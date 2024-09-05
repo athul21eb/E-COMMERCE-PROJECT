@@ -57,7 +57,7 @@ const RenderPagination = ({
             className={`px-3 py-1 border rounded ${
               currentPage === number
                 ? "bg-black text-white"
-                : "bg-gray-200 border-gray-300 text-black"
+                : "bg-gray-200 border-gray-900 text-black"
             }`}
           >
             {number}

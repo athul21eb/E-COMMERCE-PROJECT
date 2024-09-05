@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-import {  MdDeleteForever } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 import { LiaShoppingBagSolid } from "react-icons/lia";
 
 import {
@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 const CartItem = ({ item }) => {
   ////mutations
- 
+
   const [updateCartProduct] = useUpdateToCartMutation();
   const [removeItemFromCart] = useRemoveFromCartMutation();
   const [selectedSize, setSelectedSize] = useState(item.size);
@@ -29,13 +29,10 @@ const CartItem = ({ item }) => {
 
   const handleSizeChange = async (newSize) => {
     try {
-
-      
       await updateCartProduct({
         data: { size: newSize, quantity: quantity },
         itemId: item._id,
       }).unwrap();
-
     } catch (err) {
       // Display error message in case of failure
       toast.error(err?.data?.message || err?.error);
@@ -44,39 +41,29 @@ const CartItem = ({ item }) => {
   };
 
   const handleQuantityChange = async (e) => {
-      try {
-        setQuantity(parseInt(e.target.value));
+    try {
+      setQuantity(parseInt(e.target.value));
 
-      
-        await updateCartProduct({
-          data: { size: selectedSize, quantity: parseInt(e.target.value) },
-          itemId: item._id,
-        }).unwrap();
-  
-      } catch (err) {
-        // Display error message in case of failure
-        toast.error(err?.data?.message || err?.error);
-        console.error(err);
-      }
+      await updateCartProduct({
+        data: { size: selectedSize, quantity: parseInt(e.target.value) },
+        itemId: item._id,
+      }).unwrap();
+    } catch (err) {
+      // Display error message in case of failure
+      toast.error(err?.data?.message || err?.error);
+      console.error(err);
+    }
   };
 
-  const handleRemoveItemFromCart  = async (itemId) => {
-    
-    try{
-
-
-
-      const response = await removeItemFromCart({itemId}).unwrap();
-            toast.success(response.message);
-        
-              
-             
-            } catch (err) {
-              // Display error message in case of failure
-              toast.error(err?.data?.message || err?.error);
-              console.error(err);
-            }
-  }
+  const handleRemoveItemFromCart = async (itemId) => {
+    try {
+      const response = await removeItemFromCart({ itemId }).unwrap();
+    } catch (err) {
+      // Display error message in case of failure
+      toast.error(err?.data?.message || err?.error);
+      console.error(err);
+    }
+  };
 
   return (
     <div className="flex items-center justify-between p-4 bg-gray-200 rounded-lg mb-4">
@@ -105,11 +92,13 @@ const CartItem = ({ item }) => {
               }}
               className="border p-1"
             >
-              {item.productId.stock.filter(s=>s.stock!==0).map((s) => (
-                <option key={s._id} value={s.size}>
-                  {s.size}
-                </option>
-              ))}
+              {item.productId.stock
+                .filter((s) => s.stock !== 0)
+                .map((s) => (
+                  <option key={s._id} value={s.size}>
+                    {s.size}
+                  </option>
+                ))}
             </select>
 
             <label className="ml-4 mr-2">Qty:</label>
@@ -132,9 +121,8 @@ const CartItem = ({ item }) => {
           </div>
         </div>
       </div>
-      <button  onClick={()=>handleRemoveItemFromCart(item._id)}>
-      <MdDeleteForever className="text-red-500 size-6 hover:text-red-700" />
-
+      <button onClick={() => handleRemoveItemFromCart(item._id)}>
+        <MdDeleteForever className="text-red-500 size-6 hover:text-red-700" />
       </button>
     </div>
   );

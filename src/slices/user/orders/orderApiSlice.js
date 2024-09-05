@@ -11,7 +11,28 @@ const userOrderApiSlice = userApiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getOrdersForUser: builder.query({
+      query: ({ itemsPerPage, currentPage }) => ({
+        url: `${orderUrl}/user-orders?page=${currentPage}&limit=${itemsPerPage}`,
+      }),
+    }),
+    getOrderById: builder.query({
+      query: (id) => ({
+        url: `${orderUrl}/${id}`,
+      }),
+    }),
+    cancelOrderItem:builder.mutation({
+      query: ({orderId,itemId})=>({
+        url:`${orderUrl}/${orderId}/items/${itemId}/cancel`,
+        method:"PATCH",
+      })
+    })
   }),
 });
 
-export const {useCreateOrderMutation} = userOrderApiSlice;
+export const {
+  useCreateOrderMutation,
+  useLazyGetOrdersForUserQuery,
+  useLazyGetOrderByIdQuery,
+  useCancelOrderItemMutation
+} = userOrderApiSlice;

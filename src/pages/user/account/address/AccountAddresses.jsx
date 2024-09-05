@@ -1,8 +1,9 @@
 import React from 'react'
+import ManageAddresses from '../../Address/manageAddresses/ManageAddress'
 
 const AccountAddresses = () => {
   return (
-    <div className='h-screen'>AccountAddresses</div>
+    <ManageAddresses checkout={false}/>
   )
 }
 

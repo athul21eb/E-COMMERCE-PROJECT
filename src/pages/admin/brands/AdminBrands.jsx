@@ -55,11 +55,12 @@ const BrandPage = () => {
 
   const [toggleBrand, setToggleBrand] = useState(null);
 
+  // Mutations - Api Actions
+  const [triggerGetBrandsList, { isLoading: brandsQueryLoading }] =
+  useLazyGetBrandsListQuery();
+  
   ////pagination States
 
-   // Mutations - Api Actions
-   const [triggerGetBrandsList, { isLoading: brandsQueryLoading }] =
-   useLazyGetBrandsListQuery();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalBrandsCount, setTotalBrandsCount] = useState(1);

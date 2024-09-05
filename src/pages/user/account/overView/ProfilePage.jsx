@@ -85,7 +85,7 @@ const OverviewForm = () => {
         .oneOf([Yup.ref("newPassword"), null], "Passwords must match"),
     }),
 
-    onSubmit: async (values, { resetForm }) => {
+    onSubmit: async (values, { resetForm ,setFieldValue}) => {
      
       try {
         if (!avatar) {
@@ -102,8 +102,10 @@ const OverviewForm = () => {
           ...values,
           photo: uploadedImageUrL,
         }).unwrap();
+        
+        setFieldValue('newPassword','');
+        setFieldValue("confirmPassword",'');
         toast.success(response.message);
-        resetForm();
       } catch (err) {
         // Display error message in case of failure
         toast.error(err?.data?.message || err?.error);

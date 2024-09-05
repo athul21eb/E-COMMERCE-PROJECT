@@ -106,7 +106,7 @@ const CheckoutPage = () => {
         items: cartDetails?.items,
         shippingAddress: defaultAddress,
         paymentMethod: selectedPaymentMethod,
-        BillAmount: orderSummary.totalAmount,
+        billAmount: orderSummary.totalAmount,
       }).unwrap();
 
       toast.success(response.message);
@@ -133,6 +133,51 @@ const CheckoutPage = () => {
 
   return (
     <div className="max-w-5xl mx-auto p-6 bg-gray-200 shadow-lg rounded-lg">
+   {/* Step Indicator */}
+<div className="flex flex-col lg:flex-row justify-center mb-8">
+  {/* Step 1: Checkout */}
+  <div className="flex items-center">
+    <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
+      1
+    </div>
+    <span className="ml-2 font-semibold text-blue-500">Checkout</span>
+  </div>
+  
+  {/* Line separator (blue) */}
+  <div className="hidden lg:block flex-1 h-px bg-blue-300 mx-4"></div>
+  
+  {/* Step 2: Address */}
+  <div className="flex items-center mt-4 lg:mt-0">
+    <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
+      2
+    </div>
+    <span className="ml-2 font-semibold text-gray-700">Address</span>
+  </div>
+  
+  {/* Line separator (blue) */}
+  <div className="hidden lg:block flex-1 h-px bg-blue-300 mx-4"></div>
+
+  {/* Step 3: Payment */}
+  <div className="flex items-center mt-4 lg:mt-0">
+    <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
+      3
+    </div>
+    <span className="ml-2 font-semibold text-gray-700">Payment</span>
+  </div>
+  
+  {/* Line separator (gray) */}
+  <div className="hidden lg:block flex-1 h-px bg-gray-300 mx-4"></div>
+
+  {/* Step 4: Place Order */}
+  <div className="flex items-center mt-4 lg:mt-0">
+    <div className="bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center">
+      4
+    </div>
+    <span className="ml-2 font-semibold text-gray-700">Place Order</span>
+  </div>
+</div>
+
+
       <h1 className="text-3xl font-bold mb-8 text-start border-b-2 border-black">
         Checkout
       </h1>
@@ -250,7 +295,7 @@ const CheckoutPage = () => {
               <p>Loading address...</p>
             )}
             <button
-              onClick={() => navigate("/addresses")}
+              onClick={() => navigate("addresses")}
               className="mt-6 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
             >
              { !defaultAddress ? "Add Address" :"Change Address"}
@@ -316,27 +361,3 @@ const CheckoutPage = () => {
 };
 
 export default CheckoutPage;
-
-//   {/* Step Indicator */}
-//   <div className="flex justify-center mb-8">
-//     <div className="flex items-center">
-//       <div className="bg-blue-500 text-white w-8 h-8 rounded-full flex items-center justify-center">
-//         1
-//       </div>
-//       <span className="ml-2 font-semibold text-blue-500">Delivery</span>
-//     </div>
-//     <div className="flex-1 h-px bg-blue-300 mx-4"></div>
-//     <div className="flex items-center">
-//       <div className="bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center">
-//         2
-//       </div>
-//       <span className="ml-2 font-semibold text-gray-700">Payment</span>
-//     </div>
-//     <div className="flex-1 h-px bg-gray-300 mx-4"></div>
-//     <div className="flex items-center">
-//       <div className="bg-gray-300 text-gray-700 w-8 h-8 rounded-full flex items-center justify-center">
-//         3
-//       </div>
-//       <span className="ml-2 font-semibold text-gray-700">Review</span>
-//     </div>
-//   </div>

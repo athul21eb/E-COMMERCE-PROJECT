@@ -5,7 +5,7 @@ import { useAddAddressMutation } from "../../../../slices/user/profile/address/a
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const AddAddressPage = () => {
+const AddAddressPage = ({route="/addresses"}) => {
   const navigate = useNavigate();
   const [addAddress, { isLoading }] = useAddAddressMutation();
   useEffect(() => {
@@ -19,7 +19,7 @@ const AddAddressPage = () => {
         data: values,
       }).unwrap();
       toast.success(response.message);
-      navigate("/addresses");
+      navigate(route);
     } catch (err) {
       // Display error message in case of failure
       toast.error(err?.data?.message || err?.error);

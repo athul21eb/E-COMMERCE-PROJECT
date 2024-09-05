@@ -46,6 +46,10 @@ import UserProfileWrapper from "../components/wrappers/userProfileWrapper/userPr
 import Orders from "../pages/user/account/orders/Orders.jsx";
 import Wallet from "../pages/user/account/wallet/Wallet.jsx";
 import AccountAddresses from "../pages/user/account/address/AccountAddresses.jsx";
+import AccountAddAddress from "../pages/user/account/address/accountAddAddress/AccountAddAddress.jsx";
+import AccountEditAddress from "../pages/user/account/address/accountEditAddress/AccountEditAddress.jsx";
+import OrderDetails from "../pages/user/account/orders/orderDetails/OrderDetails.jsx";
+import AdminOrderDetails from "../pages/admin/order/orderDetails/AdminOrderDetails.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
@@ -64,17 +68,31 @@ const router = createBrowserRouter(
         <Route path="product-details" element={<ProductPage />} />
         <Route element={<UserProtectedRoutes />}>
         <Route path="account" element={<UserProfileWrapper/>} >
-        <Route index element={<Navigate to="overview" replace />}/>
+        <Route index element={<Navigate to="overview"  />}/>
           <Route index path='overview'element={<ProfilePage />} />
-          <Route path='orders' element={<Orders/>} />
+          <Route path='orders' element={<Outlet/>} >
+          <Route index element={<Orders />} />
+          <Route path="order-details" element={<OrderDetails/>} />
+             </Route>
           <Route path='wallet' element={<Wallet/>} />
-          <Route path='addresses' element={<AccountAddresses/>} />
+          <Route path='addresses' element={<Outlet/>} >
+          <Route index element={<AccountAddresses/>}/>
+          <Route path="add-Addresses" element={<AccountAddAddress />} />
+          <Route path="edit-Addresses" element={<AccountEditAddress />} />
+
+          </Route>
           </Route>
           <Route path="cart" element={<Cart />} />
           <Route path="addresses" element={<ManageAddresses />}/>
-            <Route path="add-Addresses" element={<AddAddressPage />} />
-            <Route path="edit-Addresses" element={<EditAddress />} />
-            <Route path="checkOut" element={<CheckoutPage />} />
+            
+            <Route path="checkOut" element={<Outlet/>} >
+            <Route index element={<CheckoutPage />} />
+            <Route path="addresses" element={<Outlet/>}>
+            <Route index element={<ManageAddresses />}/>
+            <Route path="add" element={<AddAddressPage />} />
+            <Route path="edit" element={<EditAddress />} />
+            </Route>
+            </Route>
             <Route path="order-placed" element={<OrderCompletion />} />
         </Route>
       </Route>
@@ -98,7 +116,10 @@ const router = createBrowserRouter(
             <Route path="category" element={<AdminCategory />} />
             <Route path="customers" element={<AdminUserManagement />} />
             <Route path="brands" element={<AdminBrands />} />
-            <Route path="orders" element={<AdminOrders />} />
+            <Route path="orders" element={<Outlet/>} >
+            <Route index element={<AdminOrders />} />
+            <Route path="order-details" element={<AdminOrderDetails />} />
+            </Route>
             <Route path="sales-report" element={<AdminSalesReport />} />
             <Route path="coupons" element={<AdminCoupons />} />
             <Route path="settings" element={<AdminSettings />} />

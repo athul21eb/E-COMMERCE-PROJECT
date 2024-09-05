@@ -6,11 +6,14 @@ import {
   useDeleteAddressMutation,
   useSetDefaultAddressMutation,
 } from "../../../../slices/user/profile/address/addressApiSlice";
+import Modal from "../../../../components/common/Modals/Modal";
 import { useSelector } from "react-redux";
 import LoadingBlurScreen from "../../../../components/common/LoadingScreens/LoadingBlurFullScreen";
-import { AiOutlineArrowLeft } from "react-icons/ai";
 
-const ManageAddresses = () => {
+import LoadingScreen from "../../../../components/common/LoadingScreens/LoadingScreen";
+import { Button } from "@mui/material";
+import { AiOutlineArrowLeft } from "react-icons/ai";
+const ManageAddresses = ({ checkout = true }) => {
   const [fetchAddresses, { isLoading }] = useLazyGetAddressesQuery();
   const [removeAddress] = useDeleteAddressMutation();
   const [setDefaultAddress] = useSetDefaultAddressMutation();
@@ -18,10 +21,18 @@ const ManageAddresses = () => {
   const navigate = useNavigate();
   const { addresses } = useSelector((state) => state.userAddresses);
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const [deletingAddress, setDeletingAddress] = useState(null);
+  //model setup
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   useEffect(() => {
     fetchAddresses();
   }, [fetchAddresses]);
+
   useEffect(() => {
     if (addresses.length) {
       const defaultAddress = addresses.find(
@@ -44,34 +55,52 @@ const ManageAddresses = () => {
   };
 
   const handleEditAddress = (id) => {
-    navigate(`/edit-addresses?id=${id}`);
+    navigate(checkout ? `edit?id=${id}` : `edit-addresses?id=${id}`);
   };
 
-  const handleRemoveAddress = async (id) => {
+  const handleRemoveAddress = async () => {
     try {
-      await removeAddress({ addressId: id }).unwrap();
+      await removeAddress({ addressId: deletingAddress }).unwrap();
+      closeModal();
+      setDeletingAddress(null);
     } catch (error) {
       console.error("Failed to remove address:", error);
     }
   };
 
   if (isLoading) {
-    return <LoadingBlurScreen />;
+    return  checkout?<LoadingBlurScreen />:<LoadingScreen/>;
   }
 
   return (
     <div className="max-w-5xl max-h-full mx-auto p-6 bg-white shadow-lg rounded-xl">
-      <button
-        className=" w-fit  bg-blue-500 text-white p-3 rounded-lg flex items-center"
-        onClick={() => navigate("/checkOut")}
-      >
-        <AiOutlineArrowLeft className="mr-2" />{" "}
-        {/* Icon with some right margin */}
-        Back
-      </button>
+      {checkout && (
+        <button
+          className=" w-fit   bg-blue-500 text-white p-3 m-3 rounded-lg flex items-center"
+          onClick={() => navigate("/checkOut")}
+        >
+          <AiOutlineArrowLeft className="mr-2" />{" "}
+          {/* Icon with some right margin */}
+          Back
+        </button>
+      )}
       <h2 className="text-3xl font-semibold text-gray-700 mb-6 text-center">
         Manage Address
       </h2>
+      {!checkout && (
+        <>
+          <button
+            onClick={() => navigate("add-addresses")}
+            className="flex items-center justify-center w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <FaPlusCircle className="mr-2" />
+            Add New Address
+          </button>
+          <div className="flex items-center justify-center my-4">
+            <span className="text-gray-500 text-sm">OR</span>
+          </div>
+        </>
+      )}
       {addresses?.length === 0 ? (
         <div className="text-6xl text-center">No Addresses</div>
       ) : (
@@ -116,7 +145,9 @@ const ManageAddresses = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => handleRemoveAddress(address._id)}
+                  onClick={() =>
+                    {setDeletingAddress(address._id);
+                    openModal()}}
                   className="flex items-center px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-400"
                 >
                   <FaTrashAlt className="mr-2" />
@@ -127,16 +158,37 @@ const ManageAddresses = () => {
           </div>
         ))
       )}
-      <div className="flex items-center justify-center my-4">
-        <span className="text-gray-500 text-sm">OR</span>
-      </div>
-      <button
-        onClick={() => navigate("/add-addresses")}
-        className="flex items-center justify-center w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      {checkout && (
+        <>
+          <div className="flex items-center justify-center my-4">
+            <span className="text-gray-500 text-sm">OR</span>
+          </div>
+          <button
+            onClick={() => navigate("add")}
+            className="flex items-center justify-center w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          >
+            <FaPlusCircle className="mr-2" />
+            Add New Address
+          </button>
+        </>
+      )}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        title="Are you sure to remove this address?"
+        footer={
+          <>
+            <Button variant="outlined" onClick={closeModal}>
+              Cancel
+            </Button>
+            <Button variant="contained" color="error" onClick={handleRemoveAddress}>
+              Confirm
+            </Button>
+          </>
+        }
       >
-        <FaPlusCircle className="mr-2" />
-        Add New Address
-      </button>
+        <p>Are you sure you want to log out?</p>
+      </Modal>
     </div>
   );
 };

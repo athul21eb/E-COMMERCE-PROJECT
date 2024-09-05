@@ -41,6 +41,7 @@ const Header = () => {
   const [triggerProductList] = useLazyGetAllProductListQuery();
   useEffect(() => {
     triggerProductList();
+    
   }, [triggerProductList]);
 
   useEffect(() => {
