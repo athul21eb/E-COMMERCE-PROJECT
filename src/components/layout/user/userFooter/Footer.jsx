@@ -60,9 +60,9 @@ const Footer = () => {
       <div className="container mx-auto text-center mt-8 border-t border-gray-700 pt-4">
         <div className="flex justify-center space-x-4">
           <img src="/visa.svg" alt="Visa" className="size-12" />
-          <img src="/paypal.svg" alt="PayPal" className="size-12" />
+          <img src="/paypal.svg" alt="PayPal" className="w-24" />
           <img src="/mastercard.svg" alt="MasterCard" className="size-12" />
-          <img src="/razorpay.svg" alt="RazorPay" className="size-12" />
+          <img src="/razorpay.svg" alt="RazorPay" className="w-24" />
         </div>
         <p className="mt-4">© 2024 fire.com</p>
       </div>

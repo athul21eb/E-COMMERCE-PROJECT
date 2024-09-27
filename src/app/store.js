@@ -3,15 +3,16 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
 import authReducer from "../slices/auth/authSlice.js";
 import customersReducer from "../slices/admin/customers/customersSlice.js";
-import categoriesReducer from '../slices/admin/category/categoryListSlice.js';
-import brandsReducer from '../slices/admin/brands/brandsListSlice.js';
-import productsReducer from '../slices/admin/products/productListSlice.js';
+import categoriesReducer from "../slices/admin/category/categoryListSlice.js";
+import brandsReducer from "../slices/admin/brands/brandsListSlice.js";
+import productsReducer from "../slices/admin/products/productListSlice.js";
 import { apiSlice } from "./api/auth/authenticationApiSlice.js";
 import { adminApiSlice } from "./api/admin/adminApiSlice.js";
 import userApiSlice from "./api/user/userApiSlice.js";
-import publicReducer from '../slices/public/publicSlice.js';
-import cartReducer  from "../slices/user/cart/cartSlice.js";
-import AddressReducer  from "../slices/user/profile/address/addressSlice.js";
+import publicReducer from "../slices/public/publicSlice.js";
+import cartReducer from "../slices/user/cart/cartSlice.js";
+import AddressReducer from "../slices/user/profile/address/addressSlice.js";
+import wishListSliceReducer from "../slices/user/wishList/wishListSlice.js";
 // Configuration for persisting the auth slice
 const authPersistConfig = {
   key: "auth",
@@ -23,7 +24,6 @@ const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
 
 const store = configureStore({
   reducer: {
-
     ////authenction slice
     auth: persistedAuthReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
@@ -35,24 +35,29 @@ const store = configureStore({
     [adminApiSlice.reducerPath]: adminApiSlice.reducer,
     //// user slices
     public: publicReducer,
-    userAddresses:AddressReducer,
-   cart:cartReducer,
-    [userApiSlice.reducerPath]:userApiSlice.reducer,
+    userAddresses: AddressReducer,
+    cart: cartReducer,
+    wishlist: wishListSliceReducer,
+    [userApiSlice.reducerPath]: userApiSlice.reducer,
   },
   devTools: true,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [
-          'persist/PERSIST',
-          'persist/REHYDRATE',
-          'persist/FLUSH',
-          'persist/PAUSE',
-          'persist/PURGE',
-          'persist/REGISTER',
+          "persist/PERSIST",
+          "persist/REHYDRATE",
+          "persist/FLUSH",
+          "persist/PAUSE",
+          "persist/PURGE",
+          "persist/REGISTER",
         ],
       },
-    }).concat(apiSlice.middleware, adminApiSlice.middleware,userApiSlice.middleware),
+    }).concat(
+      apiSlice.middleware,
+      adminApiSlice.middleware,
+      userApiSlice.middleware
+    ),
 });
 
 // Persistor

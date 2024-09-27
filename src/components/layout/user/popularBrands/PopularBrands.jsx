@@ -12,7 +12,7 @@ const PopularBrands = () => {
       const response = await triggerBrandsList().unwrap();
       if (response) {
         const { brands } = response;
-        setBrandDetails(brands);
+        setBrandDetails(brands.slice(0, 7)); // Show only the first 7 brands
       }
     } catch (err) {
       toast.error(err?.data?.message || err?.error);
@@ -29,14 +29,16 @@ const PopularBrands = () => {
   }
 
   return (
-    <div className="mx-auto my-5 max-w-full px-4 sm:px-6 lg:px-8">
+    <div className="mx-auto my-5 max-w-full px-4 hidden sm:block sm:px-6 lg:px-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-4 sm:mb-6">
-        <h2 className="text-xl sm:text-2xl font-semibold">Popular Brands</h2>
-        <button className="text-gray-600">
+      <div className="flex justify-between items-center mb-6">
+      <h2 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-gray-900">
+          Our <span className="text-gray-500"> Partners</span>
+          </h2>
+        <button className="text-primary-500 hover:text-primary-700 transition">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6 sm:h-8 sm:w-8"
+            className="h-6 w-6"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -52,16 +54,16 @@ const PopularBrands = () => {
       </div>
 
       {/* Brand Images */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-12 gap-x-4 gap-y-6 w-full">
+      <div className="grid grid-cols-7 gap-4  ">
         {brandDetails.map((brand, index) => (
           <div
             key={index}
-            className="flex border border-gray-300 rounded-full items-center justify-center w-full h-auto"
+            className="flex items-center justify-center border border-gray-200 rounded-full shadow-sm p-4 bg-white transition-transform hover:scale-105"
           >
             <img
               src={brand?.brandPhotoUrl}
               alt={brand?.brandName || `Brand ${index + 1}`}
-              className="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 object-contain rounded-full"
+              className="w-16 h-16 sm:w-20 sm:h-20 object-contain rounded-lg"
             />
           </div>
         ))}

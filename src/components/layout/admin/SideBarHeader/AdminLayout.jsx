@@ -33,7 +33,7 @@ const AdminLayout = () => {
     { name: "Orders", icon: MdOutlineSell, path: "orders" },
     { name: "Sales Report", icon: FaChartBar, path: "sales-report" },
     { name: "Coupons", icon: MdOutlineSell, path: "coupons" },
-    { name: "Settings", icon: MdSettings, path: "settings" },
+    { name: "Banners", icon: MdSettings, path: "banners" },
   ];
 
   
@@ -137,7 +137,7 @@ const AdminLayout = () => {
               TransitionComponent={Fade}
               TransitionProps={{ timeout: 150 }}
             >
-              <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
+              
               <MenuItem
                 onClick={() => {
                   handleMenuClose();

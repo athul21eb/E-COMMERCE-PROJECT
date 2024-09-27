@@ -3,7 +3,7 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import {
-  useLazyGetAllProductListQuery,
+  
   useLazyGetProductDetailsByIdQuery,
 } from "../../../slices/public/PublicApiSlice";
 import LoadingBlurScreen from "../../../components/common/LoadingScreens/LoadingBlurFullScreen";
@@ -19,7 +19,7 @@ import {
 
 const ProductsDetails = () => {
   const { cartDetails } = useSelector((state) => state.cart);
-  const { products } = useSelector((state) => state.public);
+  
   const { user } = useSelector((state) => state.auth?.authInfo);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -31,24 +31,37 @@ const ProductsDetails = () => {
   const [fetchProductDetailsById, { isLoading }] =
     useLazyGetProductDetailsByIdQuery();
   const [product, setProduct] = useState(null);
+  const[relatedProducts,setRelatedProducts] = useState([]);
   const [mainImage, setMainImage] = useState("");
   const [selectedSize, setSelectedSize] = useState(null);
   const [stock, setStock] = useState(null);
-
+  const [mainImageZoomOpen, setMainImageZoomOpen] = useState(false);
+const [infoMessage,setInfoMessage] = useState(null)
   const navigate = useNavigate();
-
+const [totalStock,setTotalStock] = useState(0)
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
     const selectedStock = product?.stock.find((s) => s.size === size)?.stock;
     setStock(selectedStock);
+    setInfoMessage(null)
   };
 
   const fetchProductDetails = async () => {
     try {
       const response = await fetchProductDetailsById({ id }).unwrap();
       if (response) {
+
         setProduct(response.product);
         setMainImage(response.product?.thumbnail);
+        setRelatedProducts(response.relatedProducts);
+
+        setTotalStock(response?.product?.stock?.reduce((total, item) => total + Number(item.stock), 0))
+        
+        
+        if (totalStock === 0) {
+          setInfoMessage("out of stock");
+        } 
+
         // Set the initial main image
       }
     } catch (err) {
@@ -62,6 +75,10 @@ const ProductsDetails = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
     setSelectedSize(null);
     setStock(null);
+
+   
+
+    
   }, [id]);
 
   const handleThumbnailClick = (imageSrc) => {
@@ -72,19 +89,17 @@ const ProductsDetails = () => {
 
   const handleAddToBag = async () => {
     try {
-
-      if(!user){
-       return navigate("/login");
-        
+      if (!user) {
+        return navigate("/login");
       }
 
       if (!selectedSize) {
-        toast.warning("Please select a size ");
+        setInfoMessage("Please select a size ");
         return;
       }
 
       if (stock === 0) {
-        toast.error("Out of Stock ! ");
+        setInfoMessage("Out of Stock ! ");
         return;
       }
 
@@ -109,7 +124,7 @@ const ProductsDetails = () => {
 
   return (
     <>
-      <div className="mb-8 mt-20">
+      <div className="mb-8 mt-20 mx-auto">
         <h2 className="text-3xl font-bold ml-5">Product Details</h2>
       </div>
 
@@ -129,16 +144,26 @@ const ProductsDetails = () => {
           </div>
 
           {/* Main Image with Zoom */}
-          <div className="w-3/6 flex justify-center items-center mt-6 md:mt-0">
-            <TransformWrapper>
-              <TransformComponent>
-                <img
-                  src={mainImage}
-                  alt="Main Product"
-                  className="w-full h-[500px] object-contain rounded-lg"
-                />
-              </TransformComponent>
-            </TransformWrapper>
+          <div onDoubleClick={ ()=>setMainImageZoomOpen(m=>!m)}  className="w-3/6 flex justify-center items-center mt-6 md:mt-0">
+            {!mainImageZoomOpen ? (
+             <img
+             src={mainImage}
+             alt="Main Product"
+             className="w-full h-[500px] object-contain rounded-lg"
+             title="Double click to enable Zoom"
+           />
+           
+            ) : (
+              <TransformWrapper>
+                <TransformComponent>
+                  <img
+                    src={mainImage}
+                    alt="Main Product"
+                    className="w-full h-[500px] object-contain rounded-lg"
+                  />
+                </TransformComponent>
+              </TransformWrapper>
+            )}
           </div>
 
           {/* Third Column for Details */}
@@ -148,7 +173,11 @@ const ProductsDetails = () => {
               <h3 className="text-xl font-semibold text-gray-700">
                 {product?.brand?.brandName}
               </h3>
-              <h1 className="text-3xl font-bold">{product?.productName}</h1>
+              <h2 className="text-3xl font-bold">{product?.productName}</h2>
+              <h5 className="text-xl font-semibold text-gray-700">
+                {product?.category?.categoryName}
+              </h5>
+
               <p className="text-gray-500 text-lg">5k Reviews</p>
             </div>
 
@@ -207,6 +236,7 @@ const ProductsDetails = () => {
                   </p>
                 )
               )}
+              { infoMessage&&<h3 className="text-xl font-bold text-orange-600">{infoMessage}</h3>}
             </div>
 
             {/* Actions and Description */}
@@ -223,7 +253,8 @@ const ProductsDetails = () => {
               ) : (
                 <button
                   onClick={handleAddToBag}
-                  className="bg-blue-500 text-white py-2 rounded-lg flex justify-center items-center"
+                  disabled={totalStock===0}
+                  className={`bg-blue-500 text-white py-2 rounded-lg flex justify-center items-center ${totalStock===0&&"cursor-not-allowed"}`}
                 >
                   <div className="mr-2"> Add to Bag</div>
                   <IoBagOutline />
@@ -247,7 +278,7 @@ const ProductsDetails = () => {
           </div>
         </div>
         <ProductCardList
-          productData={products.slice(0, 8)}
+          productData={relatedProducts}
           Heading={"YOU MIGHT ALSO LIKE"}
         />
       </div>

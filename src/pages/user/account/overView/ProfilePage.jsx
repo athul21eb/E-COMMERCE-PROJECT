@@ -179,7 +179,7 @@ const OverviewForm = () => {
               id="firstName"
               name="firstName"
               label="First Name"
-              value={formik.values.firstName}
+              value={formik.values.firstName??''}
               onChange={formik.handleChange}
               error={
                 formik.touched.firstName && Boolean(formik.errors.firstName)
@@ -194,7 +194,7 @@ const OverviewForm = () => {
               id="lastName"
               name="lastName"
               label="Last Name"
-              value={formik.values.lastName}
+              value={formik.values.lastName??''}
               onChange={formik.handleChange}
               error={formik.touched.lastName && Boolean(formik.errors.lastName)}
               helperText={formik.touched.lastName && formik.errors.lastName}
@@ -209,7 +209,7 @@ const OverviewForm = () => {
               name="dob"
               label="Date of Birth"
               type="date"
-              value={formik.values.dob}
+              value={formik.values.dob??''}
               onChange={formik.handleChange}
               InputLabelProps={{ shrink: true }}
               error={formik.touched.dob && Boolean(formik.errors.dob)}
@@ -223,7 +223,7 @@ const OverviewForm = () => {
               id="mobile"
               name="mobile"
               label="Mobile"
-              value={formik.values.mobile}
+              value={formik.values.mobile??''}
               onChange={formik.handleChange}
               error={formik.touched.mobile && Boolean(formik.errors.mobile)}
               helperText={formik.touched.mobile && formik.errors.mobile}
@@ -237,7 +237,7 @@ const OverviewForm = () => {
               name="newPassword"
               label="New Password"
               type={showPassword ? "text" : "password"}
-              value={formik.values.newPassword}
+              value={formik.values.newPassword??''}
               onChange={formik.handleChange}
               error={
                 formik.touched.newPassword && Boolean(formik.errors.newPassword)
@@ -263,7 +263,7 @@ const OverviewForm = () => {
               name="confirmPassword"
               label="Confirm Password"
               type={showPassword ? "text" : "password"}
-              value={formik.values.confirmPassword}
+              value={formik.values.confirmPassword??''}
               onChange={formik.handleChange}
               error={
                 formik.touched.confirmPassword &&

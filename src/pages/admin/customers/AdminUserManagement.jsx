@@ -41,7 +41,7 @@ const AdminUserManagement = () => {
       }
     } catch (err) {
       // Display error message in case of failure
-      toast.error(err?.data?.message || err?.error);
+  
       console.error(err);
     }
   };
@@ -147,10 +147,10 @@ const AdminUserManagement = () => {
                   <button
                     onClick={() => handleBlockClick(customer)}
                     className={`px-4 py-1 rounded-md mx-auto ${
-                      customer.isBlocked ? "bg-yellow-500" : "bg-green-500"
+                      customer.isBlocked ? "bg-green-500" : "bg-orange-500"
                     } text-white`}
                   >
-                    {customer.isBlocked ? "Block" : "Unblock"}
+                    {customer.isBlocked ? "Unblock" : "Block"}
                   </button>
                 </td>
               </tr>

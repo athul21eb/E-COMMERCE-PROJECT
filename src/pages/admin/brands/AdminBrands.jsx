@@ -78,8 +78,7 @@ const BrandPage = () => {
         setTotalBrandsCount(totalBrandsCount);
       }
     } catch (err) {
-      // Display error message in case of failure
-      toast.error(err?.data?.message || err?.error);
+     
       console.error(err);
     }
   };
@@ -495,6 +494,7 @@ const BrandPage = () => {
       {/* Brand Image cropper*/}
       {isCropperOpen && (
         <ImageCropperModal
+        size={1/1}
           image={selectedImage}
           onCancel={handleCancelCrop}
           onCropComplete={handleCropComplete}

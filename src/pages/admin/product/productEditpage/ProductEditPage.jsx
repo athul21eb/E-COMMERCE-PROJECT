@@ -171,14 +171,23 @@ const EditProductForm = () => {
       }
 
       let galleryImages = galleryPreviews;
+
       if (galleryImages && currentProduct?.gallery) {
-        galleryImages = await Promise.all(
-          galleryPreviews.map(async (image) => {
-            const response = await uploadImage(image, "GALLERY");
-            console.log(response, "promise");
-            return response;
-          })
+        // Compare the current gallery with the new previews
+        const isGallerySame = currentProduct.gallery.every((url, index) =>
+          url === galleryPreviews[index]?.url // Assuming galleryPreviews contains objects with a 'url' field
         );
+      
+        // If the gallery is the same, skip the upload
+        if (!isGallerySame) {
+          galleryImages = await Promise.all(
+            galleryPreviews.map(async (image) => {
+              const response = await uploadImage(image, "GALLERY");
+              console.log(response, "promise");
+              return response;
+            })
+          );
+        }
       }
 
       const response = await editProduct({

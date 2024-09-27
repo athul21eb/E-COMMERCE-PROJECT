@@ -1,9 +1,10 @@
 import React, { useRef, useState, useEffect } from "react";
+import PropTypes from 'prop-types'
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import { FaTimes } from "react-icons/fa";
 
-const ImageCropperModal = ({ image, onCancel, onCropComplete }) => {
+const ImageCropperModal = ({ image, onCancel, onCropComplete ,size}) => {
 	const [cropper, setCropper] = useState(null);
 	const cropperRef = useRef(null);
 
@@ -41,7 +42,7 @@ const ImageCropperModal = ({ image, onCancel, onCropComplete }) => {
 						ref={cropperRef}
 						src={image}
 						style={{ height: "100%", width: "100%" }}
-						aspectRatio={0.8/1}
+						aspectRatio={size??0.8/1}
 						guides={false}
 						scalable={true}
 						cropBoxResizable={true}
@@ -66,6 +67,13 @@ const ImageCropperModal = ({ image, onCancel, onCropComplete }) => {
 		</div>
 	);
 };
+
+ImageCropperModal.propTypes = {
+	image: PropTypes.string.isRequired, // image should be a URL or base64 string
+	onCancel: PropTypes.func.isRequired, // onCancel should be a function
+	onCropComplete: PropTypes.func.isRequired, // onCropComplete should be a function
+	size: PropTypes.number, // size is optional and should be a number
+  };
 
 export default ImageCropperModal;
 

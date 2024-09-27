@@ -1,7 +1,9 @@
 import React from "react";
 import ProductCard from "../../../common/productCard/ProductCard";
 
-const ProductCardList = ({ productData, Heading }) => {
+const ProductCardList = ({ productData=[], Heading }) => {
+
+  console.log(productData);
   return (
     <div className="p-2 my-6">
       {/* Section Heading */}
@@ -11,7 +13,7 @@ const ProductCardList = ({ productData, Heading }) => {
 
       {/* Product Grid */}
       <div className="mx-auto grid gap-y-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4  xl:grid-cols-5 ">
-        {productData.map((product) => (
+        {productData.length>0&&productData.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>

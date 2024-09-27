@@ -96,7 +96,7 @@ const ProductsTable = () => {
           + ADD NEW PRODUCT
         </button>
       </div>
-      <table className="min-w-full bg-white  border-gray-900 border border-gray-900-gray-200">
+      <table className="min-w-full bg-white  border-gray-900 border ">
         <thead>
           <tr>
             <th className="px-4 py-2 border border-gray-900">Sl.No</th>

@@ -80,7 +80,12 @@ const OrderTable = () => {
   return (
     <>
       <TableContainer component={Paper}>
-        <Table aria-label="order table">
+        <Table aria-label="order table"   sx={{
+          // Collapse borders between cells
+          '& td, & th': {
+            border: '1px solid black', // Apply border to all cells
+          },
+        }}>
           <TableHead>
             <TableRow>
               <TableCell>ORDER ID</TableCell>
@@ -105,7 +110,7 @@ const OrderTable = () => {
                   className="hover:bg-gray-100"
                   onClick={() => navigate(`order-details?id=${order._id}`)}
                 >
-                  <TableCell>{order._id}</TableCell>
+                  <TableCell>{order.orderId}</TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       {order.items.slice(0, 2).map((product, i) => (

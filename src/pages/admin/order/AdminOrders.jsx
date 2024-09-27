@@ -28,7 +28,7 @@ const AdminOrders = () => {
 
   ////pagination States
 
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalOrdersCount, setTotalOrdersCount] = useState(1);
   const itemsPerPage = 5;
@@ -40,7 +40,7 @@ const AdminOrders = () => {
         itemsPerPage,
       }).unwrap();
       if (totalOrdersCount) {
-        console.log(orders, totalOrders);
+       
 
         setTotalOrdersCount(totalOrders);
         if (orders) {
@@ -84,7 +84,12 @@ const AdminOrders = () => {
      <AdminBreadCrumbs />
      <h1 className="text-2xl font-bold mb-4">Order Management</h1>
       <TableContainer component={Paper}>
-        <Table aria-label="order table">
+        <Table aria-label="order table"  sx={{
+          borderCollapse: 'collapse', // Collapse borders between cells
+          '& td, & th': {
+            border: '1px solid black', // Apply border to all cells
+          },
+        }}>
           <TableHead>
             <TableRow>
               <TableCell>ORDER ID</TableCell>
@@ -96,20 +101,20 @@ const AdminOrders = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.length === 0 ? (
+            {!orders||orders?.length === 0 ? (
               <TableRow>
                 <td colSpan={5} className="text-center py-4 text-3xl font-extrabold">
                   No Orders
                 </td>
               </TableRow>
             ) : (
-              orders.map((order, index) => (
+              orders?.map((order, index) => (
                 <TableRow
                   key={index}
                   className="hover:bg-gray-100"
                   onClick={() => navigate(`order-details?id=${order._id}`)}
                 >
-                  <TableCell>{order._id}</TableCell>
+                  <TableCell>{order.orderId}</TableCell>
                   <TableCell>
                     <Box display="flex" alignItems="center">
                       {order.items.slice(0, 2).map((product, i) => (
@@ -187,12 +192,12 @@ const AdminOrders = () => {
         </Table>
       </TableContainer>
 
-      <RenderPagination
+      {orders&&orders?.length !== 0&&<RenderPagination
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         totalProductsCount={totalOrdersCount}
         itemsPerPage={itemsPerPage}
-      />
+      />}
     </>
   );
 };

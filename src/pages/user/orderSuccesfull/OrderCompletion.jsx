@@ -19,12 +19,18 @@ const OrderCompletion = () => {
         <br />
         We will update you with your order in email.
       </p>
-      <button
+      <div className='flex justify-between space-x-4'><button
         onClick={handleContinueShopping}
-        className="bg-gray-300 text-gray-700 py-2 px-6 rounded hover:bg-gray-400"
+        className="bg-gray-300 text-gray-700 py-2 px-6 rounded hover:bg-gray-400 "
       >
         Continue Shopping
       </button>
+      <button
+        onClick={()=>navigate('/account/orders')}
+        className="bg-blue-400 text-gray-100 py-2 px-6 rounded hover:bg-gray-400 "
+      >
+        Go to Orders
+      </button></div>
     </div>
   );
 };

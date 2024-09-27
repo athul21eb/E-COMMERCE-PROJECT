@@ -101,7 +101,7 @@ const AdminOrderDetails = () => {
           </Grid>
           <Grid item xs={12} sm={3}>
             <Typography variant="body2">Order ID</Typography>
-            <Typography variant="h6">#{order._id}</Typography>
+            <Typography variant="h6">#{order.orderId}</Typography>
           </Grid>
           <Grid item xs={12} sm={3}>
             <Typography variant="body2">Ship To</Typography>

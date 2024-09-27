@@ -21,7 +21,7 @@ import AdminBrands from "../pages/admin/brands/AdminBrands";
 import AdminOrders from "../pages/admin/order/AdminOrders";
 import AdminSalesReport from "../pages/admin/salesReport/AdminSalesReport";
 import AdminCoupons from "../pages/admin/coupons/AdminCoupons";
-import AdminSettings from "../pages/admin/settings/AdminSettings";
+import AdminBanners from "../pages/admin/banners/AdminBanners.jsx";
 import AdminUserManagement from "../pages/admin/customers/AdminUserManagement";
 import AdminHeader from "../components/wrappers/adminWrapper/AdminHeaderWrapper";
 import UserHeader from "../components/wrappers/userWrapper/UserHeaderWrapper";
@@ -50,9 +50,22 @@ import AccountAddAddress from "../pages/user/account/address/accountAddAddress/A
 import AccountEditAddress from "../pages/user/account/address/accountEditAddress/AccountEditAddress.jsx";
 import OrderDetails from "../pages/user/account/orders/orderDetails/OrderDetails.jsx";
 import AdminOrderDetails from "../pages/admin/order/orderDetails/AdminOrderDetails.jsx";
+import ShopAll from "../pages/user/shopAll/ShopAll.jsx";
+import MenPage from "../pages/user/MenPage/MenPage.jsx";
+
+import WomenPage from "../pages/user/womenPage/WomenPage.jsx";
+import KidsPage from "../pages/user/kidPage/KidsPage.jsx";
+import NotFound from "../components/common/notFound/NotFoundPage.jsx";
+import Wishlist from "../pages/user/wishlist/Wishlist.jsx";
+
+
+
+
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
+    
       <Route element={<UserRedirectRoute />}>
         {/* Public User Routes */}
         <Route path="login" element={<LoginPage />} />
@@ -66,37 +79,41 @@ const router = createBrowserRouter(
       <Route element={<UserHeader />}>
         <Route index element={<Homepage />} />
         <Route path="product-details" element={<ProductPage />} />
-        <Route element={<UserProtectedRoutes />}>
-        <Route path="account" element={<UserProfileWrapper/>} >
-        <Route index element={<Navigate to="overview"  />}/>
-          <Route index path='overview'element={<ProfilePage />} />
-          <Route path='orders' element={<Outlet/>} >
-          <Route index element={<Orders />} />
-          <Route path="order-details" element={<OrderDetails/>} />
-             </Route>
-          <Route path='wallet' element={<Wallet/>} />
-          <Route path='addresses' element={<Outlet/>} >
-          <Route index element={<AccountAddresses/>}/>
-          <Route path="add-Addresses" element={<AccountAddAddress />} />
-          <Route path="edit-Addresses" element={<AccountEditAddress />} />
+        <Route path="shop" element={<ShopAll />} />
+        <Route path="men" element={<MenPage />} />
+        <Route path="women" element={<WomenPage />} />
+        <Route path="kids" element={<KidsPage />} />
 
-          </Route>
+        <Route element={<UserProtectedRoutes />}>
+          <Route path="account" element={<UserProfileWrapper />}>
+            <Route index element={<Navigate to="overview" />} />
+            <Route index path="overview" element={<ProfilePage />} />
+            <Route path="orders" element={<Outlet />}>
+              <Route index element={<Orders />} />
+              <Route path="order-details" element={<OrderDetails />} />
+            </Route>
+            <Route path="wallet" element={<Wallet />} />
+            <Route path="addresses" element={<Outlet />}>
+              <Route index element={<AccountAddresses />} />
+              <Route path="add-Addresses" element={<AccountAddAddress />} />
+              <Route path="edit-Addresses" element={<AccountEditAddress />} />
+            </Route>
           </Route>
           <Route path="cart" element={<Cart />} />
-          <Route path="addresses" element={<ManageAddresses />}/>
-            
-            <Route path="checkOut" element={<Outlet/>} >
+          <Route path='wishlist' element={<Wishlist/>}/>
+          <Route path="addresses" element={<ManageAddresses />} />
+
+          <Route path="checkOut" element={<Outlet />}>
             <Route index element={<CheckoutPage />} />
-            <Route path="addresses" element={<Outlet/>}>
-            <Route index element={<ManageAddresses />}/>
-            <Route path="add" element={<AddAddressPage />} />
-            <Route path="edit" element={<EditAddress />} />
+            <Route path="addresses" element={<Outlet />}>
+              <Route index element={<ManageAddresses />} />
+              <Route path="add" element={<AddAddressPage />} />
+              <Route path="edit" element={<EditAddress />} />
             </Route>
-            </Route>
-            <Route path="order-placed" element={<OrderCompletion />} />
+          </Route>
+          <Route path="order-placed" element={<OrderCompletion />} />
         </Route>
       </Route>
-     
 
       {/* Admin Routes */}
       <Route path="admin" element={<Outlet />}>
@@ -116,16 +133,18 @@ const router = createBrowserRouter(
             <Route path="category" element={<AdminCategory />} />
             <Route path="customers" element={<AdminUserManagement />} />
             <Route path="brands" element={<AdminBrands />} />
-            <Route path="orders" element={<Outlet/>} >
-            <Route index element={<AdminOrders />} />
-            <Route path="order-details" element={<AdminOrderDetails />} />
+            <Route path="orders" element={<Outlet />}>
+              <Route index element={<AdminOrders />} />
+              <Route path="order-details" element={<AdminOrderDetails />} />
             </Route>
             <Route path="sales-report" element={<AdminSalesReport />} />
             <Route path="coupons" element={<AdminCoupons />} />
-            <Route path="settings" element={<AdminSettings />} />
+            <Route path="banners" element={<AdminBanners />} />
           </Route>
         </Route>
       </Route>
+      <Route path='*' element={<NotFound/>}/>
+      
     </Route>
   )
 );

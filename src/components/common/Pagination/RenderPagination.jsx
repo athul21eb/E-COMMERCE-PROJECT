@@ -75,7 +75,7 @@ const RenderPagination = ({
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className={`px-3 py-1 border border-gray-900 rounded ${
-          currentPage === 1 ? "bg-gray-600 line-through" : "bg-blue-800 text-white"
+          currentPage === 1 ? "invisible" : "bg-blue-800 text-white"
         }`}
       >
         Previous
@@ -85,7 +85,7 @@ const RenderPagination = ({
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         className={`px-3 py-1 border border-gray-900 rounded ${
-          currentPage === totalPages ? "bg-gray-600 line-through" : "bg-blue-800 text-white"
+          currentPage === totalPages ? "invisible" : "bg-blue-800 text-white"
         }`}
       >
         Next

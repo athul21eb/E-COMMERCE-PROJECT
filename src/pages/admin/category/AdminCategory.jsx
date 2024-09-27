@@ -61,8 +61,7 @@ const AdminCategory = () => {
         setTotalCategoriesCount(totalCategoriesCount);
       }
     } catch (err) {
-      // Display error message in case of failure
-      toast.error(err?.data?.message || err?.error);
+    
       console.error(err);
     }
   };
