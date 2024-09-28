@@ -2,10 +2,7 @@ import React, { useEffect, useState } from "react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import {
-  
-  useLazyGetProductDetailsByIdQuery,
-} from "../../../slices/public/PublicApiSlice";
+import { useLazyGetProductDetailsByIdQuery } from "../../../slices/public/PublicApiSlice";
 import LoadingBlurScreen from "../../../components/common/LoadingScreens/LoadingBlurFullScreen";
 import { BiRupee } from "react-icons/bi";
 import { FaHeart } from "react-icons/fa";
@@ -16,51 +13,45 @@ import {
   useAddToCartMutation,
   useLazyGetCartQuery,
 } from "../../../slices/user/cart/cartApiSlice";
+import {
+  useAddToWishlistMutation,
+  useRemoveFromWishlistMutation,
+} from "../../../slices/user/wishList/wishListApiSlice";
 
 const ProductsDetails = () => {
   const { cartDetails } = useSelector((state) => state.cart);
-  
+
   const { user } = useSelector((state) => state.auth?.authInfo);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id");
 
-  const [fetchCart] = useLazyGetCartQuery();
-
   const [addToCart, { isLoading: addToCartLoading }] = useAddToCartMutation();
   const [fetchProductDetailsById, { isLoading }] =
     useLazyGetProductDetailsByIdQuery();
   const [product, setProduct] = useState(null);
-  const[relatedProducts,setRelatedProducts] = useState([]);
+  const [relatedProducts, setRelatedProducts] = useState([]);
   const [mainImage, setMainImage] = useState("");
   const [selectedSize, setSelectedSize] = useState(null);
   const [stock, setStock] = useState(null);
   const [mainImageZoomOpen, setMainImageZoomOpen] = useState(false);
-const [infoMessage,setInfoMessage] = useState(null)
+  const [infoMessage, setInfoMessage] = useState(null);
   const navigate = useNavigate();
-const [totalStock,setTotalStock] = useState(0)
+  const [totalStock, setTotalStock] = useState(0);
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
     const selectedStock = product?.stock.find((s) => s.size === size)?.stock;
     setStock(selectedStock);
-    setInfoMessage(null)
+    setInfoMessage(null);
   };
 
   const fetchProductDetails = async () => {
     try {
       const response = await fetchProductDetailsById({ id }).unwrap();
       if (response) {
-
         setProduct(response.product);
         setMainImage(response.product?.thumbnail);
         setRelatedProducts(response.relatedProducts);
-
-        setTotalStock(response?.product?.stock?.reduce((total, item) => total + Number(item.stock), 0))
-        
-        
-        if (totalStock === 0) {
-          setInfoMessage("out of stock");
-        } 
 
         // Set the initial main image
       }
@@ -73,13 +64,32 @@ const [totalStock,setTotalStock] = useState(0)
   useEffect(() => {
     fetchProductDetails();
     window.scrollTo({ top: 0, behavior: "smooth" });
+
     setSelectedSize(null);
     setStock(null);
-
-   
-
-    
   }, [id]);
+
+   // useEffect to check if all stock is zero and set info message
+   useEffect(() => {
+    setInfoMessage(null);
+
+    if (product) {
+      // Calculate total stock
+      const calculatedTotalStock = product?.stock?.reduce(
+        (total, item) => total + Number(item.stock),
+        0
+      );
+      setTotalStock(calculatedTotalStock);
+
+      // Check if every item in stock has 0 quantity
+      const isOutOfStock = product.stock.every(item => Number(item.stock) === 0);
+
+      if (isOutOfStock) {
+        setInfoMessage("Out of Stock");
+      }
+    }
+  }, [product]);
+
 
   const handleThumbnailClick = (imageSrc) => {
     setMainImage(imageSrc);
@@ -116,12 +126,48 @@ const [totalStock,setTotalStock] = useState(0)
       console.error(err);
     }
   };
+  ///// -------------wishlist ----------------------
+
+  const [AddToWishlistApiCall,{isLoading:AddToWishlistLoading}] = useAddToWishlistMutation();
+  const [RemoveFromWishlistApiCall,{isLoading:RemoveFromWishlistLoading}] = useRemoveFromWishlistMutation();
+
+  const { wishListDetails } = useSelector((state) => state.wishlist);
+
+  const [inWishlist, setInWishlist] = useState(
+    wishListDetails?.products?.some((item) => item._id === product?._id)
+  );
+
+  const toggleWishlist = async (productId) => {
+    try {
+      if (inWishlist) {
+        await RemoveFromWishlistApiCall({ productId }).unwrap();
+      } else {
+        await AddToWishlistApiCall({ productId }).unwrap();
+      }
+    } catch (err) {
+      // Display error message in case of failure
+
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    if (wishListDetails) {
+      setInWishlist(
+        wishListDetails?.products?.some((item) => item._id === product?._id)
+      );
+    }
+  }, [wishListDetails,toggleWishlist, id]);
+
+  
 
   ////---------------------------component--------------------------------
   if (isLoading) {
     return <LoadingBlurScreen />;
   }
-
+  if (!product && !isLoading) {
+    return <div className="text-center text-red-500 h-screen">Product not found.</div>;
+  }
+  
   return (
     <>
       <div className="mb-8 mt-20 mx-auto">
@@ -144,15 +190,17 @@ const [totalStock,setTotalStock] = useState(0)
           </div>
 
           {/* Main Image with Zoom */}
-          <div onDoubleClick={ ()=>setMainImageZoomOpen(m=>!m)}  className="w-3/6 flex justify-center items-center mt-6 md:mt-0">
+          <div
+            onDoubleClick={() => setMainImageZoomOpen((m) => !m)}
+            className="w-full md:w-3/6 flex justify-center items-center mt-6 md:mt-0"
+          >
             {!mainImageZoomOpen ? (
-             <img
-             src={mainImage}
-             alt="Main Product"
-             className="w-full h-[500px] object-contain rounded-lg"
-             title="Double click to enable Zoom"
-           />
-           
+              <img
+                src={mainImage}
+                alt="Main Product"
+                className="w-full h-[500px] object-contain rounded-lg"
+                title="Double click to enable Zoom"
+              />
             ) : (
               <TransformWrapper>
                 <TransformComponent>
@@ -236,7 +284,11 @@ const [totalStock,setTotalStock] = useState(0)
                   </p>
                 )
               )}
-              { infoMessage&&<h3 className="text-xl font-bold text-orange-600">{infoMessage}</h3>}
+              {infoMessage && (
+                <h3 className="text-xl font-bold text-orange-600">
+                  {infoMessage}
+                </h3>
+              )}
             </div>
 
             {/* Actions and Description */}
@@ -253,17 +305,35 @@ const [totalStock,setTotalStock] = useState(0)
               ) : (
                 <button
                   onClick={handleAddToBag}
-                  disabled={totalStock===0}
-                  className={`bg-blue-500 text-white py-2 rounded-lg flex justify-center items-center ${totalStock===0&&"cursor-not-allowed"}`}
+                  disabled={addToCartLoading ||totalStock === 0}
+                  className={`bg-blue-500 text-white py-2 rounded-lg flex justify-center items-center ${
+                    totalStock === 0 && "cursor-not-allowed"
+                  }`}
                 >
                   <div className="mr-2"> Add to Bag</div>
                   <IoBagOutline />
                 </button>
               )}
-              <button className="border border-red-500 text-red-500 py-2 rounded-lg  flex justify-center items-center">
-                <div className="mr-2"> Add to Wishlist </div>
-                <FaHeart />
-              </button>
+              {inWishlist ? (
+                <button
+                  className="bg-red-500 text-white py-2 rounded-lg  flex justify-center items-center"
+                  onClick={() => toggleWishlist(product?._id)}
+                  disabled={RemoveFromWishlistLoading}
+                >
+                  <div className="mr-2"> Remove from Wishlist </div>
+                  <FaHeart className="text-white" />
+                </button>
+              ) : (
+                <button
+               
+                  className="border border-red-500 text-red-500 py-2 rounded-lg  flex justify-center items-center"
+                  onClick={() => toggleWishlist(product?._id)}
+                  disabled={AddToWishlistLoading}
+                >
+                  <div className="mr-2"> Add to Wishlist </div>
+                  <FaHeart />
+                </button>
+              )}
 
               {/* Product Description */}
               <div className="mt-4">

@@ -21,4 +21,4 @@ const ProductCardList = ({ productData=[], Heading }) => {
   );
 };
 
-export default ProductCardList;
+export default React.memo(ProductCardList);
