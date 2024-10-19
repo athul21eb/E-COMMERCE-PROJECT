@@ -1,6 +1,6 @@
 import React from "react";
 import Modal from "react-modal";
-
+import PropTypes from "prop-types";
 
 const IsActiveToggleModal = ({ open, onClose, onConfirm, message, buttonName }) => {
   // Set the app element for accessibility
@@ -45,7 +45,13 @@ const IsActiveToggleModal = ({ open, onClose, onConfirm, message, buttonName }) 
     </Modal>
   );
 };
-
+IsActiveToggleModal.propTypes = {
+  open: PropTypes.bool.isRequired, // Modal visibility state
+  onClose: PropTypes.func.isRequired, // Function to handle modal close
+  onConfirm: PropTypes.func.isRequired, // Function to handle confirm action
+  message: PropTypes.string.isRequired, // Message to display in modal
+  buttonName: PropTypes.string.isRequired, // Text for the confirm button
+};
 export default IsActiveToggleModal;
 
 

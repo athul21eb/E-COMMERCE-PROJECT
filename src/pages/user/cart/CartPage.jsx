@@ -1,52 +1,81 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useSelector } from "react-redux";
-
 import { LiaShoppingBagSolid } from "react-icons/lia";
 import CartItem from "../../../components/common/CartItem/CartItem";
-
 import { Link, useNavigate } from "react-router-dom";
+import { AiOutlineClose } from "react-icons/ai";
+import PropTypes from "prop-types";
+import {
+  Button,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
+} from "@mui/material";
+import { RiCoupon2Line } from "react-icons/ri";
+import { calculateCartTotals } from "../../../utils/helper/helper";
+import CustomModal from "../../../components/common/Modals/Modal";
+import BlockModal from "../../../components/common/BlockModals/BlockModal";
+import { toast } from "react-toastify";
+import {
+  useApplyCouponMutation,
+  useGetCouponsQuery,
+  useRemoveCouponMutation,
+} from "../../../slices/user/coupons/couponsApiSlice";
 
 const CartSummary = ({
   totalItems,
-  subtotal,
+  cartTotal,
+  couponDiscount = 9,
+
+  totalMRP,
   deliveryFee,
-  // gstAmount,
-  // discount,
   totalAmount,
+  totalDiscount,
 }) => {
   const navigate = useNavigate();
+
   return (
     <div className="p-4 bg-white rounded-lg shadow-lg">
-      <h3 className="text-lg font-semibold mb-4">Order Summary</h3>
+      <h3 className="text-lg md:text-2xl font-bold mb-4  ">Order Summary</h3>
+
       <div className="flex justify-between mb-2">
         <span>{totalItems} items</span>
         <span className="text-lg text-gray-500">
-          ₹ {subtotal.toLocaleString()}
+          ₹ {totalMRP.toLocaleString()}
         </span>
       </div>
+
+      {/* Discount Section */}
+      <div className="flex justify-between mb-2">
+        <span>Offer Discount </span>
+        <span className="text-lg text-green-500">
+          - ₹ {totalDiscount.toLocaleString()}
+        </span>
+      </div>
+
       <div className="flex justify-between mb-2">
         <span>Delivery Fee</span>
         <span className="text-lg text-gray-500">
           ₹ {deliveryFee.toLocaleString()}
         </span>
       </div>
-      {/* <div className="flex justify-between mb-2">
-        <span>GST Amount</span>
-        <span>₹ {gstAmount.toLocaleString()}</span>
-      </div> */}
-      {/* <div className="flex justify-between mb-2">
-        <span>Discount 30%</span>
-        <span>- ₹ {discount.toLocaleString()}</span>
-      </div> */}
+      {/* Coupon Section */}
+      {couponDiscount !== 0 && (
+        <div className="flex justify-between mb-2">
+          <span> Coupon Discount </span>
+          <span className="text-lg text-green-500">
+            - ₹ {couponDiscount.toLocaleString()}
+          </span>
+        </div>
+      )}
+
       <div className="flex justify-between font-semibold text-lg my-2 border-t-2 border-black">
         <span className="text-xl">Total Amount</span>
         <span className="text-2xl">₹ {totalAmount.toLocaleString()}</span>
       </div>
-      <input
-        type="text"
-        placeholder="Enter Coupon Code (optional)"
-        className="w-full p-2 border rounded-lg mt-4"
-      />
+
       <button
         onClick={() => navigate("/checkOut")}
         className="w-full bg-green-500 text-white font-semibold py-2 rounded-lg mt-4"
@@ -57,81 +86,299 @@ const CartSummary = ({
   );
 };
 
+CartSummary.propTypes = {
+  totalItems: PropTypes.number.isRequired,
+  cartTotal: PropTypes.number.isRequired,
+  deliveryFee: PropTypes.number.isRequired,
+  totalAmount: PropTypes.number.isRequired,
+  totalDiscount: PropTypes.number.isRequired,
+  couponDiscount: PropTypes.number.isRequired,
+  totalMRP: PropTypes.number.isRequired,
+  // New prop for discount
+};
+
 const Cart = () => {
   const { cartDetails } = useSelector((state) => state.cart);
+
+  //// coupon implementation
+  const { data: { coupons = [] } = {} } = useGetCouponsQuery();
+  const [applyCouponApiCall] = useApplyCouponMutation();
+  const [removeCouponApiCall] = useRemoveCouponMutation();
+
+  const [isCouponsModalOpen, setIsCouponsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [currentCoupon, setCurrentCoupon] = useState(null);
+  const [apiCallLoading, setApiCallLoading] = useState(false);
+  const [couponRemoveMode, setCouponRemoveMode] = useState(false);
+
+  // Handle opening and closing modals
+  const handleCouponsOpenModal = () => {
+    setIsCouponsModalOpen(true);
+  };
+
+  const handleCouponsCloseModal = () => {
+    setIsCouponsModalOpen(false);
+    setCurrentCoupon(null);
+  };
+
+  const handleCouponApplyConfirm = async () => {
+    try {
+      setApiCallLoading(true);
+      if (!currentCoupon) return;
+      console.log(currentCoupon.code);
+      const response = await applyCouponApiCall({
+        code: currentCoupon?.code,
+      }).unwrap();
+
+      toast.success(response?.message);
+    } catch (err) {
+      console.error("Error applying coupon:", err.error);
+      toast.error(err?.data?.message || err.error);
+    } finally {
+      setApiCallLoading(false);
+      setIsConfirmModalOpen(false);
+      setIsCouponsModalOpen(false);
+    }
+  };
+
+  //// remove Coupon
+  const handleCouponRemove = async () => {
+    try {
+      setApiCallLoading(true);
+      if (!currentCoupon) return;
+      console.log(currentCoupon.code);
+      const response = await removeCouponApiCall().unwrap();
+
+      toast.success(response?.message);
+    } catch (err) {
+      console.error("Error applying coupon:", err.error);
+      toast.error(err?.data?.message || err.error);
+    } finally {
+      setApiCallLoading(false);
+      setIsConfirmModalOpen(false);
+      setCouponRemoveMode(false);
+    }
+  };
 
   const summary = useMemo(() => {
     if (!cartDetails?.items?.length) {
       return {
         totalItems: 0,
-        subtotal: 0,
+        cartTotal: 0,
         deliveryFee: 0,
-        // gstAmount: 0,
+        couponDiscount: 0,
         totalAmount: 0,
+        totalMRP: 0,
+        totalDiscount: 0, // No discount if cart is empty
       };
     }
 
-    // Calculate subtotal by summing up the salePrice * quantity for each item
-    const subtotal = cartDetails.items.reduce(
-      (total, item) => total + item.productId.salePrice * item.quantity,
-      0
+    const { cartTotal, totalDiscount, totalMRP } = calculateCartTotals(
+      cartDetails?.items
     );
 
-    const deliveryFee = Math.ceil(subtotal * 0.03); // Assuming 5% of subtotal as delivery fee
-    // const gstAmount = subtotal * 0.18; // Assuming 18% GST
+    // Calculate coupon discount
+    let couponDiscount = 0;
+    if (
+      cartDetails?.appliedCoupon &&
+      new Date(cartDetails?.appliedCoupon?.expirationDate) > new Date()
+    ) {
+      setCurrentCoupon(cartDetails?.appliedCoupon);
+      const calculatedDiscount =
+        cartTotal * (cartDetails.appliedCoupon.discount / 100);
+      couponDiscount = Math.min(
+        calculatedDiscount,
+        cartDetails.appliedCoupon.maxDiscountAmount
+      );
+    }
 
-    // Total amount (including delivery fee and GST)
-    const totalAmount = Math.ceil(subtotal + deliveryFee);
+    // Calculate delivery fee, capped at 1000
+    const deliveryFee = Math.ceil(cartTotal * 0.03);
+    const cappedDeliveryFee = deliveryFee > 1000 ? 1000 : deliveryFee;
+
+    // Calculate total amount
+    const totalAmount = Math.ceil(
+      cartTotal + cappedDeliveryFee - couponDiscount
+    );
 
     return {
       totalItems: cartDetails.items.length,
-      subtotal,
-      deliveryFee,
-      // gstAmount,
+      cartTotal,
+      deliveryFee: cappedDeliveryFee,
       totalAmount,
+      totalDiscount, // Include total discount in the return value
+      couponDiscount,
+      totalMRP,
     };
   }, [cartDetails]);
 
   return !cartDetails || cartDetails?.items.length === 0 ? (
-    <div className="mt-2 flex flex-col items-center justify-center h-screen">
-      <LiaShoppingBagSolid size={100} className="text-gray-400 mb-4" />
+    <div className="mt-2 flex flex-col items-center justify-center min-h-screen">
+      <LiaShoppingBagSolid size={200} className="text-gray-400 mb-4" />
       <h2 className="text-2xl font-semibold text-gray-700">
         Your Bag is Empty
       </h2>
       <p className="text-gray-500 mt-2">
-        Once you add something to your bag - it will appear here. Ready to get
-        started? Get started
+        Once you add something to your bag - it will appear here.
       </p>
       <Link to="/">
-        <button className="mt-6 px-6 py-2 bg-blue-500 text-white text-lg rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">
+        <button className="mt-6 px-6 py-2 bg-blue-500 text-white text-lg rounded-lg hover:bg-blue-600">
           Get Started
         </button>
       </Link>
     </div>
   ) : (
-    <div className="container mx-auto  my-20 p-4">
+    <div className="container mx-auto my-20 p-4">
       <h1 className="text-2xl font-semibold mb-4 flex items-center">
-        <LiaShoppingBagSolid className="size-10 mr-2" />
+        <LiaShoppingBagSolid className="size-10 md:size-16 mr-2" />
         Your Cart
       </h1>
-      <p className="text-sm text-gray-500 mb-4">
+      <p className="text-sm md:text-lg text-gray-500 mb-4">
         Total {summary.totalItems} items in your cart
       </p>
 
       <div className="flex flex-col lg:flex-row gap-8">
-        <div className="flex-grow">
+        {/* Cart Items Section */}
+        <div className="flex-grow w-full lg:w-2/3">
           {cartDetails &&
             cartDetails.items.map((item) => (
               <CartItem key={item._id} item={item} />
             ))}
         </div>
 
-        <div className="lg:w-1/3">
+        {/* Cart Summary Section */}
+        <div className="w-full lg:w-1/3">
+          {cartDetails?.appliedCoupon &&
+          new Date(cartDetails.appliedCoupon.expirationDate) > new Date() ? (
+            <div className="w-full  ">
+              <span className="text-sm text-green-600 font-semibold bg-green-100 px-2 py-1 rounded flex items-center justify-between space-x-2">
+                {cartDetails.appliedCoupon.discount}% OFF (Coupon Applied)
+                <button
+                  className="text-red-500 text-lg px-2 py-1 rounded hover:bg-red-100 flex items-center"
+                  onClick={() => {
+                    setCouponRemoveMode(true);
+                    setIsConfirmModalOpen(true);
+                  }} // Add the remove handler here
+                >
+                  <AiOutlineClose /> {/* React icon for "X" */}
+                </button>
+              </span>
+            </div>
+          ) : (
+            <div className="flex justify-start">
+              <Button
+                
+                variant="outlined"
+                color="secondary"
+                startIcon={<RiCoupon2Line />}
+                onClick={handleCouponsOpenModal}
+              >
+                Apply Coupons
+              </Button>
+              
+            </div>
+          )}
+
           <CartSummary {...summary} />
         </div>
       </div>
+      {/* Coupons Modal */}
+      <CustomModal
+        isOpen={isCouponsModalOpen}
+        onClose={handleCouponsCloseModal}
+        title="Select a Coupon"
+        footer={
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleCouponsCloseModal}
+          >
+            Close
+          </Button>
+        }
+        className="bg-white"
+      >
+        <div className="max-h-64 overflow-y-auto">
+          <List className="space-y-2">
+            {coupons.length > 0 ? (
+              coupons.map((coupon) => (
+                <ListItem
+                  key={coupon._id}
+                  onClick={() => {
+                    setCurrentCoupon(coupon);
+                    setIsConfirmModalOpen(true);
+                  }}
+                  className="hover:bg-blue-100 hover:shadow-md hover:cursor-pointer transition-all rounded-md mb-1 p-2 border border-gray-200 flex items-center space-x-4"
+                >
+                  <ListItemIcon className="min-w-0">
+                    <RiCoupon2Line className="text-red-500 text-lg" />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="subtitle1"
+                        component="span"
+                        className="font-semibold"
+                      >
+                        {coupon.code}
+                      </Typography>
+                    }
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          variant="subtitle2"
+                          component="span"
+                          className="font-bold text-red-500 mt-1 block"
+                        >
+                          {coupon.discount}% OFF
+                        </Typography>
+
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          className="text-gray-600 block"
+                        >
+                          On minPurchaseAmount of {coupon?.minPurchaseAmount}{" "}
+                          <br /> (Upto ₹{coupon.maxDiscountAmount})
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <Typography
+                variant="body1"
+                className="text-gray-600 text-center p-4"
+              >
+                No Coupons Available
+              </Typography>
+            )}
+          </List>
+        </div>
+      </CustomModal>
+
+      {/* Confirmation Modal */}
+      <BlockModal
+        open={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={
+          couponRemoveMode ? handleCouponRemove : handleCouponApplyConfirm
+        }
+        message={
+          couponRemoveMode
+            ? `Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF?`
+            : `Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF?`
+        }
+        buttonName={couponRemoveMode ? "Remove" : "Apply"}
+        loading={apiCallLoading}
+      />
     </div>
   );
+};
+
+CartItem.propTypes = {
+  item: PropTypes.any.isRequired, // Since item can be any type
 };
 
 export default Cart;

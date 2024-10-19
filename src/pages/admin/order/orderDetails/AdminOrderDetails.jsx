@@ -87,10 +87,11 @@ const AdminOrderDetails = () => {
   };
 
   return (
+    <div className="p-4  bg-gray-200">
     <Box padding={2}>
       <AdminBreadCrumbs />
-      <h1 className="text-2xl font-bold mb-4">Order Details</h1>
-      <BackButton className="mb-4 bg-slate-600" />
+      <h1 className="mb-10 text-2xl font-bold ">Order Details  <BackButton className=" float-right bg-slate-600" /></h1>
+     
 
       {/* Top Row - Order Info */}
       <Paper elevation={3} style={{ padding: "16px", marginBottom: "16px", borderRadius: "8px", backgroundColor: "black", color: "white" }}>
@@ -244,6 +245,7 @@ const AdminOrderDetails = () => {
         <Typography>Are you sure you want to change the status to "{newStatus}"?</Typography>
       </Modal>
     </Box>
+    </div>
   );
 };
 

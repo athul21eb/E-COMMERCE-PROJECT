@@ -11,7 +11,7 @@ import {
 } from "react-icons/fa";
 import { SiRazorpay } from "react-icons/si";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { replace, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useGetCartQuery } from "../../../slices/user/cart/cartApiSlice";
 import { useGetAddressesQuery } from "../../../slices/user/profile/address/addressApiSlice";
@@ -292,7 +292,7 @@ const CheckoutPage = () => {
                 <p className="text-gray-600">{defaultAddress.mobileNumber}</p>
               </>
             ) : (
-              <p>Loading address...</p>
+              <p> please Add a Address ...</p>
             )}
             <button
               onClick={() => navigate("addresses")}

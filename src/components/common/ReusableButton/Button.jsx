@@ -13,4 +13,13 @@ const RoundedButton = ({ type = 'button', onClick, children, className }) => {
     );
 };
 
+import PropTypes from 'prop-types';
+
+RoundedButton.propTypes = {
+  type: PropTypes.string, // Specifies the type attribute of the button
+  onClick: PropTypes.func, // Click handler function
+  children: PropTypes.node, // Button content (usually text or elements)
+  className: PropTypes.string, // Additional CSS classes for styling
+};
+
 export default RoundedButton;

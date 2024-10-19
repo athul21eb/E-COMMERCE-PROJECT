@@ -350,7 +350,7 @@ const EditProductForm = () => {
                 >
                   <option value="">Select Category</option>
                   {categories &&
-                    categories?.categories.map((category) => (
+                    categories?.categories.filter(x=>x?.isActive).map((category) => (
                       <option key={category._id} value={category._id}>
                         {category.categoryName}
                       </option>
@@ -375,7 +375,7 @@ const EditProductForm = () => {
                 >
                   <option value="66b755b184370e8343901989">Select Brand</option>
                   {brands &&
-                    brands?.brands.map((brand) => (
+                    brands?.brands.filter(x=>x?.isActive).map((brand) => (
                       <option key={brand._id} value={brand._id}>
                         {brand.brandName}
                       </option>

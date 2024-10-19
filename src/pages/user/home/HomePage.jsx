@@ -8,11 +8,16 @@ import Carousel from "../../../components/layout/user/carouselHomepage/Carousel.
 import CategoryBanner from "../../../components/layout/user/categoryBanner/Banner.jsx";
 import MostProducts from "../../../components/layout/user/MostProducts/MostProducts.jsx";
 import LoadingFullScreen from "../../../components/common/LoadingScreens/LoadingFullScreen.jsx";
+import { useEffect } from "react";
 
 const Homepage = () => {
-  const { data, isLoading, isUninitialized } = useGetNewArrivalsQuery({
+  const { data, isLoading, isUninitialized ,refetch} = useGetNewArrivalsQuery({
     limit: 10,
   });
+
+  useEffect(()=>{
+    refetch()
+  },[])
 
   const products = data?.products || [];
 
@@ -24,7 +29,7 @@ const Homepage = () => {
       <Carousel />
 
       <CategoryBanner />
-      {products.length > 5 && (
+      {products.length  && (
         <>
           <div className="mb-6 lg:mb-0">
             <h2 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-gray-900">

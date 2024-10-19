@@ -21,4 +21,18 @@ const InputField = ({ id, label, name, type,placeholder, autoComplete, required,
     );
 };
 
+import PropTypes from "prop-types";
+
+InputField.propTypes = {
+  id: PropTypes.string.isRequired, // Input field identifier
+  label: PropTypes.string.isRequired, // Label for the input field
+  name: PropTypes.string.isRequired, // Name attribute for the input field
+  type: PropTypes.string, // Type of input (e.g., text, password)
+  placeholder: PropTypes.string, // Placeholder text for the input field
+  autoComplete: PropTypes.string, // Autocomplete attribute
+  required: PropTypes.bool, // Whether the input is required
+  autoFocus: PropTypes.bool, // Whether the input should be auto-focused
+};
+
+
 export default InputField;

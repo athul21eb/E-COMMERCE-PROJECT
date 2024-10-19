@@ -47,4 +47,16 @@ const MostProducts = ({productData ,bgcolor='blue',Heading='Most Popular'}) => {
   );
 };
 
+
+import PropTypes from "prop-types";
+
+MostProducts.propTypes = {
+  productData: PropTypes.arrayOf(
+    PropTypes.any
+  ).isRequired, // Array of product objects, required prop
+  bgcolor: PropTypes.string, // Background color for the component, defaults to 'blue'
+  Heading: PropTypes.string, // Optional heading for the component
+};
+
+
 export default MostProducts;

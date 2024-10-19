@@ -21,4 +21,12 @@ const ImageZoomModal = ({ isOpen, onRequestClose, imageSrc }) => {
   );
 };
 
+import PropTypes from "prop-types";
+
+ImageZoomModal.propTypes = {
+  isOpen: PropTypes.bool.isRequired, // Modal visibility state
+  onRequestClose: PropTypes.func.isRequired, // Function to close the modal
+  imageSrc: PropTypes.string.isRequired, // Source URL of the image to display
+};
+
 export default ImageZoomModal;

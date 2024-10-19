@@ -3,8 +3,8 @@ import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLazyGetProductDetailsByIdQuery } from "../../../slices/public/PublicApiSlice";
-import LoadingBlurScreen from "../../../components/common/LoadingScreens/LoadingBlurFullScreen";
-import { BiRupee } from "react-icons/bi";
+import LoadingFullScreen from "../../../components/common/LoadingScreens/LoadingFullScreen";
+import { AiOutlineWarning } from 'react-icons/ai';
 import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import ProductCardList from "../../../components/layout/user/ProductListofCards/ProductCardList";
@@ -26,7 +26,7 @@ const ProductsDetails = () => {
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id");
 
-  const [addToCart, { isLoading: addToCartLoading }] = useAddToCartMutation();
+  const [addToCart, { isLoading: addToCartLoading ,isError}] = useAddToCartMutation();
   const [fetchProductDetailsById, { isLoading }] =
     useLazyGetProductDetailsByIdQuery();
   const [product, setProduct] = useState(null);
@@ -45,6 +45,12 @@ const ProductsDetails = () => {
     setInfoMessage(null);
   };
 
+
+  
+
+    const handleGoBack = () => {
+        navigate(-1); // Go back to the previous page
+    };
   const fetchProductDetails = async () => {
     try {
       const response = await fetchProductDetailsById({ id }).unwrap();
@@ -53,24 +59,27 @@ const ProductsDetails = () => {
         setMainImage(response.product?.thumbnail);
         setRelatedProducts(response.relatedProducts);
 
+      
+
         // Set the initial main image
       }
     } catch (err) {
-      toast.error(err?.data?.message || err?.error);
+      
       console.error(err);
     }
   };
 
   useEffect(() => {
     fetchProductDetails();
-    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  
 
     setSelectedSize(null);
     setStock(null);
   }, [id]);
 
-   // useEffect to check if all stock is zero and set info message
-   useEffect(() => {
+  // useEffect to check if all stock is zero and set info message
+  useEffect(() => {
     setInfoMessage(null);
 
     if (product) {
@@ -82,14 +91,15 @@ const ProductsDetails = () => {
       setTotalStock(calculatedTotalStock);
 
       // Check if every item in stock has 0 quantity
-      const isOutOfStock = product.stock.every(item => Number(item.stock) === 0);
+      const isOutOfStock = product.stock.every(
+        (item) => Number(item.stock) === 0
+      );
 
       if (isOutOfStock) {
         setInfoMessage("Out of Stock");
       }
     }
   }, [product]);
-
 
   const handleThumbnailClick = (imageSrc) => {
     setMainImage(imageSrc);
@@ -128,8 +138,10 @@ const ProductsDetails = () => {
   };
   ///// -------------wishlist ----------------------
 
-  const [AddToWishlistApiCall,{isLoading:AddToWishlistLoading}] = useAddToWishlistMutation();
-  const [RemoveFromWishlistApiCall,{isLoading:RemoveFromWishlistLoading}] = useRemoveFromWishlistMutation();
+  const [AddToWishlistApiCall, { isLoading: AddToWishlistLoading }] =
+    useAddToWishlistMutation();
+  const [RemoveFromWishlistApiCall, { isLoading: RemoveFromWishlistLoading }] =
+    useRemoveFromWishlistMutation();
 
   const { wishListDetails } = useSelector((state) => state.wishlist);
 
@@ -139,6 +151,9 @@ const ProductsDetails = () => {
 
   const toggleWishlist = async (productId) => {
     try {
+      if (!user) {
+        return navigate("/login");
+      }
       if (inWishlist) {
         await RemoveFromWishlistApiCall({ productId }).unwrap();
       } else {
@@ -156,18 +171,33 @@ const ProductsDetails = () => {
         wishListDetails?.products?.some((item) => item._id === product?._id)
       );
     }
-  }, [wishListDetails,toggleWishlist, id]);
-
-  
+  }, [wishListDetails, toggleWishlist, id]);
 
   ////---------------------------component--------------------------------
   if (isLoading) {
-    return <LoadingBlurScreen />;
+    return <LoadingFullScreen />;
   }
-  if (!product && !isLoading) {
-    return <div className="text-center text-red-500 h-screen">Product not found.</div>;
+   
+
+  // If no product found, handle that case
+  if ((!product||isError)&&!isLoading) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen text-red-500 text-center">
+            <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
+            <p className="text-lg mb-4">We couldn't find the product you were looking for.</p>
+              {/* React Icon */}
+              <AiOutlineWarning className="w-16 h-16 mb-4 text-red-500" />
+            <button 
+                onClick={handleGoBack} 
+                className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 ease-in-out"
+            >
+                Go Back
+            </button>
+        </div>
+    );
   }
-  
+
+
   return (
     <>
       <div className="mb-8 mt-20 mx-auto">
@@ -175,7 +205,7 @@ const ProductsDetails = () => {
       </div>
 
       <div className="container mx-auto  p-4 max-w-full">
-        <div className="flex flex-col md:flex-row md:justify-evenly md:space-x-6">
+        <div className=" border-b-2 border-gray-500 pb-5 flex flex-col md:flex-row md:justify-evenly md:space-x-6">
           {/* Thumbnail Images */}
           <div className="flex flex-wrap md:flex-col md:align-middle md:space-y-4 space-x-4 md:space-x-0">
             {product?.gallery.map((image, index) => (
@@ -215,9 +245,9 @@ const ProductsDetails = () => {
           </div>
 
           {/* Third Column for Details */}
-          <div className="md:w-2/6 flex flex-col space-y-4 mt-6 md:mt-0">
+          <div className="md:w-2/6 flex  flex-col  space-y-4 mt-6 md:mt-0">
             {/* Product Brand and Name */}
-            <div className="text-start">
+            <div className=" md:ms-10 text-center md:text-start">
               <h3 className="text-xl font-semibold text-gray-700">
                 {product?.brand?.brandName}
               </h3>
@@ -229,21 +259,38 @@ const ProductsDetails = () => {
               <p className="text-gray-500 text-lg">5k Reviews</p>
             </div>
 
-            {/* Pricing Section */}
-            <div className="text-center">
-              <div className="flex justify-center items-center space-x-4 mt-4">
-                <span className="text-2xl font-bold">
-                  <BiRupee className="inline-block" />
-                  {product?.salePrice}
-                </span>
-                {product?.regularPrice && (
-                  <span className="line-through text-xl text-gray-500">
-                    <BiRupee className="inline-block" />
-                    {product?.regularPrice}
-                  </span>
-                )}
-              </div>
-            </div>
+          {/* Pricing Section */}
+<div className="my-6">
+  <div className="flex flex-col  justify-center md:justify-start items-center space-y-4 md:space-y-0 ">
+    
+    {/* Display Offer Information if offer is active */}
+    {product.offer && new Date(product.offer?.endDate) > Date.now() ? (
+      <>
+        {/* Offer Price */}
+        <div className="text-3xl font-bold text-gray-800">
+          ₹{product.offerPrice}
+        </div>
+        
+        {/* Sale Price (Strikethrough) and Discount Percentage */}
+        <div className="flex items-center space-x-2">
+          <span className="text-xl font-medium text-red-500 line-through">
+            (₹{product.salePrice})
+          </span>
+          <span className="text-lg font-bold text-green-600">
+            {product.offer?.discountPercentage}% OFF
+          </span>
+        </div>
+      </>
+    ) : (
+      /* If no offer, display only Sale Price */
+      <div className="text-2xl font-bold text-gray-800">
+        ₹{product.salePrice}
+      </div>
+    )}
+  </div>
+</div>
+
+
 
             {/* Size Selection */}
             <div className="text-center">
@@ -305,7 +352,7 @@ const ProductsDetails = () => {
               ) : (
                 <button
                   onClick={handleAddToBag}
-                  disabled={addToCartLoading ||totalStock === 0}
+                  disabled={addToCartLoading || totalStock === 0}
                   className={`bg-blue-500 text-white py-2 rounded-lg flex justify-center items-center ${
                     totalStock === 0 && "cursor-not-allowed"
                   }`}
@@ -325,7 +372,6 @@ const ProductsDetails = () => {
                 </button>
               ) : (
                 <button
-               
                   className="border border-red-500 text-red-500 py-2 rounded-lg  flex justify-center items-center"
                   onClick={() => toggleWishlist(product?._id)}
                   disabled={AddToWishlistLoading}
@@ -357,58 +403,3 @@ const ProductsDetails = () => {
 };
 
 export default ProductsDetails;
-
-//  <>
-//     <div className="my-8">
-//       <h2 className="text-3xl font-bold ml-5">Product Details</h2>
-//     </div>
-
-//     <div className="container mx-auto p-4 max-w-screen-lg">
-//       <div className="mx-auto flex flex-col md:flex-row md:space-x-6">
-//         {/* Thumbnail Images */}
-//         <div className="flex flex-wrap md:flex-col md:space-y-4 space-x-4 md:space-x-0">
-//           {product?.gallery.map((image, index) => (
-//             <img
-//               key={index}
-//               src={image}
-//               alt={`Thumbnail ${index + 1}`}
-//               className="w-32 h-36 object-contain rounded cursor-pointer border-2 border-transparent hover:border-gray-300"
-//               onClick={() => handleThumbnailClick(image)}
-//             />
-//           ))}
-//         </div>
-
-//         {/* Main Image with Zoom */}
-//         <div className="md:w-3/4 flex justify-center items-center mt-6 md:mt-0">
-//           <TransformWrapper>
-//             <TransformComponent>
-//               <img
-//                 src={mainImage}
-//                 alt="Main Product"
-//                 className="w-full h-[500px] object-contain rounded-lg"
-//               />
-//             </TransformComponent>
-//           </TransformWrapper>
-//         </div>
-//       </div>
-
-//       {/* Product Details */}
-//       <div className="text-center mt-8">
-//         <h1 className="text-3xl font-semibold">{product?.productName}</h1>
-//         <p className="text-gray-500 text-lg">5k Reviews</p>
-
-//         {/* Pricing Section */}
-//         <div className="flex justify-center items-center space-x-4 mt-4">
-//           <span className="text-2xl font-bold">${product?.salePrice}</span>
-//           <span className="line-through text-xl text-gray-500">
-//             ${product?.regularPrice}
-//           </span>
-//         </div>
-
-//         {/* Description */}
-//         <p className="mt-6 text-base leading-relaxed text-gray-700">
-//           {product?.description}
-//         </p>
-//       </div>
-//     </div>
-//   </>

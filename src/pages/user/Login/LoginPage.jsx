@@ -7,7 +7,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { loginValidationSchema } from "../../../utils/validation/validate.js";
 import RoundedButton from "../../../components/common/ReusableButton/Button.jsx";
 import { useLoginMutation } from "../../../slices/auth/authApiSlice.js";
-import { toast } from "react-toastify";
+import { toast } from 'react-hot-toast';
 import LoadingButton from "../../../components/common/LoadingButtons/LoadingButton.jsx";
 import GoogleOAuthButton from "../../../components/layout/user/googleOauthButton/GoogleOAuth.jsx";
 
@@ -149,5 +149,13 @@ const LoginPage = ({
     </div>
   );
 };
+
+import PropTypes from 'prop-types'
+
+LoginPage.propTypes = {
+  user : PropTypes.bool,
+  mutation : PropTypes.func,
+  heading :PropTypes.string
+}
 
 export default LoginPage;

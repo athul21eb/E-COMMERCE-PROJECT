@@ -59,6 +59,7 @@ const wishListApiSlice = userApiSlice.injectEndpoints({
 
 export const {
   useGetWishListQuery,
+  useLazyGetWishListQuery,
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
 } = wishListApiSlice;

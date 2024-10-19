@@ -5,7 +5,7 @@ import { useAddAddressMutation } from "../../../../slices/user/profile/address/a
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const AddAddressPage = ({route="/addresses"}) => {
+const AddAddressPage = ({route="/checkOut/addresses"}) => {
   const navigate = useNavigate();
   const [addAddress, { isLoading }] = useAddAddressMutation();
   useEffect(() => {
@@ -32,5 +32,13 @@ const AddAddressPage = ({route="/addresses"}) => {
   }
   return <AddressForm onSubmit={handleAddAddress} />;
 };
+
+import PropTypes from 'prop-types';
+
+AddAddressPage.propTypes = {
+  route: PropTypes.string
+}
+
+
 
 export default AddAddressPage;

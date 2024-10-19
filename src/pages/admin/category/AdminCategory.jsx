@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaTags } from "react-icons/fa";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 
 import IsActiveToggleModal from "../../../components/common/BlockModals/IsActiveToggleModal.jsx";
@@ -15,6 +15,11 @@ import {
   TableHead,
   TableRow,
   Paper,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Typography,
 } from "@mui/material";
 import {
   useAddCategoryMutation,
@@ -29,11 +34,22 @@ import Modal from "../../../components/common/Modals/Modal";
 import { CategoryValidationSchema } from "../../../utils/validation/validate";
 import AdminBreadCrumbs from "../../../components/common/BreadCrumbs/AdminBreadCrumbs";
 import RenderPagination from "../../../components/common/Pagination/RenderPagination.jsx";
+import BlockModal from "../../../components/common/BlockModals/BlockModal.jsx";
+import CustomModal from "../../../components/common/Modals/Modal";
+import {
+  useApplyOfferToCategoryMutation,
+  useGetOffersByTypeQuery,
+} from "../../../slices/admin/offers/adminOfferSlice.js";
 
 const AdminCategory = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const [isToggleModalOpen, setIsToggleModalOpen] = useState(false);
+  const [toggleCategory, setToggleCategory] = useState(null);
 
+  const [apiCallLoading, setApiCallLoading] = useState(false);
+
+  ////api calls
   const [triggerGetCategoriesList, { isLoading }] =
     useLazyGetCategoriesListQuery();
   const [createCategory] = useAddCategoryMutation();
@@ -41,8 +57,8 @@ const AdminCategory = () => {
   const [updateCategory, { isLoading: updateIsLoading }] =
     useUpdateCategoryMutation();
 
-  const [isToggleModalOpen, setIsToggleModalOpen] = useState(false);
-  const [toggleCategory, setToggleCategory] = useState(null);
+  const { data: { offers = [] } = {}, refetch } =
+    useGetOffersByTypeQuery("category");
 
   ////pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -56,18 +72,16 @@ const AdminCategory = () => {
         itemsPerPage,
       }).unwrap();
       if (totalCategoriesCount) {
-        console.log(totalCategoriesCount);
-
         setTotalCategoriesCount(totalCategoriesCount);
       }
     } catch (err) {
-    
       console.error(err);
     }
   };
 
   useEffect(() => {
     fetchCategoriesData();
+    refetch();
   }, [currentPage]);
 
   const handleToggleClick = (category) => {
@@ -125,7 +139,51 @@ const AdminCategory = () => {
       setIsToggleModalOpen(false);
     }
   };
+  //// handle apply offers
 
+  const [ApplyOfferToCategory] = useApplyOfferToCategoryMutation();
+  const [isOfferConfirmModalOpen, setIsOfferConfirmModalOpen] = useState(false);
+  const [currentApplyingOffer, setCurrentApplyingOffer] = useState(null);
+  const [isOffersModalOpen, setIsOffersModalOpen] = useState(false);
+
+  const handelConfirmOfferApplying = async () => {
+    try {
+      setApiCallLoading(true);
+
+      if (!currentApplyingOffer || !selectedCategory) return;
+
+      const response = await ApplyOfferToCategory({
+        categoryId: selectedCategory._id,
+        offerId: currentApplyingOffer._id,
+      }).unwrap();
+
+      await refetch();
+      await fetchCategoriesData();
+
+      toast.success(response?.message);
+    } catch (err) {
+      toast.error(err?.data?.message || err.error);
+      console.error(err);
+    } finally {
+      // Close modals regardless of success or failure
+      setApiCallLoading(false);
+      setIsOfferConfirmModalOpen(false); // Close confirmation modal
+      handleOffersCloseModal(); // Close offers selection modal
+      // Reset loading state
+    }
+  };
+
+  const handleOffersOpenModal = (category) => {
+    setSelectedCategory(category);
+    setIsOffersModalOpen(true);
+  };
+
+  const handleOffersCloseModal = () => {
+    setIsOffersModalOpen(false);
+    setSelectedCategory(null);
+  };
+
+  /////----------------------------------------------render component--------------------------------
   if (isLoading) return <LoadingScreen />;
 
   return (
@@ -192,7 +250,7 @@ const AdminCategory = () => {
                 <TableCell>Category Name</TableCell>
                 <TableCell>Description</TableCell>
                 <TableCell>isActive</TableCell>
-                <TableCell>Update</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -201,7 +259,36 @@ const AdminCategory = () => {
                   <TableRow key={category._id}>
                     <TableCell>{i + 1}</TableCell>
                     <TableCell>{category.categoryName}</TableCell>
-                    <TableCell>{category.categoryDescription}</TableCell>
+                    <TableCell>
+                      <div className="flex flex-col space-y-1">
+                        {/* Display the category description */}
+                        <span className="text-base font-medium text-gray-800">
+                          {category.categoryDescription}
+                        </span>
+
+                        {/* Check if there is an offer and handle conditions */}
+                        {category.offer &&
+                          (new Date(category.offer?.startDate) <= Date.now() &&
+                          new Date(category.offer?.endDate) >= Date.now() ? (
+                            <span className="text-sm text-green-600 font-semibold bg-green-100 px-2 py-1 rounded">
+                              {category.offer?.discountPercentage}% OFF (Offer
+                              Applied)
+                            </span>
+                          ) : (
+                            new Date(category.offer?.startDate) >
+                              Date.now() && (
+                              <span className="text-sm text-yellow-600 font-semibold bg-yellow-100 px-2 py-1 rounded">
+                                {category.offer?.discountPercentage}% OFF -
+                                Offer starts on{" "}
+                                {new Date(
+                                  category.offer?.startDate
+                                ).toLocaleDateString()}
+                              </span>
+                            )
+                          ))}
+                      </div>
+                    </TableCell>
+
                     <TableCell>
                       <Switch
                         checked={category.isActive}
@@ -228,6 +315,14 @@ const AdminCategory = () => {
                       />
                     </TableCell>
                     <TableCell>
+                      <Button
+                        variant="text"
+                        color="secondary"
+                        startIcon={<FaTags />}
+                        onClick={() => handleOffersOpenModal(category)}
+                      >
+                        ApplyOffer
+                      </Button>
                       <Button
                         variant="text"
                         color="primary"
@@ -265,6 +360,7 @@ const AdminCategory = () => {
       {/* Edit Category Modal */}
       {selectedCategory && (
         <Modal
+          Classnames={"md:w-3/4 h-3/4 bg-white"}
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           title="Edit Category"
@@ -332,6 +428,94 @@ const AdminCategory = () => {
           </Formik>
         </Modal>
       )}
+
+      {/* Custom Modal Component for apply offers */}
+      <CustomModal
+        isOpen={isOffersModalOpen}
+        onClose={handleOffersCloseModal}
+        title={`Select an Offer for - ${selectedCategory?.categoryName}`}
+        footer={
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleOffersCloseModal}
+          >
+            Close
+          </Button>
+        }
+        Classnames="bg-white"
+      >
+        {/* Modal Body - Display Offers */}
+        <div className="max-h-64 overflow-y-auto">
+          <List className="space-y-2">
+            {offers.length > 0 ? (
+              offers.filter(existingOffer=> existingOffer && new Date(existingOffer.endDate) >= new Date()).map((offer) => (
+                <ListItem
+                  key={offer._id}
+                  onClick={() => {
+                    setCurrentApplyingOffer(offer);
+                    setIsOfferConfirmModalOpen(true);
+                  }}
+                  className="hover:bg-blue-100 hover:shadow-md hover:cursor-pointer transition-all rounded-md mb-1 p-2 border border-gray-200 flex items-center space-x-4"
+                >
+                  {/* Icon or Tag for Each Offer */}
+                  <ListItemIcon className="min-w-0">
+                    <FaTags className="text-red-500 text-lg" />
+                  </ListItemIcon>
+
+                  {/* Offer Details */}
+                  <ListItemText
+                    primary={
+                      <Typography
+                        variant="subtitle1"
+                        component="span"
+                        className="font-semibold"
+                      >
+                        {offer.offerTitle}
+                      </Typography>
+                    }
+                    secondary={
+                      <React.Fragment>
+                        <Typography
+                          variant="body2"
+                          component="span"
+                          className="text-gray-600 block"
+                        >
+                          {offer.description}
+                        </Typography>
+                        <Typography
+                          variant="subtitle2"
+                          component="span"
+                          className="font-bold text-red-500 mt-1 block"
+                        >
+                          {offer.discountPercentage}% OFF
+                        </Typography>
+                      </React.Fragment>
+                    }
+                  />
+                </ListItem>
+              ))
+            ) : (
+              <Typography
+                variant="body1"
+                className="text-gray-600 text-center p-4"
+              >
+                No Offers Available
+              </Typography>
+            )}
+          </List>
+        </div>
+      </CustomModal>
+
+      <BlockModal
+        open={isOfferConfirmModalOpen}
+        onClose={() => setIsOfferConfirmModalOpen(false)}
+        onConfirm={handelConfirmOfferApplying}
+        message={`Are you sure you want to apply  this  offer - ${currentApplyingOffer?.offerTitle} ? ,after this you can not edit this  offer on category!`}
+        buttonName="Apply"
+        loading={apiCallLoading}
+      />
+
       {/* InActive/Active Modal */}
       <IsActiveToggleModal
         open={isToggleModalOpen}

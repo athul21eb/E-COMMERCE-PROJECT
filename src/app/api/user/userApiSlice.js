@@ -5,6 +5,8 @@ import {
   SetAccessToken,
 } from "../../../slices/auth/authSlice.js";
 import { toast } from "react-toastify";
+import { setCart } from "../../../slices/user/cart/cartSlice.js";
+import { setWishList } from "../../../slices/user/wishList/wishListSlice.js";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: "http://localhost:5000/v1",
@@ -47,6 +49,8 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
     } else {
       if (refreshResult?.error?.status === 401) {
         api.dispatch(ClearCredentials());
+        api.dispatch(setCart(null));
+        api.dispatch(setWishList(null));
         toast.error(`Your Login has expired `);
       }
 

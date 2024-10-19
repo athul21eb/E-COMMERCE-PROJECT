@@ -11,7 +11,7 @@ import {
   FaUsers,
   FaChartBar,
 } from "react-icons/fa";
-import { MdCategory, MdSettings, MdOutlineSell } from "react-icons/md";
+import { MdCategory, MdSettings, MdOutlineSell, Md6FtApart } from "react-icons/md";
 import { Menu, MenuItem, IconButton, Fade } from "@mui/material";
 import { useAdminLogoutMutation } from "../../../../slices/auth/authApiSlice";
 import Button from "@mui/material/Button";
@@ -33,7 +33,7 @@ const AdminLayout = () => {
     { name: "Orders", icon: MdOutlineSell, path: "orders" },
     { name: "Sales Report", icon: FaChartBar, path: "sales-report" },
     { name: "Coupons", icon: MdOutlineSell, path: "coupons" },
-    { name: "Banners", icon: MdSettings, path: "banners" },
+    { name: "Offers", icon: Md6FtApart, path: "offers" }, 
   ];
 
   
@@ -81,7 +81,7 @@ const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-16 sm:w-20 md:w-40 bg-white shadow-lg flex flex-col items-center md:items-start">
+      <aside className="w-16 sm:w-20 md:w-40 ml-2  bg-white  flex flex-col items-center md:items-start">
         <div className="py-4 pl-6 w-full flex justify-center">
           <img
             src="/LOGO.png"
@@ -89,8 +89,8 @@ const AdminLayout = () => {
             className="object-contain w-16 h-12 md:w-20 md:h-16"
           />
         </div>
-        <nav className="flex-1  w-full">
-          <ul className="space-y-2">
+        <nav className="flex-1  w-full ">
+          <ul className="space-y-2 ">
             {menuItems.map((item) => (
               <li key={item.name}>
                 <button
@@ -99,14 +99,14 @@ const AdminLayout = () => {
                     navigate(`/admin/${item.path}`);
                   }}
                   className={clsx(
-                    "flex items-center p-3 w-full rounded-lg text-gray-600  transition-colors",
+                    "flex items-center p-2 w-full rounded-lg text-gray-600  transition-colors",
                     {
                       "bg-blue-700 text-white": selectedMenu === item.name,
                       "hover:bg-blue-200 ": selectedMenu !== item.name,
                     }
                   )}
                 >
-                  <item.icon className="w-6 h-6" />
+                  <item.icon className='size-7 md:size-6 ' />
                   <span className="ml-3 hidden md:block">{item.name}</span>
                 </button>
               </li>
@@ -118,7 +118,7 @@ const AdminLayout = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Navbar */}
-        <header className="flex items-center justify-between p-4 bg-white shadow-md border-b border-gray-200">
+        <header className="flex items-center justify-between p-4 bg-white  border-b border-gray-200">
           <h1 className="text-lg md:text-xl font-semibold text-gray-900">
             Admin Panel
           </h1>
@@ -151,7 +151,7 @@ const AdminLayout = () => {
         </header>
 
         {/* Content */}
-        <main className="p-6 flex-1 overflow-y-auto bg-gray-50">
+        <main className="px-6 pt-6 pb-3 overflow-y-auto flex-1 flex-wrap  bg-gray-50">
           <Modal
             isOpen={isModalOpen}
             onClose={closeModal}

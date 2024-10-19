@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GoPerson } from "react-icons/go";
 import { CiSearch } from "react-icons/ci";
 import { IoBagOutline } from "react-icons/io5";
@@ -7,7 +7,7 @@ import { CiHeart } from "react-icons/ci";
 import { AiOutlineMenu, AiOutlineClose } from "react-icons/ai";
 import { useSelector } from "react-redux";
 import { useLazyGetCartQuery } from "../../../../slices/user/cart/cartApiSlice";
-import { useGetWishListQuery } from "../../../../slices/user/wishList/wishListApiSlice";
+import { useLazyGetWishListQuery } from "../../../../slices/user/wishList/wishListApiSlice";
 
 const BagButton = ({ itemCount = 0 }) => {
   return (
@@ -25,16 +25,18 @@ const BagButton = ({ itemCount = 0 }) => {
 
 const Header = () => {
 
-  const {isLoading }= useGetWishListQuery();
-  const [refetch] = useLazyGetCartQuery();
+  const [fetchWishlist ,{isLoading:wishListLoading}]= useLazyGetWishListQuery();
+  const [fetchCart,{isLoading:CartLoading}] = useLazyGetCartQuery();
   const user = useSelector((state) => state.auth?.authInfo.user);
   const cart = useSelector((state) => state.cart.cartDetails);
-
+const location = useLocation();
   useEffect(() => {
     if (user?.role) {
-      refetch();
+      fetchWishlist();
+      fetchCart();
+     
     }
-  }, [user?.role, refetch]);
+  }, [user?.role, fetchCart,fetchWishlist,location.pathname]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -47,6 +49,13 @@ const Header = () => {
   };
 
   ////--------------------------RENDER COMPONENT-----------
+  
+    if(wishListLoading||CartLoading){
+  
+      return <LoadingFullScreen/>
+    }
+
+    
   return (
     <header className="bg-white h-16 shadow-md fixed w-full z-10 top-0">
       <nav className="flex items-center justify-between px-6 py-3">
@@ -193,6 +202,13 @@ const Header = () => {
 
     </header>
   );
+};
+
+import PropTypes from "prop-types";
+import LoadingFullScreen from "../../../common/LoadingScreens/LoadingFullScreen";
+
+BagButton.propTypes = {
+  itemCount: PropTypes.number, // The number of items in the bag, defaults to 0
 };
 
 export default Header;

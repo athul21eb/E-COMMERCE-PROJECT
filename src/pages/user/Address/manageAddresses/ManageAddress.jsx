@@ -193,4 +193,9 @@ const ManageAddresses = ({ checkout = true }) => {
   );
 };
 
+import PropTypes from 'prop-types'
+
+ManageAddresses.propTypes ={
+  checkout:PropTypes.bool,
+}
 export default ManageAddresses;

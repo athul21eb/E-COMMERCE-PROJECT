@@ -399,7 +399,7 @@ const BrandPage = () => {
         <TableContainer>
           <Table size="small">
             <TableHead>
-              <TableRow>
+              <TableRow sx={{ '& .MuiTableCell-root': { fontWeight: 'bold', fontSize: '1.2rem', border: 1 } }} >
                 <TableCell>Photo</TableCell>
                 <TableCell>Brand Name</TableCell>
                 <TableCell>Description</TableCell>

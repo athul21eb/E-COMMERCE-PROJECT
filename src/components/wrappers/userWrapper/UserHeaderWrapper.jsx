@@ -12,7 +12,7 @@ function UserHeader() {
   return (
     <>
       <Header />
-<div className="mt-20 ">
+<div className="mt-20 min-h-screen ">
       <Outlet />
       </div>
       <Footer/>

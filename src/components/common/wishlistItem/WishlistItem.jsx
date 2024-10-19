@@ -13,7 +13,7 @@ const WishlistItem = ({ product, onDelete ,onMoveToBag}) => {
   
     return (
       <div
-        className="border rounded-lg hover:shadow-lg transition-transform transform hover:scale-105 bg-white cursor-pointer   md:w-64 mx-4 mb-6"
+        className="border rounded-lg hover:shadow-lg transition-transform transform hover:scale-105 bg-white cursor-pointer   md:w-30 mx-4 mb-6"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -39,9 +39,32 @@ const WishlistItem = ({ product, onDelete ,onMoveToBag}) => {
         {/* Product Details */}
         <div className="p-2 text-center">
           <h3 className="text-md font-semibold truncate">{product?.productName}</h3>
-          <p className="flex items-center justify-center text-gray-700">
-            <BiRupee className="mr-1" /> {product?.salePrice}
-          </p>
+          <div className="flex flex-col items-center justify-center text-gray-700">
+             {/* Display Offer Information if offer is active */}
+    {product.offer && new Date(product.offer?.startDate) <=Date.now()&& new Date(product.offer?.endDate) >= Date.now() ? (
+      <>
+        {/* Offer Price */}
+        <div className=" md:text-3xl font-bold text-gray-800">
+          ₹{product.offerPrice}
+        </div>
+        
+        {/* Sale Price (Strikethrough) and Discount Percentage */}
+        <div className="flex items-center space-x-2">
+          <span className="md:text-xl font-medium text-red-500 line-through">
+            (₹{product.salePrice})
+          </span>
+          <span className="md:text-lg font-bold text-green-600">
+            {product.offer?.discountPercentage}% OFF
+          </span>
+        </div>
+      </>
+    ) : (
+      /* If no offer, display only Sale Price */
+      <div className="md:text-2xl font-bold text-gray-800">
+        ₹{product.salePrice}
+      </div>
+    )}
+          </div>
           {/* <button
             className="bg-blue-500 text-white text-sm px-4 py-1 rounded-md mt-2 hover:bg-blue-600"
             onClick={() => onMoveToBag(product._id)}
@@ -53,5 +76,13 @@ const WishlistItem = ({ product, onDelete ,onMoveToBag}) => {
     );
   };
   
+  import PropTypes from "prop-types";
+
+WishlistItem.propTypes = {
+  product: PropTypes.any.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  onMoveToBag: PropTypes.func, // Optional prop
+};
+
 
   export default WishlistItem

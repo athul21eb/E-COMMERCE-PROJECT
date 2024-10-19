@@ -6,7 +6,7 @@ const ProductUrl = `/admin/products`;
 const productApiSlice = adminApiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProductList: builder.query({
-      query: ({itemsPerPage,currentPage}) => `${ProductUrl}/get-products?page=${currentPage}&limit=${itemsPerPage}`,
+      query: ({itemsPerPage,currentPage,sortingOption}) => `${ProductUrl}/get-products?page=${currentPage}&limit=${itemsPerPage}&sortBy=${sortingOption}`,
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;

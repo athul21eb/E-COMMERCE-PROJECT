@@ -1,14 +1,14 @@
 import React from "react";
 import ProductCard from "../../../common/productCard/ProductCard";
 
-const ProductCardList = ({ productData=[], Heading }) => {
+const ProductCardList = ({ productData=[], Heading='' }) => {
 
-  console.log(productData);
+  
   return (
     <div className="p-2 my-6">
       {/* Section Heading */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg sm:text-xl font-semibold">{Heading}</h2>
+        <h2 className="text-lg sm:text-4xl  font-extrabold">{Heading}</h2>
       </div>
 
       {/* Product Grid */}
@@ -19,6 +19,14 @@ const ProductCardList = ({ productData=[], Heading }) => {
       </div>
     </div>
   );
+};
+import PropTypes from "prop-types";
+
+ProductCardList.propTypes = {
+  productData: PropTypes.arrayOf(
+    PropTypes.any
+  ), // Array of product objects, defaults to an empty array
+  Heading: PropTypes.string, // Required heading for the component
 };
 
 export default React.memo(ProductCardList);

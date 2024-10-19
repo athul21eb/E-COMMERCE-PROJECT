@@ -10,7 +10,9 @@ const cartApiSlice = userApiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
+
           const { cart } = res.data;
+
           dispatch(setCart(cart));
         } catch (error) {
           console.error("Error in get cart list API call:", error);
@@ -55,7 +57,7 @@ const cartApiSlice = userApiSlice.injectEndpoints({
         method: "PUT",
         body: data,
       }),
-      
+
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;

@@ -11,6 +11,7 @@ import LoadingFullScreen from "../../../common/LoadingScreens/LoadingFullScreen"
 import { useNavigate } from "react-router-dom";
 import RenderPagination from "../../../common/Pagination/RenderPagination";
 
+
 const AllProductsListComponent = ({
   ComponentProducts = null,
   Heading = "SHOP ALL",
@@ -176,6 +177,18 @@ const AllProductsListComponent = ({
             <span>{priceRange[1]}</span>
           </div>
         </div>
+
+        {/* Reset Filters Button */}
+<div className="flex justify-start mt-4">
+  <button
+    onClick={handleResetFilters}
+    className="px-6 py-2 bg-red-500 text-white font-medium rounded-md hover:bg-red-600 transition-all"
+  >
+    Reset Filters
+  </button>
+</div>
+
+
       </div>
 
       {/* Product Grid and Sorting */}
@@ -253,5 +266,22 @@ const AllProductsListComponent = ({
     </div>
   );
 };
+
+import PropTypes from "prop-types";
+
+AllProductsListComponent.propTypes = {
+  ComponentProducts: PropTypes.arrayOf(
+    PropTypes.shape({
+      _id: PropTypes.string.isRequired,
+      productName: PropTypes.string.isRequired,
+      salePrice: PropTypes.number.isRequired,
+      thumbnail: PropTypes.string.isRequired,
+      gallery: PropTypes.arrayOf(PropTypes.string.isRequired),
+    })
+  ),
+  Heading: PropTypes.string,
+  states: PropTypes.arrayOf(PropTypes.any).isRequired, // Array of state hooks used in the component
+};
+
 
 export default AllProductsListComponent;

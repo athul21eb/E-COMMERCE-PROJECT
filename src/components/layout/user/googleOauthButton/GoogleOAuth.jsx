@@ -6,7 +6,7 @@ import firebaseApp from "../../../../utils/firebase/firebaseConfig.js";
 import { useGoogleSignInMutation } from "../../../../slices/auth/authApiSlice.js";
 import { useNavigate } from "react-router-dom";
 import LoadingButton from "../../../common/LoadingButtons/LoadingButton.jsx";
-import { toast } from "react-toastify";
+import { toast } from 'react-hot-toast';
 
 function GoogleOAuthButton({ Page }) {
 
@@ -26,7 +26,7 @@ const navigate = useNavigate();
       } = resultsFromGoogleAuth;
       
 
-      console.log(email, displayName, photoURL, uid, emailVerified);
+      
 
       const response = await googleSingleSignOn({
         email,
@@ -67,5 +67,12 @@ const navigate = useNavigate();
     </RoundedButton>
   );
 }
+
+
+import PropTypes from "prop-types";
+
+GoogleOAuthButton.propTypes = {
+  Page: PropTypes.string.isRequired, // The text to display for the button
+};
 
 export default GoogleOAuthButton;

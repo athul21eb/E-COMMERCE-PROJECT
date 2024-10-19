@@ -14,7 +14,7 @@ const ProductCard = ({ product }) => {
   const [isHovered, setIsHovered] = useState(false);
   const navigate = useNavigate();
   const { wishListDetails } = useSelector((state) => state.wishlist);
-
+  const user = useSelector((state) => state.auth?.authInfo.user);
   const [inWishlist, setInWishlist] = useState(false);
 
   useEffect(() => {
@@ -27,6 +27,9 @@ const ProductCard = ({ product }) => {
 
   const toggleWishlist = async (productId) => {
     try {
+      if (!user) {
+        return navigate("/login");
+      }
       if (inWishlist) {
         await RemoveFromWishlistApiCall({ productId }).unwrap();
       } else {
@@ -77,12 +80,37 @@ const ProductCard = ({ product }) => {
           {product.productName}
         </h3>{" "}
         {/* Reduced font size */}
-        <p className="text-gray-700 flex items-center justify-center text-sm">
-          {" "}
-          {/* Reduced font size */}
-          <BiRupee className="mr-1" />
-          {product.salePrice}
-        </p>
+        <div className="text-gray-700 text-sm flex flex-col items-center justify-center">
+  {/* Display Rupee icon */}
+ 
+
+  {/* Check if there's an active offer with a valid end date */}
+  {product.offer && new Date(product.offer?.endDate) >= Date.now() &&new Date(product.offer?.startDate) <= Date.now() ? (
+    <>
+      {/* First row: Offer Price (larger and standalone) */}
+      <div className="text-xl font-bold text-gray-800">
+        ₹{product.offerPrice}
+      </div>
+      
+      {/* Second row: Sale Price (strike-through) and Discount Percentage */}
+      <div className="flex items-center space-x-2">
+        <span className="text-base text-red-500 font-medium line-through">
+          (₹{product.salePrice})
+        </span>
+        <span className="text-sm text-green-600 font-bold">
+          {product.offer?.discountPercentage}% OFF
+        </span>
+      </div>
+    </>
+  ) : (
+    /* When no offer or offer expired: Only Sale Price displayed */
+    <div className="text-xl font-bold text-gray-800">
+      ₹{product.salePrice}
+    </div>
+  )}
+</div>
+
+
         {/* Favorite Icon */}
         <div
           className={`absolute top-1 right-1 cursor-pointer ${
@@ -101,6 +129,12 @@ const ProductCard = ({ product }) => {
       </div>
     </div>
   );
+};
+
+import PropTypes from 'prop-types';
+
+ProductCard.propTypes = {
+  product: PropTypes.any.isRequired, // Product object prop
 };
 
 export default ProductCard;

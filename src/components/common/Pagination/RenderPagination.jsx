@@ -94,4 +94,14 @@ const RenderPagination = ({
   );
 };
 
+import PropTypes from 'prop-types';
+
+RenderPagination.propTypes = {
+  currentPage: PropTypes.number.isRequired, // Current active page number
+  setCurrentPage: PropTypes.func.isRequired, // Function to update the current page
+  totalProductsCount: PropTypes.number.isRequired, // Total count of products
+  itemsPerPage: PropTypes.number.isRequired, // Number of items to show per page
+  maxPageButtons: PropTypes.number, // Maximum number of visible page buttons
+};
+
 export default RenderPagination;

@@ -14,4 +14,11 @@ const LoadingButton = ({ className, loadingText = 'Loading...' }) => {
     );
 };
 
+import PropTypes from "prop-types";
+
+LoadingButton.propTypes = {
+  className: PropTypes.string, // Additional CSS classes for styling the button
+  loadingText: PropTypes.string, // Text to display next to the spinner (default: 'Loading...')
+};
+
 export default LoadingButton;

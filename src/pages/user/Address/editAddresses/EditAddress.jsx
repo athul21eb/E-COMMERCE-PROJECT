@@ -65,4 +65,9 @@ const navigate = useNavigate();
   return <AddressForm onSubmit={handleEditAddress} initialValues={address} />;
 };
 
+import PropTypes from 'prop-types'
+
+EditAddress.propTypes = {
+  route : PropTypes.string
+}
 export default EditAddress;

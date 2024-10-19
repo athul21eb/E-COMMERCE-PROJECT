@@ -80,7 +80,7 @@ const AdminOrders = () => {
   }
 
   return (
-    <>
+<div className="p-4  bg-gray-200">
      <AdminBreadCrumbs />
      <h1 className="text-2xl font-bold mb-4">Order Management</h1>
       <TableContainer component={Paper}>
@@ -198,7 +198,7 @@ const AdminOrders = () => {
         totalProductsCount={totalOrdersCount}
         itemsPerPage={itemsPerPage}
       />}
-    </>
+    </div>
   );
 };
 

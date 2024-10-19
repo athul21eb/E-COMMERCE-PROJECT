@@ -54,7 +54,7 @@ const CategoryBanner = () => {
           </p>
         </div>
         {/* Arrow button with React Icon */}
-        <button className="flex items-center bg-blue-800 text-white px-4 mx-4 py-2 rounded-full shadow-lg hover:bg-blue-950 text-lg lg:text-2xl">
+        <button onClick={()=>navigate(`/shop`)}  className="flex items-center bg-blue-800 text-white px-4 mx-4 py-2 rounded-full shadow-lg hover:bg-blue-950 text-lg lg:text-2xl">
           Explore <FaArrowRight className="ml-2 " />
         </button>
       </div>

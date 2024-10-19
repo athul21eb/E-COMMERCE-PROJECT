@@ -66,7 +66,7 @@ const CartItem = ({ item }) => {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-200 rounded-lg mb-4">
+    <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-4">
       <div className="flex items-center">
         <img
           src={item.productId.thumbnail}
@@ -78,9 +78,31 @@ const CartItem = ({ item }) => {
             {item.productId.brand.brandName}
           </h2>
           <p className="text-lg text-gray-500">{item.productId.productName}</p>
-          <p className="text-xl font-bold">
-            ₹ {item.productId.salePrice.toLocaleString()}
-          </p>
+          <div className="text-xl font-bold">
+            {item.productId.offer &&
+            item.productId.offer.startDate &&
+            item.productId.offer.endDate &&
+            new Date(item.productId.offer.startDate) <= new Date() &&
+            new Date(item.productId.offer.endDate) >= new Date() ? (
+              <>
+                <div className="text-xl font-bold text-gray-800">
+                  ₹{item.productId.offerPrice}
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-base text-red-500 font-medium line-through">
+                    (₹{item.productId.salePrice})
+                  </span>
+                  <span className="text-sm text-green-600 font-bold">
+                    {item.productId.offer?.discountPercentage}% OFF
+                  </span>
+                </div>
+              </>
+            ) : (
+              <div className="text-xl font-bold text-gray-800">
+                ₹{item.productId.salePrice}
+              </div>
+            )}11
+          </div>
           <div className="flex items-center mt-2">
             <label className="mr-2">Size:</label>
             <select
@@ -126,6 +148,12 @@ const CartItem = ({ item }) => {
       </button>
     </div>
   );
+};
+
+import PropTypes from "prop-types";
+
+CartItem.propTypes = {
+  item: PropTypes.any.isRequired,
 };
 
 export default CartItem;

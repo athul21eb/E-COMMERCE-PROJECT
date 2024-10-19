@@ -1,5 +1,6 @@
 import { apiSlice } from "../../app/api/auth/authenticationApiSlice.js";
 import { setCart } from "../user/cart/cartSlice.js";
+import { setWishList } from "../user/wishList/wishListSlice.js";
 import { ClearAdminCredentials, ClearCredentials, SetAdminCredentials, SetCredentials } from "./authSlice.js";
 
 const USER_URL = "/auth/user";
@@ -124,6 +125,7 @@ const authApiSlice = apiSlice.injectEndpoints({
           await queryFulfilled;
           dispatch(ClearCredentials());
           dispatch(setCart(null));
+          dispatch(setWishList(null));
         } catch (error) {
           console.error("Error in logout:", error);
         }

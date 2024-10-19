@@ -149,4 +149,10 @@ const navigate = useNavigate();
   );
 };
 
+import PropTypes from 'prop-types';
+
+OtpValidationPage.propTypes = {
+  forgotPassword: PropTypes.bool, // Required boolean prop
+};
+
 export default OtpValidationPage;
