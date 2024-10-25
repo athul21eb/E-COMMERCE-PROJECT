@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { LiaShoppingBagSolid } from "react-icons/lia";
 import CartItem from "../../../components/common/CartItem/CartItem";
@@ -24,84 +24,10 @@ import {
   useRemoveCouponMutation,
 } from "../../../slices/user/coupons/couponsApiSlice";
 
-const CartSummary = ({
-  totalItems,
-  cartTotal,
-  couponDiscount = 9,
-
-  totalMRP,
-  deliveryFee,
-  totalAmount,
-  totalDiscount,
-}) => {
-  const navigate = useNavigate();
-
-  return (
-    <div className="p-4 bg-white rounded-lg shadow-lg">
-      <h3 className="text-lg md:text-2xl font-bold mb-4  ">Order Summary</h3>
-
-      <div className="flex justify-between mb-2">
-        <span>{totalItems} items</span>
-        <span className="text-lg text-gray-500">
-          ₹ {totalMRP.toLocaleString()}
-        </span>
-      </div>
-
-      {/* Discount Section */}
-      <div className="flex justify-between mb-2">
-        <span>Offer Discount </span>
-        <span className="text-lg text-green-500">
-          - ₹ {totalDiscount.toLocaleString()}
-        </span>
-      </div>
-
-      <div className="flex justify-between mb-2">
-        <span>Delivery Fee</span>
-        <span className="text-lg text-gray-500">
-          ₹ {deliveryFee.toLocaleString()}
-        </span>
-      </div>
-      {/* Coupon Section */}
-      {couponDiscount !== 0 && (
-        <div className="flex justify-between mb-2">
-          <span> Coupon Discount </span>
-          <span className="text-lg text-green-500">
-            - ₹ {couponDiscount.toLocaleString()}
-          </span>
-        </div>
-      )}
-
-      <div className="flex justify-between font-semibold text-lg my-2 border-t-2 border-black">
-        <span className="text-xl">Total Amount</span>
-        <span className="text-2xl">₹ {totalAmount.toLocaleString()}</span>
-      </div>
-
-      <button
-        onClick={() => navigate("/checkOut")}
-        className="w-full bg-green-500 text-white font-semibold py-2 rounded-lg mt-4"
-      >
-        Checkout
-      </button>
-    </div>
-  );
-};
-
-CartSummary.propTypes = {
-  totalItems: PropTypes.number.isRequired,
-  cartTotal: PropTypes.number.isRequired,
-  deliveryFee: PropTypes.number.isRequired,
-  totalAmount: PropTypes.number.isRequired,
-  totalDiscount: PropTypes.number.isRequired,
-  couponDiscount: PropTypes.number.isRequired,
-  totalMRP: PropTypes.number.isRequired,
-  // New prop for discount
-};
-
 const Cart = () => {
   const { cartDetails } = useSelector((state) => state.cart);
 
-  //// coupon implementation
-  const { data: { coupons = [] } = {} } = useGetCouponsQuery();
+  const { data: { coupons = [] } = {}, refetch } = useGetCouponsQuery();
   const [applyCouponApiCall] = useApplyCouponMutation();
   const [removeCouponApiCall] = useRemoveCouponMutation();
 
@@ -121,10 +47,69 @@ const Cart = () => {
     setCurrentCoupon(null);
   };
 
+  useEffect(() => {
+    refetch();
+  }, [cartDetails]);
+  const summary = useMemo(() => {
+    if (!cartDetails?.items?.length) {
+      return {
+        totalItems: 0,
+        cartTotal: 0,
+
+        couponDiscount: 0,
+        totalAmount: 0,
+        totalMRP: 0,
+        totalDiscount: 0, // No discount if cart is empty
+      };
+    }
+
+    if (
+      cartDetails?.appliedCoupon &&
+      new Date(cartDetails?.appliedCoupon?.expirationDate) > new Date()
+    ) {
+      setCurrentCoupon(cartDetails?.appliedCoupon);
+    } else {
+      setCurrentCoupon(null);
+    }
+
+    const {
+      totalQuantity,
+      couponDiscount,
+      totalAmount,
+      cartTotal,
+      totalDiscount,
+      totalMRP,
+    } = calculateCartTotals(cartDetails);
+
+    // Calculate total amount
+
+    return {
+      totalItems: totalQuantity,
+      cartTotal,
+
+      totalAmount,
+      totalDiscount, // Include total discount in the return value
+      couponDiscount,
+      totalMRP,
+    };
+  }, [cartDetails]);
+
   const handleCouponApplyConfirm = async () => {
     try {
       setApiCallLoading(true);
-      if (!currentCoupon) return;
+
+      if (!currentCoupon) {
+        toast.warning("invalid Coupon");
+        return;
+      }
+
+      if (currentCoupon.minPurchaseAmount > summary.cartTotal) {
+        toast.warning(
+          `coupon need minimum purchase Amount of ₹${currentCoupon.minPurchaseAmount}`
+        );
+        return;
+      }
+
       console.log(currentCoupon.code);
       const response = await applyCouponApiCall({
         code: currentCoupon?.code,
@@ -160,58 +145,6 @@ const Cart = () => {
     }
   };
 
-  const summary = useMemo(() => {
-    if (!cartDetails?.items?.length) {
-      return {
-        totalItems: 0,
-        cartTotal: 0,
-        deliveryFee: 0,
-        couponDiscount: 0,
-        totalAmount: 0,
-        totalMRP: 0,
-        totalDiscount: 0, // No discount if cart is empty
-      };
-    }
-
-    const { cartTotal, totalDiscount, totalMRP } = calculateCartTotals(
-      cartDetails?.items
-    );
-
-    // Calculate coupon discount
-    let couponDiscount = 0;
-    if (
-      cartDetails?.appliedCoupon &&
-      new Date(cartDetails?.appliedCoupon?.expirationDate) > new Date()
-    ) {
-      setCurrentCoupon(cartDetails?.appliedCoupon);
-      const calculatedDiscount =
-        cartTotal * (cartDetails.appliedCoupon.discount / 100);
-      couponDiscount = Math.min(
-        calculatedDiscount,
-        cartDetails.appliedCoupon.maxDiscountAmount
-      );
-    }
-
-    // Calculate delivery fee, capped at 1000
-    const deliveryFee = Math.ceil(cartTotal * 0.03);
-    const cappedDeliveryFee = deliveryFee > 1000 ? 1000 : deliveryFee;
-
-    // Calculate total amount
-    const totalAmount = Math.ceil(
-      cartTotal + cappedDeliveryFee - couponDiscount
-    );
-
-    return {
-      totalItems: cartDetails.items.length,
-      cartTotal,
-      deliveryFee: cappedDeliveryFee,
-      totalAmount,
-      totalDiscount, // Include total discount in the return value
-      couponDiscount,
-      totalMRP,
-    };
-  }, [cartDetails]);
-
   return !cartDetails || cartDetails?.items.length === 0 ? (
     <div className="mt-2 flex flex-col items-center justify-center min-h-screen">
       <LiaShoppingBagSolid size={200} className="text-gray-400 mb-4" />
@@ -237,9 +170,9 @@ const Cart = () => {
         Total {summary.totalItems} items in your cart
       </p>
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-8 mx-auto">
         {/* Cart Items Section */}
-        <div className="flex-grow w-full lg:w-2/3">
+        <div className="flex-grow w-full lg:w-7/12">
           {cartDetails &&
             cartDetails.items.map((item) => (
               <CartItem key={item._id} item={item} />
@@ -247,14 +180,14 @@ const Cart = () => {
         </div>
 
         {/* Cart Summary Section */}
-        <div className="w-full lg:w-1/3">
+        <div className="w-full lg:w-5/12">
           {cartDetails?.appliedCoupon &&
           new Date(cartDetails.appliedCoupon.expirationDate) > new Date() ? (
             <div className="w-full  ">
               <span className="text-sm text-green-600 font-semibold bg-green-100 px-2 py-1 rounded flex items-center justify-between space-x-2">
                 {cartDetails.appliedCoupon.discount}% OFF (Coupon Applied)
                 <button
-                  className="text-red-500 text-lg px-2 py-1 rounded hover:bg-red-100 flex items-center"
+                  className="text-red-500 text-lg px-2 py-1  rounded hover:bg-red-100 flex items-center"
                   onClick={() => {
                     setCouponRemoveMode(true);
                     setIsConfirmModalOpen(true);
@@ -265,9 +198,8 @@ const Cart = () => {
               </span>
             </div>
           ) : (
-            <div className="flex justify-start">
+            <div className="flex justify-start mx-auto mb-4">
               <Button
-                
                 variant="outlined"
                 color="secondary"
                 startIcon={<RiCoupon2Line />}
@@ -275,7 +207,6 @@ const Cart = () => {
               >
                 Apply Coupons
               </Button>
-              
             </div>
           )}
 
@@ -367,8 +298,10 @@ const Cart = () => {
         }
         message={
           couponRemoveMode
-            ? `Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF?`
-            : `Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF?`
+            ? `Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
+                           (Upto ₹${currentCoupon?.maxDiscountAmount})?`
+            : `Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
+                           (Upto ₹${currentCoupon?.maxDiscountAmount})?`
         }
         buttonName={couponRemoveMode ? "Remove" : "Apply"}
         loading={apiCallLoading}
@@ -382,3 +315,80 @@ CartItem.propTypes = {
 };
 
 export default Cart;
+
+export const CartSummary = ({
+  totalItems,
+  cartTotal,
+  couponDiscount,
+
+  totalMRP,
+
+  totalAmount,
+  totalDiscount,
+  cart = true,
+}) => {
+  const navigate = useNavigate();
+
+  return (
+    <div className="p-4 bg-gray-100 rounded-lg border">
+      <h3 className="text-lg md:text-2xl font-bold mb-4  ">Order Summary</h3>
+
+      <div className="flex justify-between mb-2">
+        <span>{totalItems}items (inc. all of taxes)</span>
+        <span className="text-lg text-gray-500">
+          ₹ {totalMRP.toLocaleString()}
+        </span>
+      </div>
+
+      {/* Discount Section */}
+      {totalDiscount !== 0 && (
+        <div className="flex justify-between mb-2">
+          <span>Offer Discount </span>
+          <span className="text-lg text-green-500">
+            - ₹ {totalDiscount.toLocaleString()}
+          </span>
+        </div>
+      )}
+
+      {/* Coupon Section */}
+      {couponDiscount !== 0 && (
+        <div className="flex justify-between mb-2">
+          <span> Coupon Discount </span>
+          <span className="text-lg text-green-500">
+            - ₹ {couponDiscount.toLocaleString()}
+          </span>
+        </div>
+      )}
+      <div className="flex justify-between mb-2">
+        <span>Shipping Free</span>
+        <span className="text-lg text-gray-500">₹ 0</span>
+      </div>
+      <div className="flex justify-between font-semibold text-lg my-2 border-t-2 border-black">
+        <span className="text-xl">Total Amount</span>
+        <span className="text-2xl">₹ {totalAmount.toLocaleString()}</span>
+      </div>
+
+      {cart && (
+        <button
+          onClick={() => navigate("/checkOut")}
+          className="w-full bg-green-500 text-white font-semibold py-2 rounded-lg mt-4"
+        >
+          Checkout
+        </button>
+      )}
+    </div>
+  );
+};
+
+CartSummary.propTypes = {
+  totalItems: PropTypes.number.isRequired,
+  cartTotal: PropTypes.number.isRequired,
+
+  totalAmount: PropTypes.number.isRequired,
+  totalDiscount: PropTypes.number.isRequired,
+  couponDiscount: PropTypes.number.isRequired,
+  totalMRP: PropTypes.number.isRequired,
+  isCart: PropTypes.bool,
+
+  // New prop for discount
+};

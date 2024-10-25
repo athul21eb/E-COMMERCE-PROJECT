@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 const CartItem = ({ item }) => {
   ////mutations
-
+const navigate = useNavigate();
   const [updateCartProduct] = useUpdateToCartMutation();
   const [removeItemFromCart] = useRemoveFromCartMutation();
   const [selectedSize, setSelectedSize] = useState(item.size);
@@ -42,6 +42,9 @@ const CartItem = ({ item }) => {
 
   const handleQuantityChange = async (e) => {
     try {
+
+      
+
       setQuantity(parseInt(e.target.value));
 
       await updateCartProduct({
@@ -66,8 +69,8 @@ const CartItem = ({ item }) => {
   };
 
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-4">
-      <div className="flex items-center">
+    <div   className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-4">
+      <div  onClick={() => navigate(`/product-details?id=${item.productId._id}`)}  className="flex items-center cursor-pointer">
         <img
           src={item.productId.thumbnail}
           alt={item.productId.productName}
@@ -103,15 +106,19 @@ const CartItem = ({ item }) => {
               </div>
             )}11
           </div>
-          <div className="flex items-center mt-2">
+          <div  onClick={(e)=>{
+                e.stopPropagation()
+              }} className="flex items-center mt-2">
             <label className="mr-2">Size:</label>
             <select
               value={selectedSize}
               onChange={(e) => {
+                
                 const newSize = e.target.value;
                 setSelectedSize(newSize);
                 handleSizeChange(newSize);
               }}
+             
               className="border p-1"
             >
               {item.productId.stock
@@ -122,6 +129,7 @@ const CartItem = ({ item }) => {
                   </option>
                 ))}
             </select>
+          
 
             <label className="ml-4 mr-2">Qty:</label>
             <select
@@ -151,6 +159,7 @@ const CartItem = ({ item }) => {
 };
 
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
 
 CartItem.propTypes = {
   item: PropTypes.any.isRequired,

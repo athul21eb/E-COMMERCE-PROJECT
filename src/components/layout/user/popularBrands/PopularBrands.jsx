@@ -27,6 +27,9 @@ const PopularBrands = () => {
   if (isLoading) {
     return <LoadingBlurScreen />;
   }
+  if(brandDetails?.length===0){
+    return ;
+  }
 
   return (
     <div className="mx-auto my-5 max-w-full px-4 hidden sm:block sm:px-6 lg:px-8">

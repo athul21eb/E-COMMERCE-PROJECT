@@ -27,7 +27,7 @@ const ProductsDetails = () => {
   const id = queryParams.get("id");
 
   const [addToCart, { isLoading: addToCartLoading ,isError}] = useAddToCartMutation();
-  const [fetchProductDetailsById, { isLoading }] =
+  const [fetchProductDetailsById, { isLoading ,isUninitialized,isError:isProductNotFound}] =
     useLazyGetProductDetailsByIdQuery();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -174,13 +174,13 @@ const ProductsDetails = () => {
   }, [wishListDetails, toggleWishlist, id]);
 
   ////---------------------------component--------------------------------
-  if (isLoading) {
+  if (isLoading||(isUninitialized&&!isLoading)) {
     return <LoadingFullScreen />;
   }
    
 
   // If no product found, handle that case
-  if ((!product||isError)&&!isLoading) {
+  if (isError&&isProductNotFound) {
     return (
       <div className="flex flex-col justify-center items-center h-screen text-red-500 text-center">
             <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
@@ -264,7 +264,7 @@ const ProductsDetails = () => {
   <div className="flex flex-col  justify-center md:justify-start items-center space-y-4 md:space-y-0 ">
     
     {/* Display Offer Information if offer is active */}
-    {product.offer && new Date(product.offer?.endDate) > Date.now() ? (
+    {product?.offer && new Date(product?.offer?.endDate) > Date.now() ? (
       <>
         {/* Offer Price */}
         <div className="text-3xl font-bold text-gray-800">
@@ -274,7 +274,7 @@ const ProductsDetails = () => {
         {/* Sale Price (Strikethrough) and Discount Percentage */}
         <div className="flex items-center space-x-2">
           <span className="text-xl font-medium text-red-500 line-through">
-            (₹{product.salePrice})
+            (₹{product?.salePrice})
           </span>
           <span className="text-lg font-bold text-green-600">
             {product.offer?.discountPercentage}% OFF
@@ -284,7 +284,7 @@ const ProductsDetails = () => {
     ) : (
       /* If no offer, display only Sale Price */
       <div className="text-2xl font-bold text-gray-800">
-        ₹{product.salePrice}
+        ₹{product?.salePrice}
       </div>
     )}
   </div>

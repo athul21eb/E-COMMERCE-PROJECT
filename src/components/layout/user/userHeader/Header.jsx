@@ -24,19 +24,26 @@ const BagButton = ({ itemCount = 0 }) => {
 };
 
 const Header = () => {
-
-  const [fetchWishlist ,{isLoading:wishListLoading}]= useLazyGetWishListQuery();
-  const [fetchCart,{isLoading:CartLoading}] = useLazyGetCartQuery();
+  const [fetchWishlist, { isLoading: wishListLoading }] =
+    useLazyGetWishListQuery();
+  const [fetchCart, { isLoading: CartLoading }] = useLazyGetCartQuery();
   const user = useSelector((state) => state.auth?.authInfo.user);
   const cart = useSelector((state) => state.cart.cartDetails);
-const location = useLocation();
+  const location = useLocation();
   useEffect(() => {
     if (user?.role) {
       fetchWishlist();
       fetchCart();
-     
     }
-  }, [user?.role, fetchCart,fetchWishlist,location.pathname]);
+  }, [user?.role, fetchCart, fetchWishlist]);
+
+  //refetching the cart data
+  useEffect(() => {
+    // Refetch the cart when the location changes to '/cart' or '/checkout'
+    if (location.pathname === "/cart" || location.pathname === "/checkout") {
+      fetchCart(); // Call fetchCart again to refetch the cart
+    }
+  }, [location.pathname]);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -49,13 +56,11 @@ const location = useLocation();
   };
 
   ////--------------------------RENDER COMPONENT-----------
-  
-    if(wishListLoading||CartLoading){
-  
-      return <LoadingFullScreen/>
-    }
 
-    
+  if (wishListLoading || CartLoading) {
+    return <LoadingFullScreen />;
+  }
+
   return (
     <header className="bg-white h-16 shadow-md fixed w-full z-10 top-0">
       <nav className="flex items-center justify-between px-6 py-3">
@@ -72,16 +77,24 @@ const location = useLocation();
         <div id="NavButton" className="flex items-center justify-between">
           <div className="hidden lg:flex space-x-8 text-black text-lg font-medium">
             <Link to={"shop"}>
-              <button className="hover:text-gray-500 hover:underline cursor-pointer">SHOP ALL</button>
+              <button className="hover:text-gray-500 hover:underline cursor-pointer">
+                SHOP ALL
+              </button>
             </Link>
             <Link to={"men"}>
-              <button className="hover:text-gray-500 hover:underline cursor-pointer">MEN</button>
+              <button className="hover:text-gray-500 hover:underline cursor-pointer">
+                MEN
+              </button>
             </Link>
             <Link to={"women"}>
-              <button className="hover:text-gray-500 hover:underline cursor-pointer">WOMEN</button>
+              <button className="hover:text-gray-500 hover:underline cursor-pointer">
+                WOMEN
+              </button>
             </Link>
             <Link to={"kids"}>
-              <button className="hover:text-gray-500 hover:underline cursor-pointer">KIDS</button>
+              <button className="hover:text-gray-500 hover:underline cursor-pointer">
+                KIDS
+              </button>
             </Link>
           </div>
 
@@ -107,10 +120,10 @@ const location = useLocation();
               </button>
             </Link>
             <Link to={user?.isVerified ? "wishlist" : "login"}>
-            <button className="hover:text-gray-500 hover:underline cursor-pointer flex flex-col items-center">
-              <CiHeart className="size-7 md:size-auto" />
-              <span className="hidden md:block text-sm">Wishlist</span>
-            </button>
+              <button className="hover:text-gray-500 hover:underline cursor-pointer flex flex-col items-center">
+                <CiHeart className="size-7 md:size-auto" />
+                <span className="hidden md:block text-sm">Wishlist</span>
+              </button>
             </Link>
             <Link to={user?.isVerified ? "cart" : "login"}>
               <BagButton itemCount={cart && cart?.items.length} />
@@ -119,87 +132,86 @@ const location = useLocation();
         </div>
 
         {/* Toggle button for menu */}
-<button
-  onClick={() => setMenuOpen(!menuOpen)}
-  className="lg:hidden text-black"
->
-  {menuOpen ? (
-    <AiOutlineClose className="w-6 h-6" />
-  ) : (
-    <AiOutlineMenu className="w-6 h-6" />
-  )}
-</button>
-
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="lg:hidden text-black"
+        >
+          {menuOpen ? (
+            <AiOutlineClose className="w-6 h-6" />
+          ) : (
+            <AiOutlineMenu className="w-6 h-6" />
+          )}
+        </button>
       </nav>
 
-     {/* Sidebar for small screens */}
-{menuOpen && (
-  <div className="fixed inset-y-0 right-0 w-3/4 bg-white shadow-lg z-20 p-6 lg:hidden transition-transform duration-300 ease-in-out transform translate-x-0">
-    {/* Close button */}
-    <button
-      onClick={() => setMenuOpen(false)}
-      className="absolute top-4 right-4 text-black"
-    >
-      <AiOutlineClose className="w-6 h-6" />
-    </button>
+      {/* Sidebar for small screens */}
+      {menuOpen && (
+        <div className="fixed inset-y-0 right-0 w-3/4 bg-white shadow-lg z-20 p-6 lg:hidden transition-transform duration-300 ease-in-out transform translate-x-0">
+          {/* Close button */}
+          <button
+            onClick={() => setMenuOpen(false)}
+            className="absolute top-4 right-4 text-black"
+          >
+            <AiOutlineClose className="w-6 h-6" />
+          </button>
 
-    {/* Search Bar */}
-    <div className="mt-8 mb-6">
-      <form onSubmit={(e)=>{
-        handleSubmit(e)
-       setMenuOpen(false)
-      }} className="w-full">
-        <input
-          type="text"
-          placeholder="What you looking for?"
-          className="w-full px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button type="submit" className="hidden"></button>
+          {/* Search Bar */}
+          <div className="mt-8 mb-6">
+            <form
+              onSubmit={(e) => {
+                handleSubmit(e);
+                setMenuOpen(false);
+              }}
+              className="w-full"
+            >
+              <input
+                type="text"
+                placeholder="What you looking for?"
+                className="w-full px-4 py-2 border border-gray-300 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <button type="submit" className="hidden"></button>
+            </form>
+          </div>
 
-        
-      </form>
-    </div>
-
-    {/* Menu items */}
-    <div className="space-y-4">
-      <Link to={"shop"}  >
-        <button
-          onClick={() => setMenuOpen(false)}
-          className="hover:text-gray-500 hover:underline block w-full text-left"
-        >
-          SHOP ALL
-        </button>
-      </Link>
-      <Link to={"men"}>
-        <button
-          onClick={() => setMenuOpen(false)}
-          className="hover:text-gray-500 hover:underline block w-full text-left"
-        >
-          MEN
-        </button>
-      </Link>
-      <Link to={"women"}>
-        <button
-          onClick={() => setMenuOpen(false)}
-          className="hover:text-gray-500 hover:underline block w-full text-left"
-        >
-          WOMEN
-        </button>
-      </Link>
-      <Link to={"kids"}>
-        <button
-          onClick={() => setMenuOpen(false)}
-          className="hover:text-gray-500 hover:underline block w-full text-left"
-        >
-          KIDS
-        </button>
-      </Link>
-    </div>
-  </div>
-)}
-
+          {/* Menu items */}
+          <div className="space-y-4">
+            <Link to={"shop"}>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-gray-500 hover:underline block w-full text-left"
+              >
+                SHOP ALL
+              </button>
+            </Link>
+            <Link to={"men"}>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-gray-500 hover:underline block w-full text-left"
+              >
+                MEN
+              </button>
+            </Link>
+            <Link to={"women"}>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-gray-500 hover:underline block w-full text-left"
+              >
+                WOMEN
+              </button>
+            </Link>
+            <Link to={"kids"}>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="hover:text-gray-500 hover:underline block w-full text-left"
+              >
+                KIDS
+              </button>
+            </Link>
+          </div>
+        </div>
+      )}
     </header>
   );
 };

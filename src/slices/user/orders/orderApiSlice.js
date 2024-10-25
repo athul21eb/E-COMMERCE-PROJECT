@@ -11,6 +11,7 @@ const userOrderApiSlice = userApiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    
     getOrdersForUser: builder.query({
       query: ({ itemsPerPage, currentPage }) => ({
         url: `${orderUrl}/user-orders?page=${currentPage}&limit=${itemsPerPage}`,
@@ -26,6 +27,14 @@ const userOrderApiSlice = userApiSlice.injectEndpoints({
         url:`${orderUrl}/${orderId}/items/${itemId}/cancel`,
         method:"PATCH",
       })
+    }),
+    verifyPayment:builder.mutation({
+      query:(data)=>({
+        url:`${orderUrl}/verify-payment`,
+        method:'POST',
+        body:data
+        
+      })
     })
   }),
 });
@@ -34,5 +43,6 @@ export const {
   useCreateOrderMutation,
   useLazyGetOrdersForUserQuery,
   useLazyGetOrderByIdQuery,
-  useCancelOrderItemMutation
+  useCancelOrderItemMutation,
+  useVerifyPaymentMutation
 } = userOrderApiSlice;
