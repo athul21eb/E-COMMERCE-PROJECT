@@ -11,12 +11,13 @@ import OrderCompletion from "../orderSuccesfull/OrderCompletion";
 import { CartSummary } from "../cart/CartPage";
 import { calculateCartTotals } from "../../../utils/helper/helper";
 import PaymentMethod from "../../../components/layout/user/paymentComponent/PaymentComponent";
+import LoadingButton from "../../../components/common/LoadingButtons/LoadingButton";
 
 const CheckoutPage = () => {
   const { refetch } = useGetCartQuery();
   const { data } = useGetAddressesQuery();
   const [placeOrder, { isLoading }] = useCreateOrderMutation();
-  const [verifyPayment] = useVerifyPaymentMutation();
+  const [verifyPayment,{isLoading:isLoadingVerifyPayment}] = useVerifyPaymentMutation();
 
   const navigate = useNavigate();
   const [selectedPaymentMethod, setSelectedPaymentMethod] =
@@ -134,9 +135,7 @@ const CheckoutPage = () => {
     return <OrderCompletion />;
   }
 
-  if (isLoading) {
-    return <LoadingBlurScreen />;
-  }
+  
 
   /////razor pay functions
   function loadScript(src) {
@@ -275,13 +274,14 @@ toast.success("Order placed successfully with RazorPay");
         {/* Order Summary */}
         <div className="md:w-1/2 bg-white p-4 shadow rounded-lg flex-col flex">
           <CartSummary {...summary} />
-          <button
+         { (isLoading||isLoadingVerifyPayment)?<LoadingButton   className="mt-6 w-full bg-blue-500 text-white py-3 rounded hover:bg-green-600 flex items-center justify-center"
+         />:<button
             onClick={handlePlaceOrder}
             className="mt-6 w-full bg-green-500 text-white py-3 rounded hover:bg-green-600 flex items-center justify-center"
           >
             <FaCheckCircle className="mr-2" />
             Place Order
-          </button>
+          </button>}
           {/* Order Items */}
           <div className="bg-gray-100 p-4 mt-8  rounded-lg">
             <h2 className="text-2xl font-bold mb-4">Order Items</h2>
