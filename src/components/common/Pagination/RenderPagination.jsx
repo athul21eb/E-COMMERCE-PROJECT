@@ -1,4 +1,6 @@
 import React from "react";
+import { motion } from "framer-motion";
+import PropTypes from "prop-types";
 
 const RenderPagination = ({
   currentPage,
@@ -8,7 +10,6 @@ const RenderPagination = ({
   maxPageButtons = 1,
 }) => {
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
- 
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
@@ -18,17 +19,13 @@ const RenderPagination = ({
 
   const renderPageNumbers = () => {
     const pageNumbers = [];
-
-    // Determine the start and end of the visible page range
     let startPage = Math.max(currentPage - Math.floor(maxPageButtons / 2), 1);
     let endPage = Math.min(startPage + maxPageButtons - 1, totalPages);
 
-    // Adjust if we hit the lower or upper limit
     if (endPage - startPage + 1 < maxPageButtons) {
       startPage = Math.max(endPage - maxPageButtons + 1, 1);
     }
 
-    // Add the first page and ellipsis if necessary
     if (startPage > 1) {
       pageNumbers.push(1);
       if (startPage > 2) {
@@ -36,12 +33,10 @@ const RenderPagination = ({
       }
     }
 
-    // Add the visible page numbers
     for (let i = startPage; i <= endPage; i++) {
       pageNumbers.push(i);
     }
 
-    // Add the last page and ellipsis if necessary
     if (endPage < totalPages - 1) {
       pageNumbers.push("...");
     }
@@ -52,16 +47,18 @@ const RenderPagination = ({
     return pageNumbers.map((number, index) => (
       <li key={index} className="mx-1">
         {typeof number === "number" ? (
-          <button
+          <motion.button
             onClick={() => handlePageChange(number)}
             className={`px-3 py-1 border rounded ${
               currentPage === number
                 ? "bg-black text-white"
-                : "bg-gray-200 border-gray-900 text-black"
+                : "bg-white border-black text-black"
             }`}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
           >
             {number}
-          </button>
+          </motion.button>
         ) : (
           <span className="px-3 py-1">{number}</span>
         )}
@@ -71,37 +68,39 @@ const RenderPagination = ({
 
   return (
     <div className="flex justify-center items-center space-x-2 mt-4">
-      <button
+      <motion.button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-1 border border-gray-900 rounded ${
-          currentPage === 1 ? "invisible" : "bg-blue-800 text-white"
+        className={`px-3 py-1 border border-black rounded ${
+          currentPage === 1 ? "invisible" : "bg-black text-white"
         }`}
+        whileHover={{ scale: currentPage === 1 ? 1 : 1.1 }}
+        whileTap={{ scale: currentPage === 1 ? 1 : 0.9 }}
       >
-        Previous
-      </button>
+        {"<"}
+      </motion.button>
       <ul className="flex space-x-1">{renderPageNumbers()}</ul>
-      <button
+      <motion.button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-1 border border-gray-900 rounded ${
-          currentPage === totalPages ? "invisible" : "bg-blue-800 text-white"
+        className={`px-3 py-1 border border-black rounded ${
+          currentPage === totalPages ? "invisible" : "bg-black text-white"
         }`}
+        whileHover={{ scale: currentPage === totalPages ? 1 : 1.1 }}
+        whileTap={{ scale: currentPage === totalPages ? 1 : 0.9 }}
       >
-        Next
-      </button>
+        {">"}
+      </motion.button>
     </div>
   );
 };
 
-import PropTypes from 'prop-types';
-
 RenderPagination.propTypes = {
-  currentPage: PropTypes.number.isRequired, // Current active page number
-  setCurrentPage: PropTypes.func.isRequired, // Function to update the current page
-  totalProductsCount: PropTypes.number.isRequired, // Total count of products
-  itemsPerPage: PropTypes.number.isRequired, // Number of items to show per page
-  maxPageButtons: PropTypes.number, // Maximum number of visible page buttons
+  currentPage: PropTypes.number.isRequired,
+  setCurrentPage: PropTypes.func.isRequired,
+  totalProductsCount: PropTypes.number.isRequired,
+  itemsPerPage: PropTypes.number.isRequired,
+  maxPageButtons: PropTypes.number,
 };
 
 export default RenderPagination;

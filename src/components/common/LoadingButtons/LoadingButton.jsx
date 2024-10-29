@@ -10,7 +10,7 @@ const LoadingButton = ({ className, loadingText = 'Loading...' }) => {
             className={`font-bold py-2 px-4 rounded-full flex items-center justify-center ${className}`}
             disabled
             initial={{ scale: 1 }}
-            animate={{ scale: 1.05 }}
+            animate={{ scale: 0.9 }}
             transition={{
                 
                 stiffness: 400,

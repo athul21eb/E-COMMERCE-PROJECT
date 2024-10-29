@@ -12,7 +12,7 @@ const BlockModal = ({ open, onClose, onConfirm, message, buttonName ,loading=fal
       isOpen={open}
       onRequestClose={onClose}
       className="relative mx-auto my-auto   w-11/12 md:w-1/3 p-6 max-w-lg bg-white  rounded-lg shadow-xl border-t-4 transform transition-transform duration-300 ease-in-out"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center"
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-[1100] flex items-center justify-center"
       contentLabel="Block/Unblock Modal"
       closeTimeoutMS={300}
     >

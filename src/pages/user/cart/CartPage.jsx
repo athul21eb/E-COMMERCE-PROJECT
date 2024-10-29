@@ -269,7 +269,7 @@ const Cart = () => {
                           component="span"
                           className="text-gray-600 block"
                         >
-                          On minPurchaseAmount of {coupon?.minPurchaseAmount}{" "}
+                          On minPurchaseAmount of {coupon?.minPurchaseAmount}
                           <br /> (Upto ₹{coupon.maxDiscountAmount})
                         </Typography>
                       </React.Fragment>
