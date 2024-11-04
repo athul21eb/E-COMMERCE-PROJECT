@@ -1,76 +1,49 @@
 import React, { useState } from "react";
-import {
-  Outlet,
-  
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
-import {
-  FaTachometerAlt,
-  FaShoppingBag,
-  FaUsers,
-  FaChartBar,
-} from "react-icons/fa";
-import { MdCategory, MdSettings, MdOutlineSell, Md6FtApart } from "react-icons/md";
-import { Menu, MenuItem, IconButton, Fade } from "@mui/material";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+
+ // Import necessary icons from React Icons
+ import { FaTachometerAlt, FaShoppingBag, FaUsers, FaChartBar } from 'react-icons/fa';
+ import { MdCategory, MdOutlineSell, MdLocalOffer,   MdLightMode,
+    MdDarkMode } from 'react-icons/md';
+ 
+import { Menu, MenuItem, IconButton, Fade, Button } from "@mui/material";
 import { useAdminLogoutMutation } from "../../../../slices/auth/authApiSlice";
-import Button from "@mui/material/Button";
 import Modal from "../../../common/Modals/Modal";
 import { toast } from "react-toastify";
-import clsx from "clsx";
+import { motion } from "framer-motion";
+import { useTheme } from "../../../../contexts/themeContext.jsx";
 
 const AdminLayout = () => {
-
   const location = useLocation();
+  const navigate = useNavigate();
+  const { theme, toggleTheme, themeStyles } = useTheme();
 
 
-  const menuItems = [
-    { name: "Dashboard", icon: FaTachometerAlt, path: "dashboard" },
-    { name: "Products", icon: FaShoppingBag, path: "products" },
-    { name: "Customers", icon: FaUsers, path: "customers" },
-    { name: "Category", icon: MdCategory, path: "category" },
-    { name: "Brands", icon: MdCategory, path: "brands" },
-    { name: "Orders", icon: MdOutlineSell, path: "orders" },
-    { name: "Sales Report", icon: FaChartBar, path: "sales-report" },
-    { name: "Coupons", icon: MdOutlineSell, path: "coupons" },
-    { name: "Offers", icon: Md6FtApart, path: "offers" }, 
-  ];
+const menuItems = [
+  { name: "Dashboard", icon: FaTachometerAlt, path: "dashboard" },
+  { name: "Products", icon: FaShoppingBag, path: "products" },
+  { name: "Customers", icon: FaUsers, path: "customers" },
+  { name: "Category", icon: MdCategory, path: "category" },
+  { name: "Brands", icon: MdCategory, path: "brands" },
+  { name: "Orders", icon: MdOutlineSell, path: "orders" },
+  { name: "Sales Report", icon: FaChartBar, path: "sales-report" },
+  { name: "Coupons", icon: MdOutlineSell, path: "coupons" },
+  { name: "Offers", icon: MdLocalOffer, path: "offers" },
+];
 
-  
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedMenu, setSelectedMenu] = useState(() => {
     const path = location.pathname.split("/")[2];
-    console.log(path);
-    
-    const MenuItem = menuItems.find((item) => item.path === path);
-
-    return  MenuItem ? MenuItem.name.toString() : "Dashboard";
+    return menuItems.find((item) => item.path === path)?.name || "Dashboard";
   });
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
-  const navigate = useNavigate();
   const [adminLogout] = useAdminLogoutMutation();
-
-  const handleMenuClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
 
   const handleLogout = async () => {
     try {
       const response = await adminLogout().unwrap();
-      closeModal();
+      setIsModalOpen(false);
       toast.success(response.message);
       navigate("/admin/login");
     } catch (error) {
@@ -79,36 +52,37 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen" style={{ backgroundColor: themeStyles.background }}>
       {/* Sidebar */}
-      <aside className="w-16 sm:w-20 md:w-40 ml-2  bg-white  flex flex-col items-center md:items-start">
-        <div className="py-4 pl-6 w-full flex justify-center">
-          <img
-            src="/LOGO.png"
-            alt="FIRE logo"
-            className="object-contain w-16 h-12 md:w-20 md:h-16"
-          />
+      <aside 
+        className="w-16 sm:w-20 md:w-40 flex flex-col items-center md:items-start"
+        style={{ 
+          backgroundColor: themeStyles.surface,
+          borderRight: `1px solid ${themeStyles.border}` 
+        }}
+      >
+        <div className="py-4 w-full flex justify-center">
+          <img src="/LOGO.png" alt="FIRE logo" className="object-contain w-16 h-12 md:w-20 md:h-16" />
         </div>
-        <nav className="flex-1  w-full ">
-          <ul className="space-y-2 ">
+        <nav className="flex-1 w-full">
+          <ul className="space-y-2 px-2">
             {menuItems.map((item) => (
               <li key={item.name}>
-                <button
+                <motion.button
                   onClick={() => {
                     setSelectedMenu(item.name);
                     navigate(`/admin/${item.path}`);
                   }}
-                  className={clsx(
-                    "flex items-center p-2 w-full rounded-lg text-gray-600  transition-colors",
-                    {
-                      "bg-blue-700 text-white": selectedMenu === item.name,
-                      "hover:bg-blue-200 ": selectedMenu !== item.name,
-                    }
-                  )}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center p-2 w-full rounded-lg transition-colors"
+                  style={{
+                    backgroundColor: selectedMenu === item.name ? themeStyles.accent : "transparent",
+                    color: selectedMenu === item.name ? "#ffffff" : themeStyles.textSecondary,
+                  }}
                 >
-                  <item.icon className='size-7 md:size-6 ' />
+                  <item.icon className="w-5 h-5" />
                   <span className="ml-3 hidden md:block">{item.name}</span>
-                </button>
+                </motion.button>
               </li>
             ))}
           </ul>
@@ -117,31 +91,46 @@ const AdminLayout = () => {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Navbar */}
-        <header className="flex items-center justify-between p-4 bg-white  border-b border-gray-200">
-          <h1 className="text-lg md:text-xl font-semibold text-gray-900">
-            Admin Panel
-          </h1>
-          <div className="relative">
-            <IconButton onClick={handleMenuClick} className="text-gray-800">
-              <img
-                className="h-8 w-8 rounded-full"
-                src="/LOGO.jpeg"
-                alt="FIRE logo"
-              />
+        {/* Header */}
+        <header
+          className="flex items-center justify-between p-4"
+          style={{ 
+            backgroundColor: themeStyles.surface,
+            borderBottom: `1px solid ${themeStyles.border}`,
+            color: themeStyles.textPrimary
+          }}
+        >
+          <h1 className="text-lg md:text-xl font-semibold">Admin Panel</h1>
+          <div className="flex items-center space-x-4">
+            <IconButton 
+              onClick={toggleTheme}
+              style={{ color: themeStyles.textPrimary }}
+            >
+              {theme === "light" ? <MdDarkMode size={24} /> : <MdLightMode size={24} />}
+            </IconButton>
+            <IconButton 
+              onClick={(e) => setAnchorEl(e.currentTarget)}
+              style={{ padding: 0 }}
+            >
+              <img className="h-8 w-8 rounded-full" src="/LOGO.jpeg" alt="Profile" />
             </IconButton>
             <Menu
               anchorEl={anchorEl}
-              open={open}
-              onClose={handleMenuClose}
+              open={Boolean(anchorEl)}
+              onClose={() => setAnchorEl(null)}
               TransitionComponent={Fade}
-              TransitionProps={{ timeout: 150 }}
+              PaperProps={{
+                style: {
+                  backgroundColor: themeStyles.surface,
+                  color: themeStyles.textPrimary,
+                  border: `1px solid ${themeStyles.border}`
+                }
+              }}
             >
-              
-              <MenuItem
+              <MenuItem 
                 onClick={() => {
-                  handleMenuClose();
-                  openModal();
+                  setAnchorEl(null);
+                  setIsModalOpen(true);
                 }}
               >
                 Logout
@@ -150,28 +139,46 @@ const AdminLayout = () => {
           </div>
         </header>
 
-        {/* Content */}
-        <main className="px-6 pt-6 pb-3 overflow-y-auto flex-1 flex-wrap  bg-gray-50">
+        {/* Main Content Area */}
+        <main 
+          className="flex-1 overflow-y-auto p-6"
+          style={{ 
+            backgroundColor: themeStyles.background,
+            color: themeStyles.textPrimary 
+          }}
+        >
           <Modal
             isOpen={isModalOpen}
-            onClose={closeModal}
+            onClose={() => setIsModalOpen(false)}
             title="Confirm Logout"
             footer={
               <>
-                <Button variant="outlined" onClick={closeModal}>
+                <Button 
+                  variant="outlined" 
+                  onClick={() => setIsModalOpen(false)}
+                  style={{
+                    borderColor: themeStyles.border,
+                    color: themeStyles.textPrimary
+                  }}
+                >
                   Cancel
                 </Button>
-                <Button
-                  variant="contained"
-                  color="primary"
+                <Button 
+                  variant="contained" 
                   onClick={handleLogout}
+                  style={{
+                    backgroundColor: themeStyles.accent,
+                    color: "#ffffff"
+                  }}
                 >
                   Confirm
                 </Button>
               </>
             }
           >
-            <p>Are you sure you want to log out?</p>
+            <p style={{ color: themeStyles.textPrimary }}>
+              Are you sure you want to log out?
+            </p>
           </Modal>
 
           <Outlet />

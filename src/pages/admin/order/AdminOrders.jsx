@@ -1,36 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { FaSearch, FaFilter } from "react-icons/fa";
-import { format } from "date-fns"; // Optional for date formatting
+import { format } from "date-fns";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   Paper,
   Typography,
   Box,
   Avatar,
 } from "@mui/material";
-import RenderPagination from "../../../components/common/Pagination/RenderPagination";
-
-
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../../../components/common/LoadingScreens/LoadingScreen";
 import { useLazyGetAllOrdersQuery } from "../../../slices/admin/order/orderApiSlice";
 import AdminBreadCrumbs from "../../../components/common/BreadCrumbs/AdminBreadCrumbs";
+import RenderPagination from "../../../components/common/Pagination/RenderPagination";
+import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable";
+import { useTheme  } from "../../../contexts/themeContext";
 
 
 const AdminOrders = () => {
   const navigate = useNavigate();
-  const [fetchOrders, { isLoading }] = useLazyGetAllOrdersQuery();
-
-  ////pagination States
-
-  const [orders, setOrders] = useState(null);
+  const { themeStyles,theme } = useTheme();
+  const [fetchOrders, { isLoading, currentData, isFetching }] = useLazyGetAllOrdersQuery();
+  const [orders, setOrders] = useState(currentData?.orders ?? null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalOrdersCount, setTotalOrdersCount] = useState(1);
+  const [totalOrdersCount, setTotalOrdersCount] = useState(currentData?.totalOrders ?? 1);
   const itemsPerPage = 5;
 
   const fetchOrdersData = async () => {
@@ -39,17 +30,9 @@ const AdminOrders = () => {
         currentPage,
         itemsPerPage,
       }).unwrap();
-      if (totalOrdersCount) {
-       
-
-        setTotalOrdersCount(totalOrders);
-        if (orders) {
-          setOrders(orders);
-        }
-      }
+      setTotalOrdersCount(totalOrders);
+      setOrders(orders);
     } catch (err) {
-      // Display error message in case of failure
-     
       console.error(err);
     }
   };
@@ -58,146 +41,147 @@ const AdminOrders = () => {
     fetchOrdersData();
   }, [currentPage]);
 
-  ////status color
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "orange";
-      case "Shipped":
-        return "blue";
-      case "Delivered":
-        return "green";
-      case "Cancelled":
-        return "red";
-      default:
-        return "black";
-    }
-  };
-
-  /////---------------------------component-----------------------------------------------------------------------
-  if (isLoading) {
+  if (isLoading || isFetching) {
     return <LoadingScreen />;
   }
 
+  const headers = [
+    "Order ID",
+    "Product",
+    "Address",
+    "Date",
+    "Price",
+    "Payment Details",
+  ];
+
+  const rows = orders?.map((order) => [
+    order.orderId,
+    (
+      <Box display="flex" alignItems="center">
+        {order.items.slice(0, 2).map((product, i) => (
+          <Avatar
+            key={i}
+            src={product.productId.thumbnail}
+            alt={product.productId.productName}
+            sx={{ width: 40, height: 40, marginRight: 1 }}
+          />
+        ))}
+        {order.items.length > 2 && (
+          <Avatar
+            sx={{
+              width: 40,
+              height: 40,
+              backgroundColor: themeStyles.accent,
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              marginRight: 1,
+            }}
+          >
+            +{order.items.length - 2}
+          </Avatar>
+        )}
+        <Typography variant="body2" sx={{ color: themeStyles.accent }} textAlign="center">
+          {order.items.length} items
+        </Typography>
+      </Box>
+    ),
+    (
+      <>
+        <Typography variant="body2" sx={{ color: themeStyles.textPrimary }}>
+          {order.shippingAddress.firstName} {order.shippingAddress.lastName}
+        </Typography>
+        <Typography variant="body2" sx={{ color: themeStyles.textSecondary }}>
+          {order.shippingAddress.city}, {order.shippingAddress.district},
+          {order.shippingAddress.state}
+        </Typography>
+        <Typography variant="body2" sx={{ color: themeStyles.textSecondary }}>
+          PIN: {order.shippingAddress.pincode}
+        </Typography>
+        <Typography variant="body2" sx={{ color: themeStyles.textSecondary }}>
+          {order.shippingAddress.landmark}
+        </Typography>
+      </>
+    ),
+    format(new Date(order.orderDate), "dd MMM, yyyy"),
+    `₹${order.billAmount}`,
+    (
+      <>
+        <Typography variant="body2" sx={{ color: themeStyles.textPrimary }}>
+          Method: {order.payment.method}
+        </Typography>
+        <Typography variant="body2" sx={{ color: themeStyles.textSecondary }}>
+          Status: {order.payment.status}
+        </Typography>
+      </>
+    ),
+  ]);
+
+  const navigateOrderDetails = (oid) => {
+    navigate(`order-details?id=${oid}`);
+  };
+
   return (
-<div className="p-4  bg-gray-200">
-     <AdminBreadCrumbs />
-     <h1 className="text-2xl font-bold mb-4">Order Management</h1>
-      <TableContainer component={Paper}>
-        <Table aria-label="order table"  sx={{
-          borderCollapse: 'collapse', // Collapse borders between cells
-          '& td, & th': {
-            border: '1px solid black', // Apply border to all cells
-          },
-        }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>ORDER ID</TableCell>
-              <TableCell>PRODUCT</TableCell>
-              <TableCell>ADDRESS</TableCell>
-              <TableCell>DATE</TableCell>
-              <TableCell>PRICE</TableCell>
-              <TableCell>STATUS</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {!orders||orders?.length === 0 ? (
-              <TableRow>
-                <td colSpan={5} className="text-center py-4 text-3xl font-extrabold">
-                  No Orders
-                </td>
-              </TableRow>
-            ) : (
-              orders?.map((order, index) => (
-                <TableRow
-                  key={index}
-                  className="hover:bg-gray-100"
-                  onClick={() => navigate(`order-details?id=${order._id}`)}
-                >
-                  <TableCell>{order.orderId}</TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      {order.items.slice(0, 2).map((product, i) => (
-                        <Avatar
-                          key={i}
-                          src={product.productId.thumbnail}
-                          alt={product.productId.productName}
-                          sx={{ width: 40, height: 40, marginRight: 1 }}
-                        />
-                      ))}
-                         {order.items.length > 2 && (
-        <Avatar
-          sx={{
-            width: 40,
-            height: 40,
-            backgroundColor: 'grey.400',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: 1,
+    <div style={{ 
+      padding: "1rem", 
+      backgroundColor: themeStyles.background,
+      minHeight: "100vh"
+    }}>
+      <AdminBreadCrumbs />
+      <Typography 
+        variant="h4" 
+        sx={{ 
+          fontWeight: "bold", 
+          marginBottom: "1rem",
+          color: themeStyles.textPrimary
+        }}
+      >
+        Order Management
+      </Typography>
+      <Paper 
+        elevation={2}
+        sx={{
+          backgroundColor: themeStyles.surface,
+          color: themeStyles.textPrimary,
+          marginBottom: "1rem"
+        }}
+      >
+        <ReusableTable 
+          headers={headers} 
+          rows={rows} 
+          onClickOnRow={navigateOrderDetails}
+          headerStyle={{
+            backgroundColor: themeStyles.accent,
+            color: "#ffffff"
           }}
-        >
-          +{order.items.length - 2}
-        </Avatar>
+          rowStyle={{
+            '&:nth-of-type(odd)': {
+              backgroundColor: themeStyles.background,
+            },
+            '&:hover': {
+              backgroundColor: themeStyles.accent,
+              color: "#ffffff",
+              cursor: "pointer"
+            }
+          }}
+        />
+      </Paper>
+      {orders && orders.length > 0 && (
+        <RenderPagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalProductsCount={totalOrdersCount}
+          itemsPerPage={itemsPerPage}
+          style={{
+            color: themeStyles.textPrimary,
+            '& .Mui-selected': {
+              backgroundColor: themeStyles.accent,
+              color: "#ffffff"
+            }
+          }}
+        />
       )}
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      color="Highlight"
-                      textAlign="center"
-                    >
-                      {order.items.length}items
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    {order.shippingAddress && (
-                      <>
-                        <Typography variant="body2" component="span">
-                          {order.shippingAddress.firstName}{" "}
-                          {order.shippingAddress.lastName}
-                        </Typography>
-                        <br />
-                        <Typography variant="body2" component="span">
-                          {order.shippingAddress.city},{" "}
-                          {order.shippingAddress.district},{" "}
-                          {order.shippingAddress.state}
-                        </Typography>
-                        <br />
-                        <Typography variant="body2" component="span">
-                          PIN: {order.shippingAddress.pincode}
-                        </Typography>
-                        <br />
-                        <Typography variant="body2" component="span">
-                          {order.shippingAddress.landmark}
-                        </Typography>
-                      </>
-                    )}
-                  </TableCell>
-
-                  <TableCell>
-                  {format(new Date(order.orderDate), 'dd MMM, yyyy')}
-                  </TableCell>
-                  <TableCell> ₹ {order.billAmount}</TableCell>
-                  <TableCell> <Typography
-                variant="subtitle2"
-                color={getStatusColor(order.orderStatus)}
-                style={{ marginBottom: "16px" }}
-              > {order.orderStatus}
-              </Typography></TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      {orders&&orders?.length !== 0&&<RenderPagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalProductsCount={totalOrdersCount}
-        itemsPerPage={itemsPerPage}
-      />}
     </div>
   );
 };

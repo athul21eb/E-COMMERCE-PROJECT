@@ -1,35 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { FaSearch, FaFilter } from "react-icons/fa";
-import { format } from "date-fns"; // Optional for date formatting
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Typography,
-  Box,
-  Avatar,
-} from "@mui/material";
-import RenderPagination from "../../../../components/common/Pagination/RenderPagination";
-import { useLazyGetOrdersForUserQuery } from "../../../../slices/user/orders/orderApiSlice";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import LoadingScreen from "../../../../components/common/LoadingScreens/LoadingScreen";
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { format } from 'date-fns';
+import { FaChevronRight, FaShoppingBag } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import { useLazyGetOrdersForUserQuery } from '../../../../slices/user/orders/orderApiSlice';
+import RenderPagination from '../../../../components/common/Pagination/RenderPagination';
+import LoadingScreen from '../../../../components/common/LoadingScreens/LoadingScreen';
 
-
-const OrderTable = () => {
+const CoolOrderRows = () => {
   const navigate = useNavigate();
-  const [fetchOrders, { isLoading }] = useLazyGetOrdersForUserQuery();
-
-  ////pagination States
-
-  const [orders, setOrders] = useState([]);
+  const [fetchOrders, { isLoading, isUninitialized, isFetching, currentData }] = useLazyGetOrdersForUserQuery();
+  const [orders, setOrders] = useState(currentData?.orders ?? []);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalOrdersCount, setTotalOrdersCount] = useState(1);
-  const itemsPerPage = 2;
+  const itemsPerPage = 10;
 
   const fetchOrdersData = async () => {
     try {
@@ -37,17 +21,13 @@ const OrderTable = () => {
         currentPage,
         itemsPerPage,
       }).unwrap();
-      if (totalOrdersCount) {
-        console.log(orders, totalOrders);
-
+      if (totalOrders) {
         setTotalOrdersCount(totalOrders);
         if (orders) {
           setOrders(orders);
         }
       }
     } catch (err) {
-      // Display error message in case of failure
-     
       console.error(err);
     }
   };
@@ -56,146 +36,120 @@ const OrderTable = () => {
     fetchOrdersData();
   }, [currentPage]);
 
-  ////status color
-  
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Pending":
-        return "orange";
-      case "Shipped":
-        return "blue";
-      case "Delivered":
-        return "green";
-      case "Cancelled":
-        return "red";
-      default:
-        return "black";
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
     }
   };
-  /////---------------------------component-----------------------------------------------------------------------
-  if (isLoading) {
+
+  const rowVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { type: 'spring', stiffness: 100 }
+    }
+  };
+
+  // const getStatusColor = (status) => {
+  //   switch (status) {
+  //     case "Initiated": return "bg-blue-100 text-blue-800";
+  //     case "Pending": return "bg-yellow-100 text-yellow-800";
+  //     case "Confirmed": return "bg-green-100 text-green-800";
+  //     case "Failed": return "bg-red-100 text-red-800";
+  //     default: return "bg-gray-100 text-gray-800";
+  //   }
+  // };
+
+  if (isLoading || isUninitialized || isFetching) {
     return <LoadingScreen />;
   }
 
   return (
-    <>
-      <TableContainer component={Paper}>
-        <Table aria-label="order table"   sx={{
-          // Collapse borders between cells
-          '& td, & th': {
-            border: '1px solid black', // Apply border to all cells
-          },
-        }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>ORDER ID</TableCell>
-              <TableCell>PRODUCT</TableCell>
-              <TableCell>ADDRESS</TableCell>
-              <TableCell>DATE</TableCell>
-              <TableCell>PRICE</TableCell>
-              <TableCell>STATUS</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {orders.length === 0 ? (
-              <TableRow>
-                <td colSpan={5} className="text-center py-4 text-3xl font-extrabold">
-                  No Orders
-                </td>
-              </TableRow>
-            ) : (
-              orders.map((order, index) => (
-                <TableRow
-                  key={index}
-                  className="hover:bg-gray-100"
-                  onClick={() => navigate(`order-details?id=${order._id}`)}
-                >
-                  <TableCell>{order.orderId}</TableCell>
-                  <TableCell>
-                    <Box display="flex" alignItems="center">
-                      {order.items.slice(0, 2).map((product, i) => (
-                        <Avatar
-                          key={i}
-                          src={product.productId.thumbnail}
-                          alt={product.productId.productName}
-                          sx={{ width: 40, height: 40, marginRight: 1 }}
+    <div className="container mx-auto px-4 py-8  min-h-screen">
+      <h1 className="text-3xl sm:text-4xl md:text-5xl text-center font-bold mb-6 sm:mb-10 text-gray-800">My Orders</h1>
+
+      <AnimatePresence>
+        <motion.div
+          className="space-y-4 sm:space-y-6 w-full max-w-4xl mx-auto"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          {orders.length === 0 ? (
+            <motion.div
+              className="text-center py-12 sm:py-20 bg-white rounded-lg shadow-lg"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <FaShoppingBag className="w-16 h-16 sm:w-24 sm:h-24 mx-auto text-gray-400 mb-4" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-700">No Orders Yet</h2>
+              <p className="text-gray-500 mt-2">Start shopping to see your orders here!</p>
+            </motion.div>
+          ) : (
+            orders.map((order) => (
+              <motion.div
+                key={order.orderId}
+                className="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-xl transition-all duration-300"
+                variants={rowVariants}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => navigate(`order-details?id=${order.orderId}`)}
+              >
+                <div className="p-4 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-4 sm:space-y-0">
+                  <div className="flex items-center space-x-4 w-full sm:w-auto">
+                    <div className="flex -space-x-4 overflow-hidden">
+                      {order.items.slice(0, 2).map((item, index) => (
+                        <img
+                          key={index}
+                          className="inline-block h-12 w-12 sm:h-16 sm:w-16 rounded-full ring-2 ring-white"
+                          src={item.productId.thumbnail}
+                          alt={item.productId.productName}
                         />
                       ))}
-                         {order.items.length > 2 && (
-        <Avatar
-          sx={{
-            width: 40,
-            height: 40,
-            backgroundColor: 'grey.400',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginRight: 1,
-          }}
-        >
-          +{order.items.length - 2}
-        </Avatar>
-      )}
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      color="Highlight"
-                      textAlign="center"
-                    >
-                      {order.items.length}items
-                    </Typography>
-                  </TableCell>
-                  <TableCell>
-                    {order.shippingAddress && (
-                      <>
-                        <Typography variant="body2" component="span">
-                          {order.shippingAddress.firstName}{" "}
-                          {order.shippingAddress.lastName}
-                        </Typography>
-                        <br />
-                        <Typography variant="body2" component="span">
-                          {order.shippingAddress.city},{" "}
-                          {order.shippingAddress.district},{" "}
-                          {order.shippingAddress.state}
-                        </Typography>
-                        <br />
-                        <Typography variant="body2" component="span">
-                          PIN: {order.shippingAddress.pincode}
-                        </Typography>
-                        <br />
-                        <Typography variant="body2" component="span">
-                          {order.shippingAddress.landmark}
-                        </Typography>
-                      </>
-                    )}
-                  </TableCell>
+                      {order.items.length > 2 && (
+                        <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-300 ring-2 ring-white">
+                          <span className="text-xs sm:text-sm font-medium text-gray-800">
+                            +{order.items.length - 2}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-sm sm:text-base text-gray-800">Order ID: {order.orderId}</p>
+                      <p className="text-xs sm:text-sm text-gray-500">
+                        Ordered Date:  {format(new Date(order.createdAt), 'dd MMM yyyy')}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center w-full sm:w-auto">
+                    <div className="flex flex-col items-start sm:items-end">
+                      <p className="text-lg sm:text-2xl font-bold text-gray-800"> ₹{order.billAmount}</p>
+                      {/* <span className={`px-2 py-1 rounded-full text-xs font-semibold mt-1 sm:mt-2 ${getStatusColor(order.orderStatus)}`}>
+                        {order.orderStatus}
+                      </span> */}
+                    </div>
+                    <FaChevronRight className="text-gray-400 w-4 h-4 sm:w-6 sm:h-6 ml-4" />
+                  </div>
+                </div>
+              </motion.div>
+            ))
+          )}
+        </motion.div>
+      </AnimatePresence>
 
-                  <TableCell>
-                    {format(new Date(order.orderDate), "dd/MM/yyyy")}
-                  </TableCell>
-                  <TableCell> ₹ {order.billAmount}</TableCell>
-                  <TableCell><Typography
-                variant="subtitle2"
-                color={getStatusColor(order.orderStatus)}
-                style={{ marginBottom: "16px" }}
-              > {order.orderStatus}
-              </Typography></TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <RenderPagination
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-        totalProductsCount={totalOrdersCount}
-        itemsPerPage={itemsPerPage}
-      />
-    </>
+      <div className="mt-8 sm:mt-12">
+        <RenderPagination
+          currentPage={currentPage}
+          setCurrentPage={setCurrentPage}
+          totalProductsCount={totalOrdersCount}
+          itemsPerPage={itemsPerPage}
+        />
+      </div>
+    </div>
   );
 };
 
-export default OrderTable;
+export default CoolOrderRows;

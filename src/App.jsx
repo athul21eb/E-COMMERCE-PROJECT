@@ -7,14 +7,15 @@ import { Toaster } from 'react-hot-toast';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect } from "react";
+import { ThemeProvider } from "./contexts/themeContext";
 
 
 function App() {
-  const { pathname } = useLocation();
+  const { pathname,search } = useLocation();
 
   useEffect(() => {
     window.scrollTo(0, 0,{behavior: "smooth"} ); // Scrolls to the top of the page
-  }, [pathname]);
+  }, [pathname,search]);
   return (
     <>
       {/* React Hot Toast */}
@@ -51,7 +52,9 @@ function App() {
 
 
     <ToastContainer theme="dark"/>
+    <ThemeProvider>
     <Outlet />
+    </ThemeProvider>
 
 </>
     

@@ -51,7 +51,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
         api.dispatch(ClearCredentials());
         api.dispatch(setCart(null));
         api.dispatch(setWishList(null));
-        toast.error(`Your Login has expired `);
+        
       }
 
       return refreshResult;

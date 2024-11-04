@@ -23,7 +23,7 @@ const CustomModal = ({
           onRequestClose={onClose}
           overlayClassName="fixed inset-0 bg-black bg-opacity-50 z-[1000] flex items-center justify-center"
 
-          className="relative  w-full max-w-lg p-4 rounded-lg shadow-2xl z-[1100]"
+          className="relative  w-full max-w-lg p-4 rounded-lg  z-[1100]"
 
           closeTimeoutMS={300}
           contentLabel="Custom Modal"

@@ -14,7 +14,7 @@ import { Button, TextField, useStepContext } from "@mui/material";
 import Modal from "../../../../components/common/Modals/Modal";
 import { toast } from "react-toastify";
 import ReusableTable from "../../../../components/common/reUsableTable/ReUsableTable";
-import LoadingScreen from "../../../../components/common/LoadingScreens/LoadingFullScreen";
+import LoadingScreen from "../../../../components/common/LoadingScreens/LoadingScreen";
 import RenderPagination from "../../../../components/common/Pagination/RenderPagination";
 
 const WalletComponent = () => {
@@ -191,7 +191,7 @@ const WalletComponent = () => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
           >
-            <div className="font-bold flex items-center text-xl sm:text-2xl">
+            <div className="font-bold flex items-center text-xl sm:text-2xl">  
               <FaWallet className="mr-2" />
               My Wallet
             </div>

@@ -7,9 +7,12 @@ const RenderPagination = ({
   setCurrentPage,
   totalProductsCount,
   itemsPerPage,
-  maxPageButtons = 1,
+  maxPageButtons = 5,
 }) => {
   const totalPages = Math.ceil(totalProductsCount / itemsPerPage);
+
+  // Hide pagination if there's only one page
+  if (totalPages <= 1) return null;
 
   const handlePageChange = (page) => {
     if (page > 0 && page <= totalPages) {
@@ -52,7 +55,7 @@ const RenderPagination = ({
             className={`px-3 py-1 border rounded ${
               currentPage === number
                 ? "bg-black text-white"
-                : "bg-white border-black text-black"
+                : "bg-gray-100 border-gray-400 text-gray-700"
             }`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -71,8 +74,10 @@ const RenderPagination = ({
       <motion.button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-1 border border-black rounded ${
-          currentPage === 1 ? "invisible" : "bg-black text-white"
+        className={`px-3 py-1 border border-gray-400 rounded ${
+          currentPage === 1
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "bg-blue-500 text-white"
         }`}
         whileHover={{ scale: currentPage === 1 ? 1 : 1.1 }}
         whileTap={{ scale: currentPage === 1 ? 1 : 0.9 }}
@@ -83,8 +88,10 @@ const RenderPagination = ({
       <motion.button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-1 border border-black rounded ${
-          currentPage === totalPages ? "invisible" : "bg-black text-white"
+        className={`px-3 py-1 border border-gray-400 rounded ${
+          currentPage === totalPages
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "bg-blue-500 text-white"
         }`}
         whileHover={{ scale: currentPage === totalPages ? 1 : 1.1 }}
         whileTap={{ scale: currentPage === totalPages ? 1 : 0.9 }}

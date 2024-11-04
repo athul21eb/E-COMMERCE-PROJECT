@@ -82,7 +82,7 @@ const PaymentMethod = ({ selectedPaymentMethod, handlePaymentChange, billAmount,
             {walletBalance && (
               <span className="ml-2 text-thin text-gray-500">
                 (Balance: ₹{walletBalance})
-                {(walletBalance < billAmount)&&(` low balance to purchase`)}
+                {(walletBalance < billAmount)&&(` Insufficient Balance`)}
               </span>
             )}
           </div>
