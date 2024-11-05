@@ -122,6 +122,9 @@ const AdminOrders = () => {
     navigate(`order-details?id=${oid}`);
   };
 
+
+  ////--------------------------------render component----------------
+
   return (
     <div style={{ 
       padding: "1rem", 
@@ -151,20 +154,7 @@ const AdminOrders = () => {
           headers={headers} 
           rows={rows} 
           onClickOnRow={navigateOrderDetails}
-          headerStyle={{
-            backgroundColor: themeStyles.accent,
-            color: "#ffffff"
-          }}
-          rowStyle={{
-            '&:nth-of-type(odd)': {
-              backgroundColor: themeStyles.background,
-            },
-            '&:hover': {
-              backgroundColor: themeStyles.accent,
-              color: "#ffffff",
-              cursor: "pointer"
-            }
-          }}
+         
         />
       </Paper>
       {orders && orders.length > 0 && (

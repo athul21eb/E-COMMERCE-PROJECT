@@ -63,17 +63,20 @@ const AdminOrderDetails = () => {
       case "Pending":
         return "text-orange-500";
       case "Confirmed":
-        return "text-yellow-500"; // Fixed color here
+        return "text-yellow-500";
       case "Shipped":
         return "text-blue-500";
       case "Delivered":
         return "text-green-500";
       case "Cancelled":
         return "text-red-500";
+      case "Failed":
+        return "text-red-500"; // Corrected color here
       default:
         return "text-black";
     }
   };
+  
 
   const canChangeStatus = (currentStatus) => {
     return statusPriority[currentStatus] < statusPriority["Cancelled"];
@@ -120,22 +123,22 @@ const AdminOrderDetails = () => {
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <p className="text-sm opacity-75">Ship To</p>
-            <p className="font-semibold">{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
-            <p>{order.shippingAddress.city}, {order.shippingAddress.state}</p>
-            <p>Pincode: {order.shippingAddress.pincode}</p>
+            <p className={`${theme==="dark"?"text-slate-400":"text-gray-400"} text-sm `}>Ship To</p>
+            <p className={`text-white text-bold`}>{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
+            <p className={`text-white text-semibold`}>{order.shippingAddress.city}, {order.shippingAddress.state}</p>
+            <p className={`text-white text-semibold`}>Pincode: {order.shippingAddress.pincode}</p>
           </div>
           <div>
-            <p className="text-sm opacity-75">Order Date</p>
-            <p className="font-semibold">{format(new Date(order.orderDate), 'dd MMM, yyyy')}</p>
+            <p className={`${theme==="dark"?"text-slate-400":"text-gray-400"} text-sm `}>Order Date</p>
+            <p className={`text-white text-bold`}>{format(new Date(order.orderDate), 'dd MMM, yyyy')}</p>
           </div>
           <div>
-            <p className="text-sm opacity-75">Order ID</p>
-            <p className="font-semibold">{order.orderId}</p>
+            <p className={`${theme==="dark"?"text-slate-400":"text-gray-400"} text-sm `}>Order ID</p>
+            <p className={`text-white text-bold`}>{order.orderId}</p>
           </div>
           <div>
-            <p className="text-sm opacity-75">Total</p>
-            <p className="font-semibold">₹{order.billAmount}</p>
+            <p className={`${theme==="dark"?"text-slate-400":"text-gray-400"} text-sm `}>Total</p>
+            <p className={`text-white text-bold`}>₹{order.billAmount}</p>
           </div>
         </div>
       </motion.div>
@@ -150,11 +153,11 @@ const AdminOrderDetails = () => {
         <h2 className="text-2xl font-bold mb-4">Payment Details</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"}`}>Method</p>
+            <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Method</p>
             <p className="font-semibold">{order.payment.method || "N/A"}</p>
           </div>
           <div>
-            <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"}`}>Status</p>
+            <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Status</p>
             <p className={`font-semibold ${order.payment.status === 'Success' ? 'text-green-500' : (order.payment.status === 'Pending' ? 'text-yellow-500' : "text-red-500")}`}>
               {order.payment.status || "N/A"}
             </p>
@@ -185,10 +188,10 @@ const AdminOrderDetails = () => {
             </div>
             <div className="md:w-1/2">
               <h3 className="text-xl font-semibold mb-2">{item.productId.productName}</h3>
-              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"}`}>Category: {item.productId.category.categoryName}</p>
-              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"}`}>Price: ₹{item.productId.salePrice}</p>
-              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"}`}>Size: {item.size}</p>
-              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"}`}>Quantity: {item.quantity}</p>
+              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Category: {item.productId.category.categoryName}</p>
+              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Price: ₹{item.productId.salePrice}</p>
+              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Size: {item.size}</p>
+              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Quantity: {item.quantity}</p>
             </div>
             <div className="md:w-1/4 flex flex-col justify-between">
             <div>
@@ -203,7 +206,7 @@ const AdminOrderDetails = () => {
             variant="contained"
             color="info"
             onClick={() => handleChangeStatus(item, "Shipped")}
-          sx={{ mx: 2 }}  // Adds bottom margin for spacing
+          sx={{ m: 1 }}  // Adds bottom margin for spacing
           >
             Mark as Shipped
           </Button>
@@ -211,7 +214,7 @@ const AdminOrderDetails = () => {
       variant="contained"
       color="error"
       onClick={() => handleChangeStatus(item, "Cancelled")}
-    sx={{ mx: 2 }}  // Adds bottom margin for spacing
+    sx={{ m: 1 }}  // Adds bottom margin for spacing
     >
       Cancel Item
     </Button>
@@ -223,7 +226,7 @@ const AdminOrderDetails = () => {
             variant="contained"
             color="success"
             onClick={() => handleChangeStatus(item, "Delivered")}
-          sx={{ mx: 2 }}  // Adds bottom margin for spacing
+          sx={{ m: 1 }}  // Adds bottom margin for spacing
           >
             Mark as Delivered
           </Button>
@@ -234,21 +237,21 @@ const AdminOrderDetails = () => {
    <div className="mt-4">
   {item.status === "Delivered" ? (
     <div>
-      <p className="text-sm text-gray-600">Delivered At:</p>
+      <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Delivered At:</p>
       <p className="font-semibold">{formatDate(new Date(item.deliveryDate))}</p>
     </div>
   ) : item.status === "Cancelled" ? (
     <div>
-      <p className="text-sm text-gray-600">Canceled on:</p>
+      <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Canceled on:</p>
       <p className="font-semibold">{formatDate(new Date(item.cancelledDate))}</p>
     </div>
   ) : (
-    <div>
-      <p className="text-sm text-gray-600">Delivery on:</p>
+   item.status!=="Failed"&&( <div>
+      <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Delivery on:</p>
       <p className="font-semibold">
         {formatDate(new Date(order.orderDate).setDate(new Date(order.orderDate).getDate() + 7))}
       </p>
-    </div>
+    </div>)
   )}
 </div>
   

@@ -176,7 +176,7 @@ const WalletComponent = () => {
   }
 
   return (
-    <>
+    <div className="w-[400px] md:w-full mx-auto ">
       {wallet ? (
         <motion.div
           className="w-full max-w-4xl mx-auto p-4 sm:p-6 bg-gray-50 shadow-lg rounded-lg"
@@ -331,7 +331,7 @@ const WalletComponent = () => {
           <p>Are you sure you want to create a wallet?</p>
         )}
       </Modal>
-    </>
+    </div>
   );
 };
 

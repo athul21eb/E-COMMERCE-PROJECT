@@ -18,6 +18,7 @@ import AdminHeader from "../components/wrappers/adminWrapper/AdminHeaderWrapper.
 import AdminProtectedRoutes from "../protectRoutes/admin/adminProtectedRoute/AdminProtectedRoutes.jsx";
 import AdminRedirectRoute from "../protectRoutes/admin/adminRedirectRoutes/AdminRedirectRoute.jsx";
 import AdminOffers from '../pages/admin/offers/AdminOffers.jsx'
+import ReturnOrders from "../pages/admin/returnOrders/ReturnOrders.jsx";
 
 export const AdminRoutes = (
   <Route path="admin" element={<Outlet />}>
@@ -43,6 +44,8 @@ export const AdminRoutes = (
         <Route path="sales-report" element={<AdminSalesReport />} />
         <Route path="coupons" element={<AdminCoupons />} />
         <Route path="offers" element={<AdminOffers />} />
+        <Route path ="return-orders" element={<ReturnOrders/>} />
+        <Route path ="banners" element={<AdminBanners/>} />
       </Route>
     </Route>
   </Route>

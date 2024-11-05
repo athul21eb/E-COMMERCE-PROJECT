@@ -52,10 +52,10 @@ const RenderPagination = ({
         {typeof number === "number" ? (
           <motion.button
             onClick={() => handlePageChange(number)}
-            className={`px-3 py-1 border rounded ${
+            className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
               currentPage === number
-                ? "bg-black text-white"
-                : "bg-gray-100 border-gray-400 text-gray-700"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-white text-gray-700 hover:bg-gray-200"
             }`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
@@ -63,35 +63,35 @@ const RenderPagination = ({
             {number}
           </motion.button>
         ) : (
-          <span className="px-3 py-1">{number}</span>
+          <span className="px-3 py-1 text-gray-500">{number}</span>
         )}
       </li>
     ));
   };
 
   return (
-    <div className="flex justify-center items-center space-x-2 mt-4">
+    <div className="flex flex-wrap justify-center items-center space-x-2 mt-4">
       <motion.button
         onClick={() => handlePageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-1 border border-gray-400 rounded ${
+        className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
           currentPage === 1
             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-blue-500 text-white"
+            : "bg-white text-blue-600 hover:bg-blue-100"
         }`}
         whileHover={{ scale: currentPage === 1 ? 1 : 1.1 }}
         whileTap={{ scale: currentPage === 1 ? 1 : 0.9 }}
       >
         {"<"}
       </motion.button>
-      <ul className="flex space-x-1">{renderPageNumbers()}</ul>
+      <ul className="flex flex-wrap justify-center space-x-1">{renderPageNumbers()}</ul>
       <motion.button
         onClick={() => handlePageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`px-3 py-1 border border-gray-400 rounded ${
+        className={`px-4 py-2 rounded-full font-semibold text-sm transition-all ${
           currentPage === totalPages
             ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-blue-500 text-white"
+            : "bg-white text-blue-600 hover:bg-blue-100"
         }`}
         whileHover={{ scale: currentPage === totalPages ? 1 : 1.1 }}
         whileTap={{ scale: currentPage === totalPages ? 1 : 0.9 }}

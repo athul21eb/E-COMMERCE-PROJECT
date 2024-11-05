@@ -110,7 +110,7 @@ const OverviewForm = () => {
   };
 
   return (
-    <div className="mx-auto ">
+    <div className="mx-auto min-w-fit ">
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{

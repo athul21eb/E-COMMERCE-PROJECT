@@ -10,17 +10,8 @@ import {
   Paper,
   useMediaQuery,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { useTheme } from "../../../contexts/themeContext.jsx";
-
-const StyledTableContainer = styled(TableContainer)(({ isDark }) => ({
-  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
-  overflowX: "auto",
-  margin: "auto",
-  maxWidth: "95vw",
-  backgroundColor: isDark ? "#1e1e2f" : "#ffffff",
-}));
 
 const tableVariants = {
   hidden: { opacity: 0.95 },
@@ -40,7 +31,7 @@ const rowVariants = {
 const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
   const isMobile = useMediaQuery("(max-width:600px)");
   const { theme } = useTheme(); // Assuming `theme` is either 'dark' or 'light'
-  const isDark = theme === 'dark';
+  const isDark = theme === "dark";
 
   // Define color schemes for light and dark themes
   const colors = {
@@ -67,7 +58,17 @@ const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
   const themeColors = isDark ? colors.dark : colors.light;
 
   return (
-    <StyledTableContainer component={Paper} isDark={isDark} className="mb-10">
+    <TableContainer
+      component={Paper}
+      sx={{
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
+        overflowX: "auto",
+        margin: "auto",
+        maxWidth: "95vw",
+        backgroundColor: themeColors.background,
+        mb: 2,
+      }}
+    >
       <motion.div
         initial="hidden"
         animate="visible"
@@ -82,7 +83,12 @@ const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
           aria-label="animated table"
         >
           <TableHead>
-            <TableRow component={motion.tr} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}>
+            <TableRow
+              component={motion.tr}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               {headers.map((header, index) => (
                 <TableCell
                   key={index}
@@ -107,14 +113,17 @@ const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
               rows.map((row, rowIndex) => (
                 <TableRow
                   key={rowIndex}
-                  onClick={() => onClickOnRow(row[0])}
+                  onClick={() => onClickOnRow && onClickOnRow(row[0])}
                   component={motion.tr}
                   variants={rowVariants}
                   initial="hidden"
                   animate="visible"
                   sx={{
                     backgroundColor: themeColors.background,
-                    "&:hover": { backgroundColor: themeColors.hover, color: themeColors.textPrimary },
+                    "&:hover": {
+                      backgroundColor: themeColors.hover,
+                      color: themeColors.textPrimary,
+                    },
                     transition: "background-color 0.3s, color 0.3s",
                   }}
                 >
@@ -124,7 +133,10 @@ const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
                       align="center"
                       sx={{
                         borderBottom: `1px solid ${themeColors.border}`,
-                        borderRight: cellIndex < row.length - 1 ? `1px solid ${themeColors.border}` : "none",
+                        borderRight:
+                          cellIndex < row.length - 1
+                            ? `1px solid ${themeColors.border}`
+                            : "none",
                         fontSize: isMobile ? "0.85rem" : "1rem",
                         color: themeColors.textSecondary,
                         padding: isMobile ? "8px" : "14px",
@@ -136,13 +148,18 @@ const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
                 </TableRow>
               ))
             ) : (
-              <TableRow component={motion.tr} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}>
-                <TableCell 
-                  colSpan={headers.length} 
-                  align="center" 
-                  sx={{ 
-                    color: themeColors.textSecondary, 
-                    padding: "20px", 
+              <TableRow
+                component={motion.tr}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+              >
+                <TableCell
+                  colSpan={headers.length}
+                  align="center"
+                  sx={{
+                    color: themeColors.textSecondary,
+                    padding: "20px",
                     fontSize: "1rem",
                     backgroundColor: themeColors.background,
                   }}
@@ -154,7 +171,7 @@ const ReusableTable = ({ headers, rows = [], onClickOnRow }) => {
           </TableBody>
         </Table>
       </motion.div>
-    </StyledTableContainer>
+    </TableContainer>
   );
 };
 

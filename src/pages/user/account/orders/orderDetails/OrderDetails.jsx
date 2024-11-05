@@ -384,18 +384,23 @@ export default function OrderDetails() {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Pending": return "text-orange-500"
-      case "Confirmed": return "text-purple-500"
-      case "Shipped": return "text-blue-500"
-      case "Delivered": return "text-green-500"
-      case "Cancelled": return "text-red-500"
-      case "Return Requested": return "text-teal-500"
-      case "Return Accepted": return "text-lime-500"
-      case "Return Rejected": return "text-brown-500"
-      case "Failed": return "text-gray-500"
-      default: return "text-black"
+      case "Pending":
+        return "text-orange-500";
+      case "Confirmed":
+        return "text-yellow-500";
+      case "Shipped":
+        return "text-blue-500";
+      case "Delivered":
+        return "text-green-500";
+      case "Cancelled":
+        return "text-red-500";
+      case "Failed":
+        return "text-red-500"; // Corrected color here
+      default:
+        return "text-black";
     }
-  }
+  };
+  
   ////--------------------------------render component----------------------------
 
    if(isLoading||isUninitialized||isFetching){

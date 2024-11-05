@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { format } from 'date-fns';
-import { FaChevronRight, FaShoppingBag } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
-import { useLazyGetOrdersForUserQuery } from '../../../../slices/user/orders/orderApiSlice';
-import RenderPagination from '../../../../components/common/Pagination/RenderPagination';
-import LoadingScreen from '../../../../components/common/LoadingScreens/LoadingScreen';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { format } from "date-fns";
+import { FaChevronRight, FaShoppingBag } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { useLazyGetOrdersForUserQuery } from "../../../../slices/user/orders/orderApiSlice";
+import RenderPagination from "../../../../components/common/Pagination/RenderPagination";
+import LoadingScreen from "../../../../components/common/LoadingScreens/LoadingScreen";
+import { Button } from "@mui/material";
+import { toast } from "react-toastify";
+
 
 const CoolOrderRows = () => {
   const navigate = useNavigate();
-  const [fetchOrders, { isLoading, isUninitialized, isFetching, currentData }] = useLazyGetOrdersForUserQuery();
+  const [fetchOrders, { isLoading, isUninitialized, isFetching, currentData }] =
+    useLazyGetOrdersForUserQuery();
   const [orders, setOrders] = useState(currentData?.orders ?? []);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalOrdersCount, setTotalOrdersCount] = useState(1);
@@ -40,8 +44,8 @@ const CoolOrderRows = () => {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.1 }
-    }
+      transition: { staggerChildren: 0.1 },
+    },
   };
 
   const rowVariants = {
@@ -49,8 +53,8 @@ const CoolOrderRows = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { type: 'spring', stiffness: 100 }
-    }
+      transition: { type: "spring", stiffness: 100 },
+    },
   };
 
   // const getStatusColor = (status) => {
@@ -69,7 +73,9 @@ const CoolOrderRows = () => {
 
   return (
     <div className="container mx-auto px-4 py-8  min-h-screen">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl text-center font-bold mb-6 sm:mb-10 text-gray-800">My Orders</h1>
+      <h1 className="text-3xl sm:text-4xl md:text-5xl text-center font-bold mb-6 sm:mb-10 text-gray-800">
+        My Orders
+      </h1>
 
       <AnimatePresence>
         <motion.div
@@ -86,8 +92,12 @@ const CoolOrderRows = () => {
               transition={{ duration: 0.5 }}
             >
               <FaShoppingBag className="w-16 h-16 sm:w-24 sm:h-24 mx-auto text-gray-400 mb-4" />
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-700">No Orders Yet</h2>
-              <p className="text-gray-500 mt-2">Start shopping to see your orders here!</p>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-700">
+                No Orders Yet
+              </h2>
+              <p className="text-gray-500 mt-2">
+                Start shopping to see your orders here!
+              </p>
             </motion.div>
           ) : (
             orders.map((order) => (
@@ -118,21 +128,42 @@ const CoolOrderRows = () => {
                       )}
                     </div>
                     <div>
-                      <p className="font-semibold text-sm sm:text-base text-gray-800">Order ID: {order.orderId}</p>
+                      <p className="font-semibold text-sm sm:text-base text-gray-800">
+                        Order ID: {order.orderId}
+                      </p>
                       <p className="text-xs sm:text-sm text-gray-500">
-                        Ordered Date:  {format(new Date(order.createdAt), 'dd MMM yyyy')}
+                        Ordered Date:{" "}
+                        {format(new Date(order.createdAt), "dd MMM yyyy")}
                       </p>
                     </div>
                   </div>
-                  <div className="flex justify-between items-center w-full sm:w-auto">
-                    <div className="flex flex-col items-start sm:items-end">
-                      <p className="text-lg sm:text-2xl font-bold text-gray-800"> ₹{order.billAmount}</p>
-                      {/* <span className={`px-2 py-1 rounded-full text-xs font-semibold mt-1 sm:mt-2 ${getStatusColor(order.orderStatus)}`}>
-                        {order.orderStatus}
-                      </span> */}
-                    </div>
-                    <FaChevronRight className="text-gray-400 w-4 h-4 sm:w-6 sm:h-6 ml-4" />
-                  </div>
+                 <div className="flex justify-between items-center w-full sm:w-auto">
+  {/* Left section with Retry Button and Order Amount */}
+  <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+    {/* Retry Payment Button for Failed Orders */}
+    {order.orderStatus === "Failed" && (
+      <Button
+        onClick={(e) => {
+          e.stopPropagation();
+          toast.warning("Feature coming soon");
+        }}
+        color="error"
+        className="text-xs sm:text-sm px-3 py-1 rounded-lg"
+      >
+        Retry Payment
+      </Button>
+    )}
+
+    {/* Order Amount */}
+    <p className="text-lg sm:text-2xl font-bold text-gray-800">
+      ₹{order.billAmount}
+    </p>
+  </div>
+
+  {/* Right Chevron Icon */}
+  <FaChevronRight className="text-gray-400 w-4 h-4 sm:w-6 sm:h-6 ml-4" />
+</div>
+
                 </div>
               </motion.div>
             ))
