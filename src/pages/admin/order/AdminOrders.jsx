@@ -22,7 +22,7 @@ const AdminOrders = () => {
   const [orders, setOrders] = useState(currentData?.orders ?? null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalOrdersCount, setTotalOrdersCount] = useState(currentData?.totalOrders ?? 1);
-  const itemsPerPage = 5;
+  const itemsPerPage = 4;
 
   const fetchOrdersData = async () => {
     try {
@@ -163,13 +163,7 @@ const AdminOrders = () => {
           setCurrentPage={setCurrentPage}
           totalProductsCount={totalOrdersCount}
           itemsPerPage={itemsPerPage}
-          style={{
-            color: themeStyles.textPrimary,
-            '& .Mui-selected': {
-              backgroundColor: themeStyles.accent,
-              color: "#ffffff"
-            }
-          }}
+          
         />
       )}
     </div>

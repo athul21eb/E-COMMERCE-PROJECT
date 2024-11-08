@@ -10,7 +10,7 @@
 // const OrderList = () => {
 //   const [getOrderDetailsById,{isLoading,isUninitialized,isFetching,currentData}] = useLazyGetOrderByIdQuery();
 //   const [cancelItem] = useCancelOrderItemMutation();
-  
+
 //   const location = useLocation();
 //   const navigate = useNavigate();
 //   const queryParams = new URLSearchParams(location.search);
@@ -54,7 +54,6 @@
 //   const deliveryDate = new Date(order?.orderDate);
 //   deliveryDate.setDate(deliveryDate.getDate() + 7);
 
-  
 //   ////-------------------------render component------------
 //   if(isLoading||isUninitialized||isFetching){
 //     return <LoadingScreen/>
@@ -88,9 +87,7 @@
 //         return "black";
 //     }
 //   };
-  
 
-  
 //   return (
 //     <Box padding={2}>
 //       <BackButton className="mb-4 bg-slate-600" />
@@ -250,34 +247,48 @@
 
 // export default OrderList;
 
-
-
-
-
-import React, { useState, useEffect } from 'react'
-import { FaShoppingCart, FaTruck, FaCalendarAlt, FaCreditCard, FaArrowLeft } from 'react-icons/fa'
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, CircularProgress, Typography } from '@mui/material'
-import { motion } from 'framer-motion'
-import { format } from 'date-fns'
+import React, { useState, useEffect } from "react";
+import {
+  FaShoppingCart,
+  FaTruck,
+  FaCalendarAlt,
+  FaCreditCard,
+  FaArrowLeft,
+} from "react-icons/fa";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  CircularProgress,
+  Typography,
+  MenuItem,
+  Select,
+  TextField,
+  InputLabel,
+} from "@mui/material";
+import { motion } from "framer-motion";
+import { format } from "date-fns";
 import LoadingScreen from "../../../../../components/common/LoadingScreens/LoadingScreen";
- import Modal from "../../../../../components/common/Modals/Modal";
+import Modal from "../../../../../components/common/Modals/Modal";
 import BackButton from "../../../../../components/common/ReusableButton/BackButton";
 import {
   useCancelOrderItemMutation,
   useLazyGetOrderByIdQuery,
+  useReturnOrderItemMutation,
 } from "../../../../../slices/user/orders/orderApiSlice";
-import { toast } from 'react-toastify'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { formatDate } from '../../../../../utils/helper/formatDate'
-
-
+import { toast } from "react-toastify";
+import { useLocation, useNavigate } from "react-router-dom";
+import { formatDate } from "../../../../../utils/helper/formatDate";
 
 // const mockOrderData = {
 //   "_id": { "$oid": "671b40dff8698de99e74913f" },
 //   "userId": { "$oid": "66cd6d0fdd5dcfacda5faaae" },
 //   "items": [
 //     {
-//       "productId": { 
+//       "productId": {
 //         "$oid": "66cec12af073329219b68d23",
 //         "productName": "Sample Product",
 //         "thumbnail": "/placeholder.svg?height=100&width=100",
@@ -325,18 +336,22 @@ import { formatDate } from '../../../../../utils/helper/formatDate'
 // }
 
 export default function OrderDetails() {
-
-
-    const [getOrderDetailsById,{isLoading,isUninitialized,isFetching,currentData}] = useLazyGetOrderByIdQuery();
-  const [cancelItem ,{isLoading:isLoadingCancelItem}] = useCancelOrderItemMutation();
-  
+  const [
+    getOrderDetailsById,
+    { isLoading, isUninitialized, isFetching, currentData },
+  ] = useLazyGetOrderByIdQuery();
+  const [cancelItem, { isLoading: isLoadingCancelItem }] =
+    useCancelOrderItemMutation();
+  const [returnItem, { isLoading: isLoadingReturnItem }] =
+    useReturnOrderItemMutation();
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id");
 
-  const [order, setOrder] = useState(currentData??null);
+  const [order, setOrder] = useState(currentData ?? null);
   const [cancellingItemId, setCancellingItemId] = useState(null);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
@@ -354,33 +369,87 @@ export default function OrderDetails() {
 
   const handleCancelItem = async () => {
     try {
-      const res = await cancelItem({ itemId: cancellingItemId, orderId: id }).unwrap();
-     toast.success(res.message);
+      const res = await cancelItem({
+        itemId: cancellingItemId,
+        orderId: id,
+      }).unwrap();
+      toast.success(res.message);
     } catch (err) {
       toast.error(err?.data?.message || err?.error);
       console.error(err);
-
-    }finally{
+    } finally {
       setCancellingItemId(null);
       fetchData();
       closeModal();
     }
   };
 
+  ////---------------------item return function-----------------
+
+  const [returningItemId, setReturningItemId] = useState(null);
+  const [reason, setReason] = useState("");
+  const [remarks, setRemarks] = useState("");
+  const [errors, setErrors] = useState({});
+  const [isReturnModalOpen, setIsReturnModalOpen] = useState(false);
+
+  const closeReturnModal = () => {
+    setIsReturnModalOpen(false);
+    setErrors({});
+  };
+  const reasons = [
+    "Product arrived damaged or defective",
+    "Incorrect item received",
+    "Product does not match description",
+    "Changed mind after purchase",
+    "Product does not fit as expected",
+    "Other Reason",
+  ];
+
+  const handleReturnItem = async () => {
+    const validationErrors = {};
+
+    if (!reason) {
+      validationErrors.reason =
+        "Please select a reason for returning the item.";
+    }
+
+    if (reason === "Other Reason" && !remarks.trim()) {
+      validationErrors.remarks =
+        "Additional remarks are required for 'Other Reason'.";
+    }
+    if (remarks.trim().length > 100) {
+      validationErrors.remarks =
+        "Additional remarks cannot exceed 100 characters.";
+    }
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+    try {
+      setErrors({});
+
+      const response = await returnItem({
+        orderId: id,
+        itemId: returningItemId,
+        reason,
+        remarks,
+      }).unwrap();
+      fetchData();
+      toast.success(response?.message);
+    } catch (err) {
+      toast.success(err?.data?.message || err.error);
+      console.error(err);
+    } finally {
+      setReturningItemId(null);
+
+      setIsReturnModalOpen(false);
+    }
+  };
+
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
     fetchData();
-
-    
   }, []);
-
-  console.log(order);
-  const deliveryDate = new Date(order?.orderDate);
-  deliveryDate.setDate(deliveryDate.getDate() + 7);
-
- 
-
-  
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -395,16 +464,22 @@ export default function OrderDetails() {
       case "Cancelled":
         return "text-red-500";
       case "Failed":
-        return "text-red-500"; // Corrected color here
+        return "text-red-500";
+      case "Return Requested":
+        return "text-purple-500";
+      case "Return Accepted":
+        return "text-teal-500";
+      case "Return Rejected":
+        return "text-gray-500";
       default:
-        return "text-black";
+        return "text-black"; // Empty string for any unhandled statuses
     }
   };
-  
+
   ////--------------------------------render component----------------------------
 
-   if(isLoading||isUninitialized||isFetching){
-    return <LoadingScreen/>
+  if (isLoading || isUninitialized || isFetching) {
+    return <LoadingScreen />;
   }
 
   if (!order || !order.items || order.items.length === 0) {
@@ -412,7 +487,7 @@ export default function OrderDetails() {
   }
   return (
     <div className="container mx-auto px-4 py-8">
-     <BackButton/>
+      <BackButton />
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
@@ -423,8 +498,12 @@ export default function OrderDetails() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <p className="text-sm opacity-75">Ship To</p>
-            <p className="font-semibold">{order.shippingAddress.firstName} {order.shippingAddress.lastName}</p>
-            <p>{order.shippingAddress.city}, {order.shippingAddress.state}</p>
+            <p className="font-semibold">
+              {order.shippingAddress.firstName} {order.shippingAddress.lastName}
+            </p>
+            <p>
+              {order.shippingAddress.city}, {order.shippingAddress.state}
+            </p>
             <p>Pincode: {order.shippingAddress.pincode}</p>
           </div>
           <div>
@@ -459,13 +538,23 @@ export default function OrderDetails() {
           </div>
           <div>
             <p className="text-sm text-gray-600">Status</p>
-            <p className={`font-semibold ${order.payment.status === 'Success' ? 'text-green-500' : (order.payment.status === 'Pending'?'text-yellow-500':"text-red-500")}`}>
+            <p
+              className={`font-semibold ${
+                order.payment.status === "Success"
+                  ? "text-green-500"
+                  : order.payment.status === "Pending"
+                  ? "text-yellow-500"
+                  : "text-red-500"
+              }`}
+            >
               {order.payment.status}
             </p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Transaction ID</p>
-            <p className="font-semibold">{order.payment.transactionId??"Nil"}</p>
+            <p className="font-semibold">
+              {order.payment.transactionId ?? "Nil"}
+            </p>
           </div>
           {/* <div>
             <p className="text-sm text-gray-600">Gateway Order ID</p>
@@ -491,58 +580,90 @@ export default function OrderDetails() {
               />
             </div>
             <div className="md:w-1/2">
-              <h3 className="text-xl font-semibold mb-2">{item.productId.productName}</h3>
-              <p className="text-gray-600">Category: {item.productId.category.categoryName}</p>
+              <h3 className="text-xl font-semibold mb-2">
+                {item.productId.productName}
+              </h3>
+              <p className="text-gray-600">
+                Category: {item.productId.category.categoryName}
+              </p>
               <p className="text-gray-600">Price: ₹{item.itemTotalPrice}</p>
               <p className="text-gray-600">Size: {item.size}</p>
               <p className="text-gray-600">Quantity: {item.quantity}</p>
             </div>
-            <div className="md:w-1/4 flex flex-col justify-between">
+            <div className="md:w-1/4 flex flex-col justify-center">
               <div>
-                <p className={`text-lg font-semibold mb-4 ${getStatusColor(item.status)}`}>
+                <p
+                  className={`text-lg font-semibold mb-4 ${getStatusColor(
+                    item.status
+                  )}`}
+                >
                   Status: {item.status}
                 </p>
 
-               
                 {item.status === "Confirmed" && (
                   <Button
                     variant="contained"
                     color="error"
                     onClick={() => {
-                      setCancellingItemId(item._id)
-                      setIsModalOpen(true)
+                      setCancellingItemId(item._id);
+                      setIsModalOpen(true);
                     }}
                   >
                     Cancel Item
                   </Button>
                 )}
                 {item.status === "Delivered" && (
-                  <Button variant="contained" color="primary">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      setReturningItemId(item._id);
+                      setIsReturnModalOpen(true);
+                    }}
+                  >
                     Return Item
                   </Button>
                 )}
               </div>
               <div className="mt-4">
-  {item.status === "Delivered" ? (
-    <div>
-      <p className="text-sm text-gray-600">Delivered At:</p>
-      <p className="font-semibold">{formatDate(new Date(item.deliveryDate))}</p>
-    </div>
-  ) : item.status === "Cancelled" ? (
-    <div>
-      <p className="text-sm text-gray-600">Canceled on:</p>
-      <p className="font-semibold">{formatDate(new Date(item.cancelledDate))}</p>
-    </div>
-  ) : (
-    <div>
-      <p className="text-sm text-gray-600">Delivery on:</p>
-      <p className="font-semibold">
-        {formatDate(new Date(order.orderDate).setDate(new Date(order.orderDate).getDate() + 7))}
-      </p>
-    </div>
-  )}
-</div>
+                {item.status === "Delivered" && (
+                  <div>
+                    <p className="text-sm text-gray-600">Delivered At:</p>
+                    <p className="font-semibold">
+                      {formatDate(new Date(item.deliveryDate))}
+                    </p>
+                  </div>
+                )}
 
+                {item.status === "Cancelled" && (
+                  <div>
+                    <p className="text-sm text-gray-600">Cancelled on:</p>
+                    <p className="font-semibold">
+                      {formatDate(new Date(item.cancelledDate))}
+                    </p>
+                  </div>
+                )}
+
+                {![
+                  "Cancelled",
+                  "Delivered",
+                  "Return Requested",
+                  "Return Accepted",
+                  "Return Rejected",
+                  "Failed",
+                ].includes(item.status) && (
+                  <div>
+                    <p className="text-sm text-gray-600">Delivery on:</p>
+                    <p className="font-semibold">
+                      {formatDate(
+                        new Date(order.orderDate).setDate(
+                          new Date(order.orderDate).getDate() + 7
+                        )
+                      )}
+                    </p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </motion.div>
@@ -553,24 +674,107 @@ export default function OrderDetails() {
           Download Invoice
         </Button>
       </div>
-
+      {/* //// Canceling item Modal  */}
       <Modal
         isOpen={isModalOpen}
-        onClose={!isLoadingCancelItem&&closeModal}
+        onClose={!isLoadingCancelItem && closeModal}
         title="Cancel Item"
         footer={
           <>
-            <Button disabled={isLoadingCancelItem} variant="outlined" onClick={closeModal}>
+            <Button
+              disabled={isLoadingCancelItem}
+              variant="outlined"
+              onClick={closeModal}
+            >
               Cancel
             </Button>
-            <Button disabled={isLoadingCancelItem} variant="contained" color="error" onClick={handleCancelItem}>
+            <Button
+              disabled={isLoadingCancelItem}
+              variant="contained"
+              color={"error"}
+              onClick={handleCancelItem}
+            >
               Confirm
             </Button>
           </>
         }
       >
-        <p>Are you sure you want to cancel this item?</p>
+        <p>
+          Are you sure you want to <strong>cancel</strong> this item?
+        </p>
+      </Modal>
+      {/* //// Returning item Modal  */}
+
+      <Modal
+        isOpen={isReturnModalOpen}
+        onClose={() => isLoadingReturnItem?()=>{} : closeReturnModal()}
+        title="Return Item"
+        footer={
+          <>
+            <Button
+              disabled={isLoadingReturnItem}
+              variant="outlined"
+              onClick={closeReturnModal}
+              sx={{ marginRight: 2 }}
+            >
+              Cancel
+            </Button>
+            <Button
+              disabled={isLoadingReturnItem}
+              variant="contained"
+              color="error"
+              onClick={handleReturnItem}
+            >
+              Confirm
+            </Button>
+          </>
+        }
+      >
+        <form style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <InputLabel style={{ color: "black" }}>
+            Select a reason for return
+          </InputLabel>
+          <Select
+            
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            fullWidth
+            displayEmpty
+            error={!!errors.reason}
+            sx={{ marginBottom: 1 }}
+          >
+            <MenuItem value="" disabled>
+              Select a reason for return
+            </MenuItem>
+            {reasons.map((reasonOption) => (
+              <MenuItem key={reasonOption} value={reasonOption}>
+                {reasonOption}
+              </MenuItem>
+            ))}
+          </Select>
+          {errors.reason && (
+            <p style={{ color: "red", fontSize: "0.875rem" }}>
+              {errors.reason}
+            </p>
+          )}
+
+          <TextField
+            label="Additional Remarks (required for 'Other Reason')"
+            value={remarks}
+            onChange={(e) => setRemarks(e.target.value.slice(0, 100))}
+            fullWidth
+            multiline
+            rows={3}
+            error={!!errors.remarks}
+            helperText={`${100 - remarks.length} characters remaining`}
+          />
+          {errors.remarks && (
+            <p style={{ color: "red", fontSize: "0.875rem" }}>
+              {errors.remarks}
+            </p>
+          )}
+        </form>
       </Modal>
     </div>
-  )
+  );
 }

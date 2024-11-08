@@ -11,7 +11,7 @@ const userOrderApiSlice = userApiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    
+
     getOrdersForUser: builder.query({
       query: ({ itemsPerPage, currentPage }) => ({
         url: `${orderUrl}/user-orders?page=${currentPage}&limit=${itemsPerPage}`,
@@ -22,20 +22,26 @@ const userOrderApiSlice = userApiSlice.injectEndpoints({
         url: `${orderUrl}/${id}`,
       }),
     }),
-    cancelOrderItem:builder.mutation({
-      query: ({orderId,itemId})=>({
-        url:`${orderUrl}/${orderId}/items/${itemId}/cancel`,
-        method:"PATCH",
-      })
+    cancelOrderItem: builder.mutation({
+      query: ({ orderId, itemId }) => ({
+        url: `${orderUrl}/${orderId}/items/${itemId}/cancel`,
+        method: "PATCH",
+      }),
     }),
-    verifyPayment:builder.mutation({
-      query:(data)=>({
-        url:`${orderUrl}/verify-payment`,
-        method:'POST',
-        body:data
-        
-      })
-    })
+    returnOrderItem: builder.mutation({
+      query: ({ orderId, itemId, reason, remarks }) => ({
+        url: `${orderUrl}/${orderId}/items/${itemId}/return`,
+        method: "PATCH",
+        body: { reason, remarks },
+      }),
+    }),
+    verifyPayment: builder.mutation({
+      query: (data) => ({
+        url: `${orderUrl}/verify-payment`,
+        method: "POST",
+        body: data,
+      }),
+    }),
   }),
 });
 
@@ -44,5 +50,6 @@ export const {
   useLazyGetOrdersForUserQuery,
   useLazyGetOrderByIdQuery,
   useCancelOrderItemMutation,
-  useVerifyPaymentMutation
+  useVerifyPaymentMutation,
+  useReturnOrderItemMutation,
 } = userOrderApiSlice;

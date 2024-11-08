@@ -63,7 +63,7 @@ const ProductsTable = () => {
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
-      toast.error(error.data.message ?? error);
+      
     }
   };
 

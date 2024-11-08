@@ -233,13 +233,11 @@ const AdminLayout = () => {
                   Cancel
                 </Button>
                 <Button 
+                color="error"
                   variant="contained" 
                   disabled={isLoading}
                   onClick={handleLogout}
-                  style={{
-                    backgroundColor: themeStyles.accent,
-                    color: "#ffffff"
-                  }}
+                  
                 >
                   Confirm
                 </Button>

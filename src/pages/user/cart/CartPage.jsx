@@ -123,6 +123,7 @@ const Cart = () => {
       setApiCallLoading(false);
       setIsConfirmModalOpen(false);
       setIsCouponsModalOpen(false);
+     
     }
   };
 
@@ -131,7 +132,7 @@ const Cart = () => {
     try {
       setApiCallLoading(true);
       if (!currentCoupon) return;
-      console.log(currentCoupon.code);
+      
       const response = await removeCouponApiCall().unwrap();
 
       toast.success(response?.message);
@@ -141,7 +142,12 @@ const Cart = () => {
     } finally {
       setApiCallLoading(false);
       setIsConfirmModalOpen(false);
-      setCouponRemoveMode(false);
+
+      setTimeout(()=>{
+        setCouponRemoveMode(false);
+      },1000)
+      
+      
     }
   };
 
@@ -189,6 +195,7 @@ const Cart = () => {
                 <button
                   className="text-red-500 text-lg px-2 py-1  rounded hover:bg-red-100 flex items-center"
                   onClick={() => {
+                    setCurrentCoupon(cartDetails.appliedCoupon);
                     setCouponRemoveMode(true);
                     setIsConfirmModalOpen(true);
                   }} // Add the remove handler here
@@ -290,22 +297,28 @@ const Cart = () => {
       </CustomModal>
 
       {/* Confirmation Modal */}
-      <BlockModal
-        open={isConfirmModalOpen}
-        onClose={() => setIsConfirmModalOpen(false)}
-        onConfirm={
-          couponRemoveMode ? handleCouponRemove : handleCouponApplyConfirm
-        }
-        message={
-          couponRemoveMode
-            ? `Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
-                           (Upto ₹${currentCoupon?.maxDiscountAmount})?`
-            : `Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
-                           (Upto ₹${currentCoupon?.maxDiscountAmount})?`
-        }
-        buttonName={couponRemoveMode ? "Remove" : "Apply"}
-        loading={apiCallLoading}
-      />
+      {couponRemoveMode ? (
+  <BlockModal
+    open={isConfirmModalOpen}
+    onClose={() => setIsConfirmModalOpen(false)}
+    onConfirm={handleCouponRemove}
+    message={`Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
+               (Upto ₹${currentCoupon?.maxDiscountAmount})?`}
+    buttonName="Remove"
+    loading={apiCallLoading}
+  />
+) : (
+  <BlockModal
+    open={isConfirmModalOpen}
+    onClose={() => setIsConfirmModalOpen(false)}
+    onConfirm={handleCouponApplyConfirm}
+    message={`Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
+               (Upto ₹${currentCoupon?.maxDiscountAmount})?`}
+    buttonName="Apply"
+    loading={apiCallLoading}
+  />
+)}
+
     </div>
   );
 };
