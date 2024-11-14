@@ -27,7 +27,7 @@ const ProductsDetails = () => {
   const id = queryParams.get("id");
 
   const [addToCart, { isLoading: addToCartLoading ,isError}] = useAddToCartMutation();
-  const [fetchProductDetailsById, { isLoading ,isUninitialized,isError:isProductNotFound}] =
+  const [fetchProductDetailsById, {isFetching, isLoading ,isUninitialized,isError:isProductNotFound}] =
     useLazyGetProductDetailsByIdQuery();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
@@ -174,7 +174,7 @@ const ProductsDetails = () => {
   }, [wishListDetails, toggleWishlist, id]);
 
   ////---------------------------component--------------------------------
-  if (isLoading||(isUninitialized&&!isLoading)) {
+  if (isLoading||(isUninitialized)||isFetching) {
     return <LoadingFullScreen />;
   }
    
@@ -264,7 +264,7 @@ const ProductsDetails = () => {
   <div className="flex flex-col  justify-center md:justify-start items-center space-y-4 md:space-y-0 ">
     
     {/* Display Offer Information if offer is active */}
-    {product?.offer && new Date(product?.offer?.endDate) > Date.now() ? (
+    {product?.offer && new Date(product.offer?.endDate) >= Date.now() &&new Date(product.offer?.startDate) <= Date.now() ? (
       <>
         {/* Offer Price */}
         <div className="text-3xl font-bold text-gray-800">

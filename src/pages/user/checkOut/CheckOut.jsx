@@ -47,6 +47,8 @@ const CheckoutPage = () => {
 
 
   useEffect(()=>{
+
+    window.scrollTo(0, 0,{behavior: "smooth"} );
     refetch();
     refetchWallet();
     refetchAddress();

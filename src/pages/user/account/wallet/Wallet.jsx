@@ -52,6 +52,7 @@ const WalletComponent = () => {
       console.log(error);
     } finally {
       setIsModalOpen(false);
+      refetch();
     }
   };
 
@@ -243,7 +244,7 @@ const WalletComponent = () => {
           </motion.div>
         </motion.div>
       ) : (
-        <CreateWallet onCreate={setIsModalOpen} />
+        <CreateWallet setIsModalOpen={setIsModalOpen} />
       )}
       <Modal
         isOpen={isModalOpen}
@@ -334,7 +335,6 @@ const WalletComponent = () => {
     </div>
   );
 };
-
 const CreateWallet = ({ setIsModalOpen }) => {
   const iconAnimationVariants = {
     animate: {
@@ -350,9 +350,9 @@ const CreateWallet = ({ setIsModalOpen }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-start text-center min-h-screen bg-white rounded-lg p-2 md:pt-20 ">
+    <div className="flex flex-col items-center justify-start text-center min-h-screen  bg-white rounded-lg p-4 md:pt-20 lg:p-12">
       <motion.h1
-        className="text-3xl font-bold text-gray-800 mb-4"
+        className="text-3xl font-bold text-gray-800 mb-4 md:text-4xl"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
@@ -361,7 +361,7 @@ const CreateWallet = ({ setIsModalOpen }) => {
       </motion.h1>
 
       <motion.p
-        className="text-center text-gray-600 max-w-md mb-8"
+        className="text-center text-gray-600 max-w-md mb-8 md:max-w-lg lg:max-w-xl mx-4 md:mx-0"
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.2 }}
@@ -370,7 +370,7 @@ const CreateWallet = ({ setIsModalOpen }) => {
         transactions and top-notch security features for your peace of mind.
       </motion.p>
 
-      <div className="flex justify-center space-x-16 mb-12">
+      <div className="flex flex-wrap justify-center space-x-8 mb-12 gap-y-8 md:gap-y-0">
         <div className="flex flex-col items-center">
           <motion.div variants={iconAnimationVariants} animate="animate">
             <FaExchangeAlt className="text-5xl text-green-500" />

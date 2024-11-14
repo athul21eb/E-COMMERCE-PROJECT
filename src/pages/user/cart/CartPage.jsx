@@ -160,7 +160,7 @@ const Cart = () => {
       <p className="text-gray-500 mt-2">
         Once you add something to your bag - it will appear here.
       </p>
-      <Link to="/">
+      <Link to="/shop">
         <button className="mt-6 px-6 py-2 bg-blue-500 text-white text-lg rounded-lg hover:bg-blue-600">
           Get Started
         </button>

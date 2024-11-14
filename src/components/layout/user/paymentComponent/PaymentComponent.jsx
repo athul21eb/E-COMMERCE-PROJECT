@@ -72,19 +72,21 @@ const PaymentMethod = ({ selectedPaymentMethod, handlePaymentChange, billAmount,
             selectedPaymentMethod === "Wallet"
               ? "border-black bg-gray-100 shadow-md"
               : "border-gray-200 hover:border-gray-400 hover:shadow-sm"
-          } ${walletBalance < billAmount ? "opacity-75 cursor-not-allowed" : ""}`}
+          } ${walletBalance&&(walletBalance < billAmount) ? "opacity-75 cursor-not-allowed" : ""}`}
           whileHover={{ scale: 1.05 }}
-          onClick={() => walletBalance >= billAmount && handlePaymentChange({ target: { value: "Wallet" } })}
+          onClick={() => walletBalance&&(walletBalance < billAmount) && handlePaymentChange({ target: { value: "Wallet" } })}
         >
           <div className="flex items-center">
             <FaWallet className="text-black text-2xl mr-4" />
             <span className="text-lg font-medium"> Wallet</span>
-            {walletBalance && (
+            {walletBalance===0 ? (
               <span className="ml-2 text-thin text-gray-500">
                 (Balance: ₹{walletBalance})
                 {(walletBalance < billAmount)&&(` Insufficient Balance`)}
               </span>
-            )}
+            ):
+              <span className='ml-2 text-thin text-gray-500'>Create a Wallet First</span>
+            }
           </div>
           <input
             type="radio"
@@ -92,7 +94,7 @@ const PaymentMethod = ({ selectedPaymentMethod, handlePaymentChange, billAmount,
             name="paymentMethod"
             value="Wallet"
             checked={selectedPaymentMethod === "Wallet"}
-            onChange={handlePaymentChange}
+            
             className="form-radio h-5 w-5"
             disabled={walletBalance&&(walletBalance < billAmount)}
           />
