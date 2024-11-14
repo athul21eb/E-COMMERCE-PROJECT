@@ -16,6 +16,8 @@
     "@reduxjs/toolkit": "^2.2.7",
     "cloudinary": "^2.4.0",
     "date-fns": "^3.6.0",
+    "exceljs": "^4.4.0",
+    "file-saver": "^2.0.5",
     "firebase": "^10.13.0",
     "formik": "^2.4.6",
     "framer-motion": "^11.11.10",
@@ -37,7 +39,6 @@
     "react-zoom-pan-pinch": "^3.6.1",
     "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
-    "xlsx": "^0.18.5",
     "yup": "^1.4.0"
   },
   "devDependencies": {

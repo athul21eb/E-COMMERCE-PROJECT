@@ -40,8 +40,13 @@ import {
   useApplyOfferToCategoryMutation,
   useGetOffersByTypeQuery,
 } from "../../../slices/admin/offers/adminOfferSlice.js";
+import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
+
 
 const AdminCategory = () => {
+
+  const {themeStyles,theme} = useTheme()
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isToggleModalOpen, setIsToggleModalOpen] = useState(false);
@@ -83,6 +88,8 @@ const AdminCategory = () => {
     fetchCategoriesData();
     refetch();
   }, [currentPage]);
+
+  
 
   const handleToggleClick = (category) => {
     setToggleCategory(category);
@@ -183,11 +190,65 @@ const AdminCategory = () => {
     setSelectedCategory(null);
   };
 
+  const headers = ["No", "Category Name", "Description", "isActive","Actions"];
+
+  const rows = categories && categories.length > 0 ?(categories.map((category, index) => ([
+     index + 1,
+    category.categoryName,
+    category.categoryDescription,
+     
+      <Switch
+        checked={category.isActive}
+        sx={{
+          "& .MuiSwitch-switchBase.Mui-checked": {
+            color: "green",
+            "&:hover": {
+              backgroundColor: "rgba(0, 128, 0, 0.1)",
+            },
+          },
+          "& .MuiSwitch-switchBase": {
+            color: "red",
+            "&:hover": {
+              backgroundColor: "rgba(255, 0, 0, 0.1)",
+            },
+          },
+          "& .MuiSwitch-track": {
+            backgroundColor: category.isActive
+              ? "green"
+              : "red",
+          },
+        }}
+        onChange={() => handleToggleClick(category)}
+      />
+    , <>
+    <Button
+      variant="text"
+      color="secondary"
+      startIcon={<FaTags />}
+      onClick={() => handleOffersOpenModal(category)}
+    >
+      Apply Offer
+    </Button>
+    <Button
+      variant="text"
+      color="primary"
+      startIcon={<FaEdit />}
+      onClick={() => handleEditCategory(category)}
+    >
+      Update
+    </Button>
+  </>
+  ]))):[];
   /////----------------------------------------------render component--------------------------------
   if (isLoading) return <LoadingScreen />;
 
   return (
-    <div className="p-4 bg-gray-200 min-h-screen">
+    <div className="p-4  min-h-screen"
+    style={{
+      backgroundColor: themeStyles.background,
+      color: themeStyles.textPrimary,
+    }}
+    >
       <AdminBreadCrumbs />
       <h1 className="text-3xl font-bold mb-6">Category Management</h1>
 
@@ -199,154 +260,64 @@ const AdminCategory = () => {
           onSubmit={handleAddCategory}
         >
           {({ errors, touched }) => (
-            <Form className="bg-white p-6 rounded shadow-md space-y-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <Field
-                  as={TextField}
-                  name="categoryName"
-                  placeholder="Category"
-                  label="Category Name"
-                  variant="outlined"
-                  fullWidth
-                  error={touched.categoryName && Boolean(errors.categoryName)}
-                  helperText={<ErrorMessage name="categoryName" />}
-                />
-                <Field
-                  as={TextField}
-                  name="categoryDescription"
-                  placeholder="Description"
-                  label="Description"
-                  variant="outlined"
-                  fullWidth
-                  multiline
-                  maxRows={8}
-                  error={
-                    touched.categoryDescription &&
-                    Boolean(errors.categoryDescription)
-                  }
-                  helperText={<ErrorMessage name="categoryDescription" />}
-                />
-              </div>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                className="mt-4"
-              >
-                Add Category
-              </Button>
-            </Form>
+             <Form
+             className={`p-6 rounded shadow-md space-y-2 ${theme === 'light'?"bg-white":"bg-[#1e1e2f]"}`}
+             sx={{
+               borderRadius: '8px', // Added styling for rounded corners
+               boxShadow: 3, // Example shadow, you can adjust as needed
+               padding: '1.5rem', // Padding for the form
+               backgroundColor: theme === 'light' ? '#fff' : '#333', // Light or dark background
+               color: theme === 'light' ? '#000' : '#fff', // Text color
+             }}
+           >
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+               <Field
+                 as={TextField}
+                 name="categoryName"
+                 
+                 placeholder="Category"
+                 label="Category Name"
+                 variant="outlined"
+                 fullWidth
+                 error={touched.categoryName && Boolean(errors.categoryName)}
+                 helperText={<ErrorMessage name="categoryName" />}
+               />
+               <Field
+                 as={TextField}
+                 name="categoryDescription"
+                 placeholder="Description"
+                 label="Description"
+                 variant="outlined"
+                 fullWidth
+                 multiline
+                 maxRows={8}
+                 error={touched.categoryDescription && Boolean(errors.categoryDescription)}
+                 helperText={<ErrorMessage name="categoryDescription" />}
+               />
+             </div>
+             <Button
+               type="submit"
+               variant="contained"
+               sx={{
+                 backgroundColor: theme === 'light' ? '#1976d2' : '#90caf9', // Button color for light/dark mode
+                 color: theme === 'light' ? '#fff' : '#000', // Text color of the button
+                 '&:hover': {
+                   backgroundColor: theme === 'light' ? '#1565c0' : '#64b5f6', // Hover effect for button
+                 },
+               }}
+               className="mt-4"
+             >
+               Add Category
+             </Button>
+           </Form>
           )}
         </Formik>
       </div>
 
       <div>
         <h2 className="text-lg font-semibold mb-4">Category List</h2>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>No</TableCell>
-                <TableCell>Category Name</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>isActive</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {categories && categories.length > 0 ? (
-                categories.map((category, i) => (
-                  <TableRow key={category._id}>
-                    <TableCell>{i + 1}</TableCell>
-                    <TableCell>{category.categoryName}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col space-y-1">
-                        {/* Display the category description */}
-                        <span className="text-base font-medium text-gray-800">
-                          {category.categoryDescription}
-                        </span>
-
-                        {/* Check if there is an offer and handle conditions */}
-                        {category.offer &&
-                          (new Date(category.offer?.startDate) <= Date.now() &&
-                          new Date(category.offer?.endDate) >= Date.now() ? (
-                            <span className="text-sm text-green-600 font-semibold bg-green-100 px-2 py-1 rounded">
-                              {category.offer?.discountPercentage}% OFF (Offer
-                              Applied)
-                            </span>
-                          ) : (
-                            new Date(category.offer?.startDate) >
-                              Date.now() && (
-                              <span className="text-sm text-yellow-600 font-semibold bg-yellow-100 px-2 py-1 rounded">
-                                {category.offer?.discountPercentage}% OFF -
-                                Offer starts on{" "}
-                                {new Date(
-                                  category.offer?.startDate
-                                ).toLocaleDateString()}
-                              </span>
-                            )
-                          ))}
-                      </div>
-                    </TableCell>
-
-                    <TableCell>
-                      <Switch
-                        checked={category.isActive}
-                        onChange={() => handleToggleClick(category)}
-                        sx={{
-                          "& .MuiSwitch-switchBase.Mui-checked": {
-                            color: "green",
-                            "&:hover": {
-                              backgroundColor: "rgba(0, 128, 0, 0.1)",
-                            },
-                          },
-                          "& .MuiSwitch-switchBase": {
-                            color: "red",
-                            "&:hover": {
-                              backgroundColor: "rgba(255, 0, 0, 0.1)",
-                            },
-                          },
-                          "& .MuiSwitch-track": {
-                            backgroundColor: category.isActive
-                              ? "green"
-                              : "red",
-                          },
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="text"
-                        color="secondary"
-                        startIcon={<FaTags />}
-                        onClick={() => handleOffersOpenModal(category)}
-                      >
-                        ApplyOffer
-                      </Button>
-                      <Button
-                        variant="text"
-                        color="primary"
-                        startIcon={<FaEdit />}
-                        onClick={() => handleEditCategory(category)}
-                      >
-                        Update
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan="5">
-                    <div className="text-center text-3xl">
-                      {" "}
-                      Categories not found
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <ReusableTable headers={headers} rows={rows}/>
+      
       </div>
       <div>
         <RenderPagination
@@ -360,7 +331,7 @@ const AdminCategory = () => {
       {/* Edit Category Modal */}
       {selectedCategory && (
         <Modal
-          Classnames={"md:w-3/4 h-3/4 bg-white"}
+          
           isOpen={isEditModalOpen}
           onClose={() => setIsEditModalOpen(false)}
           title="Edit Category"

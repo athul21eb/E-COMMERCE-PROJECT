@@ -67,7 +67,7 @@ const AdminLayout = () => {
           <img src={theme==="dark"?"/logo_white.png":"/LOGO.png"} alt="FIRE logo" className="object-contain w-16 h-12 md:w-20 md:h-16" />
         </div>
         <nav className="flex-1 w-full">
-          <ul className="space-y-2 px-2">
+          <ul className="space-y-1 px-2">
             {menuItems.map((item) => (
               <li key={item.name}>
                 <motion.button
@@ -172,7 +172,7 @@ const AdminLayout = () => {
                 
               }}
             >
-              {theme === "light" ? <MdDarkMode size={24} /> : <MdLightMode size={24} />}
+              {theme === "light" ? <MdDarkMode size={20} /> : <MdLightMode size={20} />}
               <span  className={`ml-3  ${theme === "light"?"text-black":"text-white"}`} >
                 {theme === "light" ? "Dark Mode" : "Light Mode"}
               </span>
