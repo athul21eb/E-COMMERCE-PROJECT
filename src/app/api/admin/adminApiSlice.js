@@ -4,7 +4,7 @@ import { ClearAdminCredentials, SetAdminAccessToken } from "../../../slices/auth
 import { toast } from "react-toastify";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/v1",
+  baseUrl: `http://localhost:${import.meta.env.VITE_SERVER_PORT}/v1`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.authInfo?.admin?.accessToken;

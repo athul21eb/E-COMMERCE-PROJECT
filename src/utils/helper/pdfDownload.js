@@ -1,8 +1,12 @@
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { formatDate } from "./formatDate";
+import toast from "react-hot-toast";
 
-export const downloadPdfReport = (reportData) => {
+export const downloadPdfReport = async(fetchData) => {
+
+ try{
+  const {salesReport:reportData} = await fetchData()?.unwrap();
   const doc = new jsPDF();
   const title = "Sales Report";
 
@@ -56,4 +60,8 @@ export const downloadPdfReport = (reportData) => {
 
   // Save the PDF
   doc.save("fire_boots_sales_report.pdf");
+} catch (error) {
+  console.error("Error downloading sales report:", error);
+  toast.error(error.message || "An error occurred while downloading the report.");
+}
 };

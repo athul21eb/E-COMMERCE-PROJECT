@@ -26,13 +26,16 @@ const adminOrderApiSlice = adminApiSlice.injectEndpoints({
         url: `${orderUrl}/salesReport?page=${currentPage}&limit=${itemsPerPage}&period=${period}&startDate=${startDate}&endDate=${endDate}`,
       }),
     }),
+    getFullSaleReport: builder.query({
+      query: () => `${orderUrl}/salesReport-download`,
+    }),
   }),
-  
 });
 
 export const {
   useLazyGetAllOrdersQuery,
   useLazyGetOrderByIdFromAllOrdersQuery,
   useUpdateOrderItemStatusMutation,
-useLazyGetSaleReportQuery
+  useLazyGetSaleReportQuery,
+  useLazyGetFullSaleReportQuery
 } = adminOrderApiSlice;

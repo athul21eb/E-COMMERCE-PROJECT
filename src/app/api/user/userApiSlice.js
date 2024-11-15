@@ -9,7 +9,7 @@ import { setCart } from "../../../slices/user/cart/cartSlice.js";
 import { setWishList } from "../../../slices/user/wishList/wishListSlice.js";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "http://localhost:5000/v1",
+  baseUrl: `http://localhost:${import.meta.env.VITE_SERVER_PORT}/v1`,
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.authInfo?.user?.accessToken;

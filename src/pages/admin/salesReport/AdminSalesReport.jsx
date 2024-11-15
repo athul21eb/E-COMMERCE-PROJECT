@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../../../components/common/LoadingScreens/LoadingScreen";
-import { useLazyGetSaleReportQuery } from "../../../slices/admin/order/orderApiSlice";
+import { useLazyGetFullSaleReportQuery, useLazyGetSaleReportQuery } from "../../../slices/admin/order/orderApiSlice";
 import AdminBreadCrumbs from "../../../components/common/BreadCrumbs/AdminBreadCrumbs";
 import RenderPagination from "../../../components/common/Pagination/RenderPagination";
 import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable";
@@ -21,6 +21,7 @@ import { downloadXlsxReport } from "../../../utils/helper/xlsxDownload";
 
 const AdminSaleReport = () => {
 
+  const [fetchData,{isLoading:downloadIsLoading}] = useLazyGetFullSaleReportQuery();
   const { themeStyles, theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -44,7 +45,6 @@ const AdminSaleReport = () => {
       surface: "#f9f9f9",
       hover: "#e0e0e0", // Add the hover color
     },
-    
   };
 
   const themeColors = isDark ? colors.dark : colors.light;
@@ -55,11 +55,10 @@ const AdminSaleReport = () => {
   const [totalOrdersCount, setTotalOrdersCount] = useState(
     data?.totalOrders ?? 1
   );
-  const itemsPerPage = 3;
+  const itemsPerPage = 10;
   const [period, setPeriod] = useState("day");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
-  const [reportData, setReportData] = useState(null);
 
   const fetchOrdersData = async () => {
     try {
@@ -79,7 +78,7 @@ const AdminSaleReport = () => {
 
       const res = await fetchOrders(params).unwrap();
       console.log(res);
-      setReportData(res.salesReport);
+
       const {
         salesReport: { orders, totalOrders },
       } = res;
@@ -89,7 +88,6 @@ const AdminSaleReport = () => {
       console.error(err);
       setTotalOrdersCount(1);
       setOrders(null);
-      setReportData(null);
     }
   };
 
@@ -192,112 +190,112 @@ const AdminSaleReport = () => {
       </Typography>
 
       <Box
-      sx={{
-        marginBottom: "2rem",
-        padding: "1.5rem",
-        borderRadius: "8px",
-        boxShadow: `0 4px 12px rgba(0, 0, 0, 0.1)`,
-        backgroundColor: themeColors.surface,
-        display: "flex",
-        flexDirection: "column",
-        gap: "1.5rem",
-        alignItems: "center",
-      }}
-    >
-      <TextField
-        select
-        label="Select Period"
-        value={period}
-        onChange={handlePeriodChange}
         sx={{
-          width: "100%",
-          maxWidth: "400px",
-          "& .MuiOutlinedInput-root": {
-            borderRadius: "10px",
-            backgroundColor: themeColors.accent,
-          },
-          "& .MuiInputLabel-root": {
-            color: themeColors.textPrimary,
-          },
+          marginBottom: "2rem",
+          padding: "1.5rem",
+          borderRadius: "8px",
+          boxShadow: `0 4px 12px rgba(0, 0, 0, 0.1)`,
+          backgroundColor: themeColors.surface,
+          display: "flex",
+          flexDirection: "column",
+          gap: "1.5rem",
+          alignItems: "center",
         }}
       >
-        <MenuItem value="day">Day</MenuItem>
-        <MenuItem value="month">Month</MenuItem>
-        <MenuItem value="year">Year</MenuItem>
-        <MenuItem value="custom">Custom Date</MenuItem>
-      </TextField>
-
-      {period === "custom" && (
-        <Box
+        <TextField
+          select
+          label="Select Period"
+          value={period}
+          onChange={handlePeriodChange}
           sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "1rem",
-            justifyContent: "center",
-            alignItems: "center",
             width: "100%",
+            maxWidth: "400px",
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "10px",
+              backgroundColor: themeColors.accent,
+            },
+            "& .MuiInputLabel-root": {
+              color: themeColors.textPrimary,
+            },
           }}
         >
-          <TextField
-            type="date"
-            label="Start Date"
-            InputLabelProps={{ shrink: true }}
-            value={startDate || ""}
-            onChange={(e) => setStartDate(e.target.value)}
+          <MenuItem value="day">Day</MenuItem>
+          <MenuItem value="month">Month</MenuItem>
+          <MenuItem value="year">Year</MenuItem>
+          <MenuItem value="custom">Custom Date</MenuItem>
+        </TextField>
+
+        {period === "custom" && (
+          <Box
             sx={{
-              flex: "1 1 auto",
-              minWidth: "200px",
-              maxWidth: "250px",
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-                backgroundColor: themeColors.accent,
-              },
-              "& .MuiInputLabel-root": {
-                color: themeColors.textPrimary,
-              },
-            }}
-          />
-          <TextField
-            type="date"
-            label="End Date"
-            InputLabelProps={{ shrink: true }}
-            value={endDate || ""}
-            onChange={(e) => setEndDate(e.target.value)}
-            sx={{
-              flex: "1 1 auto",
-              minWidth: "200px",
-              maxWidth: "250px",
-              "& .MuiOutlinedInput-root": {
-                borderRadius: "10px",
-                backgroundColor: themeColors.accent,
-              },
-              "& .MuiInputLabel-root": {
-                color: themeColors.textPrimary,
-              },
-            }}
-          />
-          <Button
-            variant="contained"
-            onClick={handleFetch}
-            sx={{
-              padding: "0.7rem 1.5rem",
-              borderRadius: "12px",
-              textTransform: "none",
-              fontWeight: "bold",
-              fontSize: "0.9rem",
-              backgroundColor: themeColors.accent,
-              color: themeColors.textPrimary,
-              boxShadow: `0px 4px 6px rgba(33, 150, 243, 0.3)`,
-              "&:hover": {
-                backgroundColor: themeColors.hover,
-              },
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "1rem",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
             }}
           >
-            Fetch
-          </Button>
-        </Box>
-      )}
-    </Box>
+            <TextField
+              type="date"
+              label="Start Date"
+              InputLabelProps={{ shrink: true }}
+              value={startDate || ""}
+              onChange={(e) => setStartDate(e.target.value)}
+              sx={{
+                flex: "1 1 auto",
+                minWidth: "200px",
+                maxWidth: "250px",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  backgroundColor: themeColors.accent,
+                },
+                "& .MuiInputLabel-root": {
+                  color: themeColors.textPrimary,
+                },
+              }}
+            />
+            <TextField
+              type="date"
+              label="End Date"
+              InputLabelProps={{ shrink: true }}
+              value={endDate || ""}
+              onChange={(e) => setEndDate(e.target.value)}
+              sx={{
+                flex: "1 1 auto",
+                minWidth: "200px",
+                maxWidth: "250px",
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "10px",
+                  backgroundColor: themeColors.accent,
+                },
+                "& .MuiInputLabel-root": {
+                  color: themeColors.textPrimary,
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleFetch}
+              sx={{
+                padding: "0.7rem 1.5rem",
+                borderRadius: "12px",
+                textTransform: "none",
+                fontWeight: "bold",
+                fontSize: "0.9rem",
+                backgroundColor: themeColors.accent,
+                color: themeColors.textPrimary,
+                boxShadow: `0px 4px 6px rgba(33, 150, 243, 0.3)`,
+                "&:hover": {
+                  backgroundColor: themeColors.hover,
+                },
+              }}
+            >
+              Fetch
+            </Button>
+          </Box>
+        )}
+      </Box>
 
       <Paper
         elevation={2}
@@ -317,36 +315,36 @@ const AdminSaleReport = () => {
 
         <ReusableTable headers={headers} rows={rows} />
 
-        {(orders && orders.length !== 0) && (
-          
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                gap: "1rem",
-                marginY: "1rem",
-                padding:"1rem"
-              }}
+        
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: "1rem",
+              marginY: "1rem",
+              padding: "1rem",
+            }}
+          >
+            <Button
+             disabled={downloadIsLoading}
+              variant="outlined"
+              color="primary"
+              onClick={()=>downloadPdfReport(fetchData)}
+              sx={{ borderRadius: "10px" }}
             >
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => downloadPdfReport(reportData)}
-                sx={{ borderRadius: "10px" }}
-              >
-                Download PDF
-              </Button>
-              <Button
-                variant="outlined"
-                color="primary"
-                onClick={() => downloadXlsxReport(reportData)}
-                sx={{ borderRadius: "10px" }}
-              >
-                Download Excel
-              </Button>
-            </Box>
-          
-        )}
+              Download PDF
+            </Button>
+            <Button
+            disabled={downloadIsLoading}
+              variant="outlined"
+              color="primary"
+              onClick={()=>downloadXlsxReport(fetchData)}
+              sx={{ borderRadius: "10px" }}
+            >
+              Download Excel
+            </Button>
+          </Box>
+       
       </Paper>
 
       {orders && orders.length > 0 && (
