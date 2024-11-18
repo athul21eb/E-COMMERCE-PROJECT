@@ -1,252 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import { Box, Typography, Button, Grid, Paper, Divider } from "@mui/material";
-
-// import { useLocation, useNavigate } from "react-router-dom";
-
-// import { format } from "date-fns";
-// import { motion } from "framer-motion";
-// import { toast } from "react-toastify";
-
-// const OrderList = () => {
-//   const [getOrderDetailsById,{isLoading,isUninitialized,isFetching,currentData}] = useLazyGetOrderByIdQuery();
-//   const [cancelItem] = useCancelOrderItemMutation();
-
-//   const location = useLocation();
-//   const navigate = useNavigate();
-//   const queryParams = new URLSearchParams(location.search);
-//   const id = queryParams.get("id");
-
-//   const [order, setOrder] = useState(null);
-//   const [cancellingItemId, setCancellingItemId] = useState(null);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-
-//   const openModal = () => setIsModalOpen(true);
-//   const closeModal = () => setIsModalOpen(false);
-
-//   const fetchData = async () => {
-//     try {
-//       const response = await getOrderDetailsById(id).unwrap();
-//       const { order } = response;
-//       setOrder(order);
-//     } catch (err) {
-//       console.error(err);
-//     }
-//   };
-
-//   const handleCancelItem = async () => {
-//     try {
-//       await cancelItem({ itemId: cancellingItemId, orderId: id }).unwrap();
-//       setCancellingItemId(null);
-//       fetchData();
-//       closeModal();
-//     } catch (err) {
-//       toast.error(err?.data?.message || err?.error);
-//       console.error(err);
-
-//     }
-//   };
-
-//   useEffect(() => {
-//     window.scrollTo({ top: 0, behavior: "smooth" });
-//     fetchData();
-//   }, []);
-
-//   const deliveryDate = new Date(order?.orderDate);
-//   deliveryDate.setDate(deliveryDate.getDate() + 7);
-
-//   ////-------------------------render component------------
-//   if(isLoading||isUninitialized||isFetching){
-//     return <LoadingScreen/>
-//   }
-
-//   if (!order || !order.items || order.items.length === 0) {
-//     return <Typography variant="h1">No items in this order.</Typography>;
-//   }
-
-//   const getStatusColor = (status) => {
-//     switch (status) {
-//       case "Pending":
-//         return "orange";
-//       case "Confirmed":
-//         return "purple";
-//       case "Shipped":
-//         return "blue";
-//       case "Delivered":
-//         return "green";
-//       case "Cancelled":
-//         return "red";
-//       case "Return Requested":
-//         return "teal";
-//       case "Return Accepted":
-//         return "lime";
-//       case "Return Rejected":
-//         return "brown";
-//       case "Failed":
-//         return "gray";
-//       default:
-//         return "black";
-//     }
-//   };
-
-//   return (
-//     <Box padding={2}>
-//       <BackButton className="mb-4 bg-slate-600" />
-
-//       {/* Shipping Address Section */}
-//       <motion.div
-//         initial={{ opacity: 0, y: -20 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         transition={{ duration: 0.5 }}
-//       >
-//         <Paper
-//           elevation={3}
-//           style={{
-//             padding: "16px",
-//             marginBottom: "16px",
-//             borderRadius: "8px",
-//             backgroundColor: "black",
-//             color: "white",
-//           }}
-//         >
-//           <Grid container spacing={2} justifyContent="space-between" alignItems="center">
-//             <Grid item xs={12} sm={3}>
-//               <Typography variant="body2">Ship To</Typography>
-//               <Typography variant="h6">
-//                 {order?.shippingAddress?.firstName} {order?.shippingAddress?.lastName}
-//               </Typography>
-//               <Typography variant="body2">
-//                 {order?.shippingAddress?.city}, {order?.shippingAddress?.state}
-//               </Typography>
-//               <Typography variant="body2">Pincode: {order?.shippingAddress?.pincode}</Typography>
-//             </Grid>
-//             <Grid item xs={12} sm={3}>
-//               <Typography variant="body2">Order Date</Typography>
-//               <Typography variant="h6">
-//                 {format(new Date(order.orderDate), "dd MMM, yyyy")}
-//               </Typography>
-//             </Grid>
-//             <Grid item xs={12} sm={3}>
-//               <Typography variant="body2">Order ID</Typography>
-//               <Typography variant="h6">#{order.orderId}</Typography>
-//             </Grid>
-//             <Grid item xs={12} sm={3}>
-//               <Typography variant="body2">Total</Typography>
-//               <Typography variant="h6">₹{order?.billAmount}</Typography>
-//             </Grid>
-//           </Grid>
-//         </Paper>
-//       </motion.div>
-
-//       {/* Order Items */}
-//       {order?.items.map((item, index) => (
-//         <motion.div
-//           key={index}
-//           initial={{ opacity: 0, y: 20 }}
-//           animate={{ opacity: 1, y: 0 }}
-//           transition={{ duration: 0.3, delay: index * 0.1 }}
-//         >
-//           <Paper
-//             elevation={3}
-//             style={{
-//               padding: "16px",
-//               marginBottom: "16px",
-//               borderRadius: "8px",
-//             }}
-//           >
-//             <Grid container spacing={2} alignItems="center">
-//               <Grid item xs={12} sm={3}>
-//                 <img
-//                   src={item.productId?.thumbnail}
-//                   alt={item.productId?.productName}
-//                   style={{
-//                     width: "150px",
-//                     height: "100px",
-//                     objectFit: "cover",
-//                     borderRadius: "8px",
-//                   }}
-//                 />
-//               </Grid>
-//               <Grid item xs={12} sm={3}>
-//                 <Typography variant="h6">{item.productId?.productName}</Typography>
-//                 <Typography variant="body2">
-//                   Category: {item.productId?.category?.categoryName}
-//                 </Typography>
-//                 <Typography variant="subtitle1">Price: ₹{item.productId?.salePrice}</Typography>
-//                 <Typography variant="body2">Size: {item.size}</Typography>
-//                 <Typography variant="body2">Quantity: {item.quantity}</Typography>
-//               </Grid>
-//               <Grid item xs={12} sm={3}>
-//                 <Typography variant="h6">{item.productId?.productName}</Typography>
-//                 <Typography variant="body2">
-//                   Category: {item.productId?.category?.categoryName}
-//                 </Typography>
-//                 <Typography variant="subtitle1">Price: ₹{item.itemTotalPrice}</Typography>
-//                 <Typography variant="body2">Size: {item.size}</Typography>
-//                 <Typography variant="body2">Quantity: {item.quantity}</Typography>
-//               </Grid>
-//               <Grid item xs={12} sm={3}>
-//                 <Typography
-//                   variant="h6"
-//                   color={getStatusColor(item?.status)}
-//                   style={{ marginBottom: "16px" }}
-//                 >
-//                   Product Status: {item?.status}
-//                 </Typography>
-
-//                 {item?.status === "Confirmed" && (
-//                   <Button
-//                     variant="contained"
-//                     color="error"
-//                     onClick={() => {
-//                       setCancellingItemId(item._id);
-//                       openModal();
-//                     }}
-//                   >
-//                     Cancel Item
-//                   </Button>
-//                 )}
-//                 {item?.status === "Delivered" && (
-//                   <Button variant="contained" color="info">
-//                     Return Item
-//                   </Button>
-//                 )}
-//               </Grid>
-//             </Grid>
-//             <Box display="flex" justifyContent="space-between" alignItems="center" mt={2}>
-//               <Typography variant="body1">
-//                 Delivery on: {format(new Date(deliveryDate), "dd MMM, yyyy")}
-//               </Typography>
-//               <Button variant="text" color="primary">
-//                 Invoice
-//               </Button>
-//             </Box>
-//           </Paper>
-//         </motion.div>
-//       ))}
-
-//       <Modal
-//         isOpen={isModalOpen}
-//         onClose={closeModal}
-//         title="Cancel Item"
-//         footer={
-//           <>
-//             <Button variant="outlined" onClick={closeModal}>
-//               Cancel
-//             </Button>
-//             <Button variant="contained" color="error" onClick={handleCancelItem}>
-//               Confirm
-//             </Button>
-//           </>
-//         }
-//       >
-//         <p>Are you sure you want to cancel this item?</p>
-//       </Modal>
-//     </Box>
-//   );
-// };
-
-// export default OrderList;
-
 import React, { useState, useEffect } from "react";
 import {
   FaShoppingCart,
@@ -282,6 +33,7 @@ import {
 import { toast } from "react-toastify";
 import { useLocation, useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../../utils/helper/formatDate";
+import { downloadOrderDetailsPdf } from "../../../../../utils/helper/pdfDownload";
 
 // const mockOrderData = {
 //   "_id": { "$oid": "671b40dff8698de99e74913f" },
@@ -669,11 +421,15 @@ export default function OrderDetails() {
         </motion.div>
       ))}
 
-      <div className="text-center">
+      <div
+        className="text-center"
+        onClick={() => downloadOrderDetailsPdf(order)}
+      >
         <Button variant="outlined" color="inherit">
           Download Invoice
         </Button>
       </div>
+
       {/* //// Canceling item Modal  */}
       <Modal
         isOpen={isModalOpen}
@@ -707,7 +463,7 @@ export default function OrderDetails() {
 
       <Modal
         isOpen={isReturnModalOpen}
-        onClose={() => isLoadingReturnItem?()=>{} : closeReturnModal()}
+        onClose={() => (isLoadingReturnItem ? () => {} : closeReturnModal())}
         title="Return Item"
         footer={
           <>
@@ -735,7 +491,6 @@ export default function OrderDetails() {
             Select a reason for return
           </InputLabel>
           <Select
-            
             value={reason}
             onChange={(e) => setReason(e.target.value)}
             fullWidth

@@ -4,7 +4,7 @@ import {
   ClearCredentials,
   SetAccessToken,
 } from "../../../slices/auth/authSlice.js";
-import { toast } from "react-toastify";
+
 import { setCart } from "../../../slices/user/cart/cartSlice.js";
 import { setWishList } from "../../../slices/user/wishList/wishListSlice.js";
 

@@ -16,7 +16,7 @@ import RenderPagination from "../../../components/common/Pagination/RenderPagina
 import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable";
 import { useTheme } from "../../../contexts/themeContext";
 import toast from "react-hot-toast";
-import { downloadPdfReport } from "../../../utils/helper/Pdfdownload";
+import { downloadPdfReport } from "../../../utils/helper/pdfDownload";
 import { downloadXlsxReport } from "../../../utils/helper/xlsxDownload";
 
 const AdminSaleReport = () => {
