@@ -2,8 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useLazyGetAllBrandsListQuery } from "../../../../slices/public/PublicApiSlice";
 import { toast } from "react-toastify";
 import LoadingBlurScreen from "../../../common/LoadingScreens/LoadingBlurFullScreen";
+import { useNavigate } from "react-router-dom";
 
 const PopularBrands = () => {
+
+  const navigate = useNavigate();
   const [triggerBrandsList, { isLoading }] = useLazyGetAllBrandsListQuery();
   const [brandDetails, setBrandDetails] = useState([]);
 
@@ -62,7 +65,8 @@ const PopularBrands = () => {
           <div
             key={index}
             className="flex items-center justify-center border border-gray-200 rounded-full shadow-sm p-4 bg-white transition-transform hover:scale-105"
-          >
+         onClick={()=>navigate(`/shop?search=${brand.brandName}`)}
+         >
             <img
               src={brand?.brandPhotoUrl}
               alt={brand?.brandName || `Brand ${index + 1}`}

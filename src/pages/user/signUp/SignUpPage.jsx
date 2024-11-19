@@ -71,6 +71,7 @@ const SignUpPage = () => {
             lastName: "",
             email: "",
             mobile_no: "",
+            referral :"",
             password: "",
             confirmPassword: "",
           }}
@@ -78,7 +79,7 @@ const SignUpPage = () => {
           onSubmit={handleFormSubmit}
         >
           {({ isSubmitting }) => (
-            <Form className="mt-8 space-y-6">
+            <Form className="mt-8 space-y-4">
               {/* Name Fields (First Name and Last Name) */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
@@ -138,6 +139,21 @@ const SignUpPage = () => {
                 />
                 <ErrorMessage
                   name="mobile_no"
+                  component="div"
+                  className="text-red-500 text-sm mt-1"
+                />
+              </div>
+              {/* referral offer  */}
+              <div>
+                <Field
+                  id="referral"
+                  name="referral"
+                  type="text"
+                  placeholder="referral Code (Optional)"
+                  className="w-full px-4 py-2 border border-gray-500 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-gray-500"
+                />
+                <ErrorMessage
+                  name="referral"
                   component="div"
                   className="text-red-500 text-sm mt-1"
                 />

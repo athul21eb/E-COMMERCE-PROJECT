@@ -4,7 +4,7 @@ import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useLazyGetProductDetailsByIdQuery } from "../../../slices/public/PublicApiSlice";
 import LoadingFullScreen from "../../../components/common/LoadingScreens/LoadingFullScreen";
-import { AiOutlineWarning } from 'react-icons/ai';
+import { AiOutlineWarning } from "react-icons/ai";
 import { FaHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import ProductCardList from "../../../components/layout/user/ProductListofCards/ProductCardList";
@@ -17,6 +17,7 @@ import {
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
 } from "../../../slices/user/wishList/wishListApiSlice";
+import { Tooltip } from "@mui/material";
 
 const ProductsDetails = () => {
   const { cartDetails } = useSelector((state) => state.cart);
@@ -26,9 +27,12 @@ const ProductsDetails = () => {
   const queryParams = new URLSearchParams(location.search);
   const id = queryParams.get("id");
 
-  const [addToCart, { isLoading: addToCartLoading ,isError}] = useAddToCartMutation();
-  const [fetchProductDetailsById, {isFetching, isLoading ,isUninitialized,isError:isProductNotFound}] =
-    useLazyGetProductDetailsByIdQuery();
+  const [addToCart, { isLoading: addToCartLoading, isError }] =
+    useAddToCartMutation();
+  const [
+    fetchProductDetailsById,
+    { isFetching, isLoading, isUninitialized, isError: isProductNotFound },
+  ] = useLazyGetProductDetailsByIdQuery();
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [mainImage, setMainImage] = useState("");
@@ -45,12 +49,9 @@ const ProductsDetails = () => {
     setInfoMessage(null);
   };
 
-
-  
-
-    const handleGoBack = () => {
-        navigate(-1); // Go back to the previous page
-    };
+  const handleGoBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
   const fetchProductDetails = async () => {
     try {
       const response = await fetchProductDetailsById({ id }).unwrap();
@@ -59,20 +60,15 @@ const ProductsDetails = () => {
         setMainImage(response.product?.thumbnail);
         setRelatedProducts(response.relatedProducts);
 
-      
-
         // Set the initial main image
       }
     } catch (err) {
-      
       console.error(err);
     }
   };
 
   useEffect(() => {
     fetchProductDetails();
-
-  
 
     setSelectedSize(null);
     setStock(null);
@@ -174,29 +170,29 @@ const ProductsDetails = () => {
   }, [wishListDetails, toggleWishlist, id]);
 
   ////---------------------------component--------------------------------
-  if (isLoading||(isUninitialized)||isFetching) {
+  if (isLoading || isUninitialized || isFetching) {
     return <LoadingFullScreen />;
   }
-   
 
   // If no product found, handle that case
-  if (isError&&isProductNotFound) {
+  if (isError && isProductNotFound) {
     return (
       <div className="flex flex-col justify-center items-center h-screen text-red-500 text-center">
-            <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
-            <p className="text-lg mb-4">We couldn't find the product you were looking for.</p>
-              {/* React Icon */}
-              <AiOutlineWarning className="w-16 h-16 mb-4 text-red-500" />
-            <button 
-                onClick={handleGoBack} 
-                className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 ease-in-out"
-            >
-                Go Back
-            </button>
-        </div>
+        <h1 className="text-3xl font-bold mb-4">Product Not Found</h1>
+        <p className="text-lg mb-4">
+          We couldn't find the product you were looking for.
+        </p>
+        {/* React Icon */}
+        <AiOutlineWarning className="w-16 h-16 mb-4 text-red-500" />
+        <button
+          onClick={handleGoBack}
+          className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-200 ease-in-out"
+        >
+          Go Back
+        </button>
+      </div>
     );
   }
-
 
   return (
     <>
@@ -225,12 +221,13 @@ const ProductsDetails = () => {
             className="w-full md:w-3/6 flex justify-center items-center mt-6 md:mt-0"
           >
             {!mainImageZoomOpen ? (
-              <img
-                src={mainImage}
-                alt="Main Product"
-                className="w-full h-[500px] object-contain rounded-lg"
-                title="Double click to enable Zoom"
-              />
+              <Tooltip title="Double click to enable Zoom"  >
+                <img
+                  src={mainImage}
+                  alt="Main Product"
+                  className="w-full h-[500px] object-contain rounded-lg"
+                />
+              </Tooltip>
             ) : (
               <TransformWrapper>
                 <TransformComponent>
@@ -259,38 +256,37 @@ const ProductsDetails = () => {
               <p className="text-gray-500 text-lg">5k Reviews</p>
             </div>
 
-          {/* Pricing Section */}
-<div className="my-6">
-  <div className="flex flex-col  justify-center md:justify-start items-center space-y-4 md:space-y-0 ">
-    
-    {/* Display Offer Information if offer is active */}
-    {product?.offer && new Date(product.offer?.endDate) >= Date.now() &&new Date(product.offer?.startDate) <= Date.now() ? (
-      <>
-        {/* Offer Price */}
-        <div className="text-3xl font-bold text-gray-800">
-          ₹{product.offerPrice}
-        </div>
-        
-        {/* Sale Price (Strikethrough) and Discount Percentage */}
-        <div className="flex items-center space-x-2">
-          <span className="text-xl font-medium text-red-500 line-through">
-            (₹{product?.salePrice})
-          </span>
-          <span className="text-lg font-bold text-green-600">
-            {product.offer?.discountPercentage}% OFF
-          </span>
-        </div>
-      </>
-    ) : (
-      /* If no offer, display only Sale Price */
-      <div className="text-2xl font-bold text-gray-800">
-        ₹{product?.salePrice}
-      </div>
-    )}
-  </div>
-</div>
+            {/* Pricing Section */}
+            <div className="my-6">
+              <div className="flex flex-col  justify-center md:justify-start items-center space-y-4 md:space-y-0 ">
+                {/* Display Offer Information if offer is active */}
+                {product?.offer &&
+                new Date(product.offer?.endDate) >= Date.now() &&
+                new Date(product.offer?.startDate) <= Date.now() ? (
+                  <>
+                    {/* Offer Price */}
+                    <div className="text-3xl font-bold text-gray-800">
+                      ₹{product.offerPrice}
+                    </div>
 
-
+                    {/* Sale Price (Strikethrough) and Discount Percentage */}
+                    <div className="flex items-center space-x-2">
+                      <span className="text-xl font-medium text-red-500 line-through">
+                        (₹{product?.salePrice})
+                      </span>
+                      <span className="text-lg font-bold text-green-600">
+                        {product.offer?.discountPercentage}% OFF
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  /* If no offer, display only Sale Price */
+                  <div className="text-2xl font-bold text-gray-800">
+                    ₹{product?.salePrice}
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Size Selection */}
             <div className="text-center">

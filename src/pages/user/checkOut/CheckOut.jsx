@@ -54,16 +54,7 @@ const CheckoutPage = () => {
     refetchAddress();
 
   },[])
-  // const deliveryDate = useMemo(() => {
-  //   const currentDate = new Date();
-  //   currentDate.setDate(currentDate.getDate() + 7);
-  //   return currentDate.toLocaleDateString("en-US", {
-  //     weekday: "long",
-  //     year: "numeric",
-  //     month: "long",
-  //     day: "numeric",
-  //   });
-  // }, []);
+ 
 
   const summary = useMemo(() => {
     if (!cartDetails?.items?.length) {

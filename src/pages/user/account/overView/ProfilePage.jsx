@@ -9,8 +9,10 @@ import {
   Grid,
   Typography,
   IconButton,
+  Tooltip,
 } from "@mui/material";
 import { FaEdit } from "react-icons/fa";
+import { FaRegCopy } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import RoundedButton from "../../../../components/common/ReusableButton/Button";
@@ -18,7 +20,7 @@ import LoadingButton from "../../../../components/common/LoadingButtons/LoadingB
 import { useUpdateUserDetailsMutation } from "../../../../slices/user/profile/address/addressApiSlice";
 import { toast } from "react-toastify";
 import { uploadImage } from "../../../../utils/cloundinary/cloudinary";
-import {userProfileValidation} from "../../../../utils/validation/userProfileValidation";
+import { userProfileValidation } from "../../../../utils/validation/userProfileValidation";
 
 const OverviewForm = () => {
   const [updateUserDetails, { isLoading }] = useUpdateUserDetailsMutation();
@@ -50,19 +52,18 @@ const OverviewForm = () => {
 
   const formik = useFormik({
     enableReinitialize: true,
-    initialValues: initialValues||{
-      firstName:  "",
+    initialValues: initialValues || {
+      firstName: "",
       lastName: "",
-      dob:  "",
-      email:"",
+      dob: "",
+      email: "",
       mobile: "",
       newPassword: "",
       confirmPassword: "",
     },
     validationSchema: userProfileValidation,
 
-    onSubmit: async (values, { resetForm ,setFieldValue}) => {
-     
+    onSubmit: async (values, { resetForm, setFieldValue }) => {
       try {
         if (!avatar) {
           toast.error("please select a avatar");
@@ -78,12 +79,11 @@ const OverviewForm = () => {
           ...values,
           photo: uploadedImageUrL,
         }).unwrap();
-        
-        setFieldValue('newPassword','');
-        setFieldValue("confirmPassword",'');
+
+        setFieldValue("newPassword", "");
+        setFieldValue("confirmPassword", "");
         toast.success(response.message);
       } catch (err) {
-        // Display error message in case of failure
         toast.error(err?.data?.message || err?.error);
         console.error(err);
       } finally {
@@ -91,11 +91,11 @@ const OverviewForm = () => {
       }
     },
   });
+
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
 
     if (file) {
-      // Optional: Validate file type (e.g., only accept image files)
       if (!file.type.startsWith("image/")) {
         toast.error("Please upload a valid image file");
         return;
@@ -105,20 +105,25 @@ const OverviewForm = () => {
       reader.onload = () => {
         setAvatar(reader.result); // Set the avatar state with the image data URL
       };
-      reader.readAsDataURL(file); // Convert the image file to a data URL
+      reader.readAsDataURL(file);
     }
   };
 
+  const handleReferralCopy = () => {
+    navigator.clipboard.writeText(user?.referral);
+    toast.success("Referral code copied to clipboard!");
+  };
+
   return (
-    <div className="mx-auto min-w-fit ">
+    <div className="mx-auto min-w-fit bg-white rounded-md p-4">
       <form onSubmit={formik.handleSubmit}>
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             justifyContent: "space-around",
-            margin: "0 auto",
-            mb: 3,
+            marginBottom: 3,
+            flexDirection: { xs: "column", sm: "row" },
           }}
         >
           <Box position="relative" sx={{ mr: 2 }}>
@@ -143,8 +148,16 @@ const OverviewForm = () => {
           </Box>
           <Box>
             <Typography variant="h5">{`${user?.firstName} ${user?.lastName}`}</Typography>
-
             <Typography variant="subtitle1">{`${user?.email}`}</Typography>
+            <Typography variant="subtitle2">
+              {`Referral Code :${user?.referral}`}
+              <Tooltip title="Copy the referral code (you can earn 500 INR for each referral)">
+ 
+                <IconButton onClick={handleReferralCopy} sx={{ ml: 1 }}>
+                  <FaRegCopy />
+                </IconButton>
+              </Tooltip>
+            </Typography>
           </Box>
         </Box>
 
@@ -155,7 +168,7 @@ const OverviewForm = () => {
               id="firstName"
               name="firstName"
               label="First Name"
-              value={formik.values.firstName??''}
+              value={formik.values.firstName ?? ""}
               onChange={formik.handleChange}
               error={
                 formik.touched.firstName && Boolean(formik.errors.firstName)
@@ -170,7 +183,7 @@ const OverviewForm = () => {
               id="lastName"
               name="lastName"
               label="Last Name"
-              value={formik.values.lastName??''}
+              value={formik.values.lastName ?? ""}
               onChange={formik.handleChange}
               error={formik.touched.lastName && Boolean(formik.errors.lastName)}
               helperText={formik.touched.lastName && formik.errors.lastName}
@@ -185,7 +198,7 @@ const OverviewForm = () => {
               name="dob"
               label="Date of Birth"
               type="date"
-              value={formik.values.dob??''}
+              value={formik.values.dob ?? ""}
               onChange={formik.handleChange}
               InputLabelProps={{ shrink: true }}
               error={formik.touched.dob && Boolean(formik.errors.dob)}
@@ -199,7 +212,7 @@ const OverviewForm = () => {
               id="mobile"
               name="mobile"
               label="Mobile"
-              value={formik.values.mobile??''}
+              value={formik.values.mobile ?? ""}
               onChange={formik.handleChange}
               error={formik.touched.mobile && Boolean(formik.errors.mobile)}
               helperText={formik.touched.mobile && formik.errors.mobile}
@@ -213,7 +226,7 @@ const OverviewForm = () => {
               name="newPassword"
               label="New Password"
               type={showPassword ? "text" : "password"}
-              value={formik.values.newPassword??''}
+              value={formik.values.newPassword ?? ""}
               onChange={formik.handleChange}
               error={
                 formik.touched.newPassword && Boolean(formik.errors.newPassword)
@@ -228,8 +241,7 @@ const OverviewForm = () => {
               onClick={togglePasswordVisibility}
               className="absolute inset-y-0 right-3 flex items-center"
             >
-              {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}{" "}
-              {/* Toggle eye icon */}
+              {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
             </button>
           </Grid>
           <Grid item xs={12} sm={6} sx={{ position: "relative" }}>
@@ -239,7 +251,7 @@ const OverviewForm = () => {
               name="confirmPassword"
               label="Confirm Password"
               type={showPassword ? "text" : "password"}
-              value={formik.values.confirmPassword??''}
+              value={formik.values.confirmPassword ?? ""}
               onChange={formik.handleChange}
               error={
                 formik.touched.confirmPassword &&
@@ -255,8 +267,7 @@ const OverviewForm = () => {
               onClick={togglePasswordVisibility}
               className="absolute inset-y-0 right-3 flex items-center"
             >
-              {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}{" "}
-              {/* Toggle eye icon */}
+              {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
             </button>
           </Grid>
         </Grid>
@@ -264,15 +275,16 @@ const OverviewForm = () => {
         <Box sx={{ mt: 3 }}>
           {apiLoading ? (
             <LoadingButton
-              className="w-full  mt-4 bg-blue-600 hover:bg-blue-950 text-white"
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-950 text-white"
               loadingText="Please wait..."
             />
           ) : (
             <RoundedButton
               type="submit"
-              className="w-full  mt-4 bg-blue-600 hover:bg-blue-900 text-white py-2 rounded"
+              className="w-full mt-4 bg-blue-600 hover:bg-blue-900 text-white py-2 rounded-full"
+              label="Update Details"
             >
-              Update
+              Update{" "}
             </RoundedButton>
           )}
         </Box>
