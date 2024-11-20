@@ -9,7 +9,7 @@ const PaymentMethod = ({
   billAmount,
   walletBalance,
 }) => {
-  const isWalletAvailable = walletBalance !== undefined && walletBalance > 0;
+  const isWalletAvailable = walletBalance !== undefined ;
   const isWalletSufficient = walletBalance >= billAmount;
 
   return (

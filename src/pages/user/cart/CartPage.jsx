@@ -23,6 +23,8 @@ import {
   useGetCouponsQuery,
   useRemoveCouponMutation,
 } from "../../../slices/user/coupons/couponsApiSlice";
+import EmptyCartAnimation from "../../../components/common/animations/EmptyCartAnimations";
+import { ShoppingCartIcon ,ShoppingBagIcon } from "lucide-react";
 
 const Cart = () => {
   const { cartDetails } = useSelector((state) => state.cart);
@@ -153,16 +155,16 @@ const Cart = () => {
 
   return !cartDetails || cartDetails?.items.length === 0 ? (
     <div className="mt-2 flex flex-col items-center justify-center min-h-screen">
-      <LiaShoppingBagSolid size={200} className="text-gray-400 mb-4" />
+      <EmptyCartAnimation icon={ <ShoppingBagIcon className="w-28 h-28 sm:w-32 sm:h-32 text-customColorTertiarypop" />}/>
       <h2 className="text-2xl font-semibold text-gray-700">
         Your Bag is Empty
       </h2>
-      <p className="text-gray-500 mt-2">
+      <p className="text-gray-500 text-center mt-2">
         Once you add something to your bag - it will appear here.
       </p>
       <Link to="/shop">
-        <button className="mt-6 px-6 py-2 bg-blue-500 text-white text-lg rounded-lg hover:bg-blue-600">
-          Get Started
+        <button className="mt-6 px-6 py-2 bg-blue-500 bg-opacity-80 text-white text-lg rounded-lg hover:bg-blue-600">
+          Shop Now 
         </button>
       </Link>
     </div>
@@ -383,7 +385,7 @@ export const CartSummary = ({
 
       {cart && (
         <button
-          onClick={() => navigate("/checkOut")}
+          onClick={() => navigate("/checkOut",{state:{from:"/cart"}})}
           className="w-full bg-green-500 text-white font-semibold py-2 rounded-lg mt-4"
         >
           Checkout

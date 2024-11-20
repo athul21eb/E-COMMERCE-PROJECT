@@ -75,7 +75,7 @@ const ManageAddresses = ({ checkout = true }) => {
       {checkout && (
         <button
           className="w-fit bg-blue-500 text-white p-3 m-3 rounded-lg flex items-center"
-          onClick={() => navigate("/checkOut")}
+          onClick={() => navigate("/checkOut",{state:{from:"/addresses"}})}
         >
           <AiOutlineArrowLeft className="mr-2" />
           Back

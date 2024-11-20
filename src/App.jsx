@@ -8,6 +8,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect } from "react";
 import { ThemeProvider } from "./contexts/themeContext";
+import ErrorBoundary from "./components/common/errorBoundary/ErrorBoundary";
 
 
 function App() {
@@ -50,11 +51,12 @@ function App() {
   }}
 />
 
-
+<ErrorBoundary>
     <ToastContainer theme="dark"/>
     <ThemeProvider>
     <Outlet />
     </ThemeProvider>
+    </ErrorBoundary>
 
 </>
     

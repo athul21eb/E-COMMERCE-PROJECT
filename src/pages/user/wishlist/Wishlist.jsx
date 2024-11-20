@@ -8,6 +8,8 @@ import {
 import LoadingFullScreen from "../../../components/common/LoadingScreens/LoadingFullScreen";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import EmptyAnimation from "../../../components/common/animations/EmptyCartAnimations";
+import { Heart } from "lucide-react";
 
 // Wishlist Component
 const Wishlist = () => {
@@ -36,13 +38,13 @@ const Wishlist = () => {
 
   return wishlistItems.length < 1 ? (
     <div className="mt-2 flex flex-col items-center justify-center h-screen">
-      <FaHeart size={100} className="text-red-400 mb-4" />
+      <EmptyAnimation icon={  <Heart className="w-28 h-28 sm:w-32 sm:h-32 text-customColorTertiarypop fill-customColorTertiaryDark" />}/>
       <h2 className="text-2xl font-semibold text-gray-700">
         Your Wishlist is Empty
       </h2>
-      <p className="text-gray-500 mt-2">
+      <p className="text-gray-500 mt-2 px-2 text-center">
         Once you add something to your wishlist - it will appear here. Ready to
-        get started? Get started
+        get started? 
       </p>
       <Link to="/">
         <button className="mt-6 px-6 py-2 bg-blue-500 text-white text-lg rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75">

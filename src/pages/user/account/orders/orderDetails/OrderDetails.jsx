@@ -421,14 +421,14 @@ export default function OrderDetails() {
         </motion.div>
       ))}
 
-      <div
+      {order?.orderStatus=="Confirmed"&&<div
         className="text-center"
         onClick={() => downloadOrderDetailsPdf(order)}
       >
         <Button variant="outlined" color="inherit">
           Download Invoice
         </Button>
-      </div>
+      </div>}
 
       {/* //// Canceling item Modal  */}
       <Modal

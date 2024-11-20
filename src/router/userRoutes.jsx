@@ -12,7 +12,7 @@ import UserProtectedRoutes from "../protectRoutes/user/userProtectedRoute/UserPr
 import UserProfileWrapper from "../components/wrappers/userProfileWrapper/userProfilieWrapper.jsx";
 import Cart from "../pages/user/cart/CartPage.jsx";
 import CheckoutPage from "../pages/user/checkOut/CheckOut.jsx";
-import OrderCompletion from "../pages/user/orderSuccesfull/OrderCompletion.jsx";
+
 import Wishlist from "../pages/user/wishlist/Wishlist.jsx";
 
 // User Account Pages
@@ -79,7 +79,7 @@ export const UserRoutes = (
               <Route path="edit" element={<EditAddress />} />
             </Route>
           </Route>
-        <Route path="order-placed" element={<OrderCompletion />} />
+       
       </Route>
     </Route>
   </>

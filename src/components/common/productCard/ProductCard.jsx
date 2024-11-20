@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaStar, FaHeart } from "react-icons/fa";
-import { BiRupee } from "react-icons/bi";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import PropTypes from "prop-types";
 import {
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
@@ -36,80 +36,73 @@ const ProductCard = ({ product }) => {
         await AddToWishlistApiCall({ productId }).unwrap();
       }
     } catch (err) {
-      // Display error message in case of failure
-
       console.error(err);
     }
   };
+
   return (
     <div
-      className="  rounded-lg hover: hover:border-black hover:border transition-transform transform hover:scale-105 bg-white  cursor-pointer w:1/2 md:w-56" // Reduced the width
+      className="relative rounded-lg hover:border-black hover:border transition-transform transform md:hover:scale-105 bg-white cursor-pointer w:1/2 md:w-56"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={() => navigate(`/product-details?id=${product._id}`)}
     >
       {/* Image with hover effect */}
-      <div className="relative rounded-lg p-2">
-        <img
-          src={isHovered ? product.gallery[0] : product.thumbnail}
-          alt={product.productName}
-          style={{
-            height: "calc(100% * 0.8)",
-            borderTopLeftRadius: "0.5rem",
-            borderTopRightRadius: "0.5rem",
-          }}
-          className="w-full object-contain transition-opacity duration-500"
-        />
-      </div>
+      <div className="relative w-full p-2 group">
+  <div className="relative aspect-[4/5] w-full rounded-t-md overflow-hidden">
+    {/* Default Image */}
+    <img
+      src={product.thumbnail}
+      alt={product.productName}
+      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-100 group-hover:opacity-0"
+    />
+
+    {/* Hover Image */}
+    <img
+      src={product.gallery[0]}
+      alt={product.productName}
+      className="absolute inset-0 w-full h-full object-cover transition-opacity duration-300 opacity-0 group-hover:opacity-100"
+    />
+  </div>
+</div>
+
+
 
       {/* Rating and Reviews */}
       <div className="flex items-center justify-center mt-1 text-xs">
-        {" "}
-        {/* Reduced margin and font size */}
         <FaStar className="text-yellow-400 mr-1" />
         <span className="font-semibold">4.4</span>
-        <span className="text-gray-500 ml-1">| 1.3k</span>{" "}
-        {/* Reduced margin */}
+        <span className="text-gray-500 ml-1">| 1.3k</span>
       </div>
 
       {/* Product Details */}
       <div className="m-1 text-center">
-        {" "}
-        {/* Reduced margin */}
         <h3 className="text-sm font-semibold truncate">
           {product.productName}
-        </h3>{" "}
-        {/* Reduced font size */}
+        </h3>
         <div className="text-gray-700 text-sm flex flex-col items-center justify-center">
-  {/* Display Rupee icon */}
- 
-
-  {/* Check if there's an active offer with a valid end date */}
-  {product.offer && new Date(product.offer?.endDate) >= Date.now() &&new Date(product.offer?.startDate) <= Date.now() ? (
-    <>
-      {/* First row: Offer Price (larger and standalone) */}
-      <div className="text-xl font-bold text-gray-800">
-        ₹{product.offerPrice}
-      </div>
-      
-      {/* Second row: Sale Price (strike-through) and Discount Percentage */}
-      <div className="flex items-center space-x-2">
-        <span className="text-base text-red-500 font-medium line-through">
-          (₹{product.salePrice})
-        </span>
-        <span className="text-sm text-green-600 font-bold">
-          {product.offer?.discountPercentage}% OFF
-        </span>
-      </div>
-    </>
-  ) : (
-    /* When no offer or offer expired: Only Sale Price displayed */
-    <div className="text-xl font-bold text-gray-800">
-      ₹{product.salePrice}
-    </div>
-  )}
-</div>
-
+          {product.offer &&
+          new Date(product.offer?.endDate) >= Date.now() &&
+          new Date(product.offer?.startDate) <= Date.now() ? (
+            <>
+              <div className="text-xl font-bold text-gray-800">
+                ₹{product.offerPrice}
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-base text-red-500 font-medium line-through">
+                  (₹{product.salePrice})
+                </span>
+                <span className="text-sm text-green-600 font-bold">
+                  {product.offer?.discountPercentage}% OFF
+                </span>
+              </div>
+            </>
+          ) : (
+            <div className="text-xl font-bold text-gray-800">
+              ₹{product.salePrice}
+            </div>
+          )}
+        </div>
 
         {/* Favorite Icon */}
         <div
@@ -117,12 +110,10 @@ const ProductCard = ({ product }) => {
             inWishlist ? "text-red-500" : "text-gray-600"
           }`}
         >
-          {" "}
-          {/* Adjusted position */}
           <FaHeart
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the card click
-              toggleWishlist(product._id); // Call the delete handler
+              toggleWishlist(product._id);
             }}
           />
         </div>
@@ -131,10 +122,8 @@ const ProductCard = ({ product }) => {
   );
 };
 
-import PropTypes from 'prop-types';
-
 ProductCard.propTypes = {
-  product: PropTypes.any.isRequired, // Product object prop
+  product: PropTypes.object.isRequired, // Product object prop
 };
 
 export default ProductCard;

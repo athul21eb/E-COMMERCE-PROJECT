@@ -150,9 +150,9 @@ const OverviewForm = () => {
             <Typography variant="h5">{`${user?.firstName} ${user?.lastName}`}</Typography>
             <Typography variant="subtitle1">{`${user?.email}`}</Typography>
             <Typography variant="subtitle2">
-              {`Referral Code :${user?.referral}`}
+              Referral Code :
+              <span className="font-bold">{` ${user?.referral}`}</span>
               <Tooltip title="Copy the referral code (you can earn 500 INR for each referral)">
- 
                 <IconButton onClick={handleReferralCopy} sx={{ ml: 1 }}>
                   <FaRegCopy />
                 </IconButton>

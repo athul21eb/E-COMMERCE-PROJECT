@@ -42,6 +42,13 @@ const userOrderApiSlice = userApiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    retryPayment: builder.mutation({
+      query: ({orderId,retryMethod,shippingAddress}) => ({
+        url: `${orderUrl}/retry-payment/${orderId}`,
+        method: "PUT",
+        body: {retryMethod,shippingAddress},
+      }),
+    }),
   }),
 });
 
@@ -52,4 +59,5 @@ export const {
   useCancelOrderItemMutation,
   useVerifyPaymentMutation,
   useReturnOrderItemMutation,
+  useRetryPaymentMutation
 } = userOrderApiSlice;

@@ -1,73 +1,93 @@
-import React from 'react';
-import { FaFacebookF, FaInstagram, FaWhatsapp, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
+'use client'
 
-const Footer = () => {
+import React from 'react'
+import { motion } from 'framer-motion'
+import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn } from 'react-icons/fa'
+import { FaCcVisa } from "react-icons/fa";
+import { SiRazorpay } from "react-icons/si";
+import { FaPaypal } from "react-icons/fa";
+import { FaCcMastercard } from "react-icons/fa";
+
+const iconVariants = {
+  hover: { scale: 1.2, rotate: 5 }
+}
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+}
+
+const FooterSection = ({ title, items }) => (
+  <motion.div
+    initial="hidden"
+    animate="visible"
+    variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+  >
+    <h3 className="font-semibold mb-4 text-lg">{title}</h3>
+    <ul className="space-y-2">
+      {items.map((item, index) => (
+        <motion.li
+          key={index}
+          variants={listItemVariants}
+          className="hover:text-gray-300 cursor-pointer"
+        >
+          {item}
+        </motion.li>
+      ))}
+    </ul>
+  </motion.div>
+)
+
+export default function Footer() {
   return (
-    <footer className="bg-black text-white py-8">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
-        {/* Contact */}
+    <footer className="relative bg-gray-900 text-white mt-10 py-12 px-4">
+      <div className="container text-center mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <FooterSection
+          title="Contact"
+          items={['Home', 'Contact us', 'About us', 'Store locator']}
+        />
+        <FooterSection
+          title="Customer Service"
+          items={['FAQ', 'Shipping and Returns', 'Order Tracking', 'Size guide']}
+        />
+        <FooterSection
+          title="Information"
+          items={['Privacy Policy', 'Terms & Conditions', 'Return Policy', 'Payment Methods']}
+        />
         <div>
-          <h3 className="font-semibold mb-4">Contact</h3>
-          <ul>
-            <li>Home</li>
-            <li>Contact us</li>
-            <li>About us</li>
-          </ul>
-        </div>
-
-        {/* Customer Service */}
-        <div>
-          <h3 className="font-semibold mb-4">Customer Service</h3>
-          <ul>
-            <li>FAQ</li>
-            <li>Shipping and Returns</li>
-            <li>Order Tracking</li>
-            <li>Size guide</li>
-          </ul>
-        </div>
-
-        {/* Information */}
-        <div>
-          <h3 className="font-semibold mb-4">Information</h3>
-          <ul>
-            <li>Privacy Policy</li>
-            <li>Terms & Conditions</li>
-            <li>Return Policy</li>
-            <li>Payment Methods</li>
-          </ul>
-        </div>
-
-        {/* Newsletter */}
-        <div>
-          <h3 className="font-semibold mb-4">Newsletter</h3>
-          <div className="flex items-center">
-            <input
-              type="email"
-              placeholder="example@gmail.com"
-              className="p-2 rounded-l-md w-full"
-            />
-            <button className="p-2 bg-blue-500 rounded-r-md hover:bg-blue-600">Subscribe</button>
+          <h3 className="font-semibold mb-4 text-lg">Follow Us</h3>
+          <div className="flex justify-center space-x-4">
+            {[FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn].map((Icon, index) => (
+              <motion.div key={index} whileHover="hover" variants={iconVariants}>
+                <Icon className="text-2xl cursor-pointer" />
+              </motion.div>
+            ))}
           </div>
-          <div className="flex space-x-4 mt-4">
-            <FaWhatsapp className="text-2xl" />
-            <FaInstagram className="text-2xl" />
-            <FaFacebookF className="text-2xl" />
-            <FaTwitter className="text-2xl" />
-            <FaLinkedinIn className="text-2xl" />
+          <h3 className="font-semibold my-4 text-lg">Digital Partners</h3>
+          <div className="flex justify-center space-x-4">
+          {[FaCcVisa, SiRazorpay, FaPaypal, FaCcMastercard].map((Icon, index) => (
+              <motion.div key={index} whileHover="hover" variants={iconVariants}>
+                <Icon className="text-2xl cursor-pointer " />
+              </motion.div>
+            ))}
           </div>
         </div>
       </div>
-      <div className="container mx-auto text-center mt-8 border-t border-gray-700 pt-4">
-        <div className="flex justify-center space-x-4">
-          <img src="/visa.svg" alt="Visa" className="size-12" />
-          <img src="/paypal.svg" alt="PayPal" className="w-24" />
-          <img src="/mastercard.svg" alt="MasterCard" className="size-12" />
-          <img src="/razorpay.svg" alt="RazorPay" className="w-24" />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5 }}
+        className="container mx-auto text-center mt-12 border-t border-gray-700 pt-8"
+      >
+        <div className="flex justify-center mb-4">
+          <img
+            src="/logo_white.png"
+            alt="Logo"
+            className="h-16 w-auto"
+          />
         </div>
-        <p className="mt-4">© 2024 fire.com</p>
-      </div>
+        <p className="text-sm">© {new Date().getFullYear()} FootballShoeStore.com - All rights reserved</p>
+      </motion.div>
     </footer>
-  );
-};
-
-export default Footer;
+  )
+}

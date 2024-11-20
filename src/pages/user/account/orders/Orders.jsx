@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { format } from "date-fns";
-import { FaChevronRight, FaShoppingBag } from "react-icons/fa";
+import { FaChevronRight, FaShoppingBasket } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useLazyGetOrdersForUserQuery } from "../../../../slices/user/orders/orderApiSlice";
 import RenderPagination from "../../../../components/common/Pagination/RenderPagination";
 import LoadingScreen from "../../../../components/common/LoadingScreens/LoadingScreen";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
+import EmptyAnimation from "../../../../components/common/animations/EmptyCartAnimations";
+import { ShoppingBag, ShoppingBagIcon } from "lucide-react";
 
 
 const CoolOrderRows = () => {
@@ -35,7 +37,7 @@ const CoolOrderRows = () => {
       console.error(err);
     }
   };
-
+console.log(orders);
   useEffect(() => {
     fetchOrdersData();
   }, [currentPage]);
@@ -91,7 +93,7 @@ const CoolOrderRows = () => {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <FaShoppingBag className="w-16 h-16 sm:w-24 sm:h-24 mx-auto text-gray-400 mb-4" />
+              <EmptyAnimation icon={<ShoppingBagIcon className="w-28 h-28 sm:w-32 sm:h-32 text-customColorTertiarypop fill-customColorTertiaryDark" />}/>
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-700">
                 No Orders Yet
               </h2>
@@ -145,7 +147,7 @@ const CoolOrderRows = () => {
       <Button
         onClick={(e) => {
           e.stopPropagation();
-          toast.warning("Feature coming soon");
+          navigate("/checkout",{state:{from:"/account/orders",RetryPaymentOrder:order}});
         }}
         color="error"
         className="text-xs sm:text-sm px-3 py-1 rounded-lg"
