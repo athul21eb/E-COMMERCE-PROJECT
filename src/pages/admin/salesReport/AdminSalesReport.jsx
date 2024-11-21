@@ -195,7 +195,7 @@ const AdminSaleReport = () => {
           padding: "1.5rem",
           borderRadius: "8px",
           boxShadow: `0 4px 12px rgba(0, 0, 0, 0.1)`,
-          backgroundColor: themeColors.surface,
+          backgroundColor: themeColors.background,
           display: "flex",
           flexDirection: "column",
           gap: "1.5rem",

@@ -261,7 +261,7 @@ const AdminCategory = () => {
         >
           {({ errors, touched }) => (
              <Form
-             className={`p-6 rounded shadow-md space-y-2 ${theme === 'light'?"bg-white":"bg-[#1e1e2f]"}`}
+             className={`p-6 rounded shadow-md space-y-2 ${theme === 'light'?"bg-white":`bg-gray-800`}`}
              sx={{
                borderRadius: '8px', // Added styling for rounded corners
                boxShadow: 3, // Example shadow, you can adjust as needed

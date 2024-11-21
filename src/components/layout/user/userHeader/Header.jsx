@@ -41,7 +41,8 @@ const Header = () => {
   useEffect(() => {
     // Refetch the cart when the location changes to '/cart' or '/checkout'
     if (location.pathname === "/cart" || location.pathname === "/checkout") {
-      fetchCart(); // Call fetchCart again to refetch the cart
+      fetchCart(); 
+      fetchWishlist();// Call fetchCart again to refetch the cart
     }
   }, [location.pathname]);
 

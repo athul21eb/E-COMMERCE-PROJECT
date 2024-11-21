@@ -54,7 +54,7 @@ const AdminLayout = () => {
   };
 
   return (
-    <div className="flex my-auto h-screen" style={{ backgroundColor: themeStyles.background }}>
+    <div className="flex my-auto min-h-screen" style={{ backgroundColor: themeStyles.background }}>
       {/* Sidebar - shown only on md+ screens */}
       <aside 
         className="hidden md:flex w-16 md:w-40 flex-col items-center justify-between"

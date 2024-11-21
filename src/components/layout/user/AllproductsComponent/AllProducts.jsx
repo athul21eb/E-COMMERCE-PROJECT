@@ -10,7 +10,23 @@ import { useGetAllBrandsListQuery } from "../../../../slices/public/PublicApiSli
 import LoadingFullScreen from "../../../common/LoadingScreens/LoadingFullScreen";
 import { useNavigate } from "react-router-dom";
 import RenderPagination from "../../../common/Pagination/RenderPagination";
+import { motion } from "framer-motion";
 
+// Animation Variants
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2, // Stagger effect between children
+    },
+  },
+};
+
+const childVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
 
 const AllProductsListComponent = ({
   ComponentProducts = null,
@@ -214,12 +230,19 @@ const AllProductsListComponent = ({
         {/* Product Grid */}
 
         {ComponentProducts && ComponentProducts.length ? (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-y-4 p-4">
-            {ComponentProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
-        ) : searchQuery ? (
+  <motion.div
+    className="grid grid-cols-2 md:grid-cols-4 gap-y-4 p-4"
+    variants={containerVariants}
+    initial="hidden"
+    animate="visible"
+  >
+    {ComponentProducts.map((product) => (
+      <motion.div key={product._id} variants={childVariants}>
+        <ProductCard product={product} />
+      </motion.div>
+    ))}
+  </motion.div>
+): searchQuery ? (
           <div className="flex flex-col items-center justify-center h-96 text-center">
             <div className="text-2xl font-semibold text-gray-700 mb-4">
               You searched for '{searchQuery}'

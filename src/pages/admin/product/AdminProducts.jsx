@@ -25,6 +25,8 @@ import {
   useApplyOfferToProductMutation,
 } from "../../../slices/admin/offers/adminOfferSlice";
 import BlockModal from "../../../components/common/BlockModals/BlockModal";
+import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable";
+import { useTheme } from "../../../contexts/themeContext";
 
 const ProductsTable = () => {
   //// api calls
@@ -32,15 +34,19 @@ const ProductsTable = () => {
   const [triggerProductList, { isLoading: productLoading }] =
     useLazyGetProductListQuery();
 
-  const { data: { offers = [] } = {}, refetch } =
-    useGetOffersByTypeQuery("product");
+  const {
+    data: { offers = [] } = {},
+    isLoading,
+    isError,
+    refetch,
+  } = useGetOffersByTypeQuery("product");
 
   const [apiCallLoading, setApiCallLoading] = useState(false);
 
   const [productToggleIsActive] = useToggleProductIsActiveMutation();
-
+  const { themeStyles,theme } = useTheme();
   //// hooks
-
+  
   const ProductList = useSelector((state) => state.products.productList);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,7 +69,6 @@ const ProductsTable = () => {
       }
     } catch (error) {
       console.error("Failed to fetch products:", error);
-      
     }
   };
 
@@ -152,6 +157,125 @@ const ProductsTable = () => {
     }
   };
 
+  const headers = [
+    "Sl.No",
+    "Product Name",
+    "Brand",
+    "Category",
+    "Product Image",
+    "Price",
+    "Size:Stock",
+    "Action",
+  ];
+  const rows = ProductList.map((item, index) => [
+    // Sl.No
+    (currentPage - 1) * itemsPerPage + index + 1,
+
+    // Product Name
+    item.productName,
+
+    // Brand
+    item.brand?.brandName,
+
+    // Category
+    item.category?.categoryName,
+
+    // Product Image
+    <div className="flex justify-center">
+      <img
+        src={item.thumbnail}
+        alt={item.productName}
+        className="w-32 object-contain"
+      />
+    </div>,
+    // Price
+    item.offer ? (
+      <div className="flex flex-col items-center md:mx-3">
+        {new Date(item.offer.startDate) <= new Date() &&
+        new Date(item.offer.endDate) >= new Date() ? (
+          <>
+            <span className="text-lg font-semibold text-gray-800">
+              ₹{item.offerPrice}
+            </span>
+            <span className="text-base text-red-500 font-medium line-through">
+              (₹{item.salePrice})
+            </span>
+            <span className="text-sm text-green-600 font-bold">
+              {item.offer?.discountPercentage}% OFF
+              {item.offer?.offerType === "category" &&
+                ` by ${item.offer?.offerType} offer`}
+            </span>
+          </>
+        ) : new Date(item.offer.startDate) > new Date() ? (
+          <div className="flex flex-col">
+            <span className="text-lg font-semibold text-gray-800">
+              ₹{item.salePrice}
+            </span>
+            <span className="text-sm text-yellow-600 font-medium">
+              {item.offer?.discountPercentage}% OFF -{" "}
+              {item.offer?.offerType && `${item.offer.offerType}`} Offer will
+              start on {new Date(item.offer.startDate).toLocaleDateString()}
+            </span>
+          </div>
+        ) : (
+          <div className="flex flex-col">
+            <span className="text-lg font-semibold text-gray-800">
+              ₹{item.salePrice}
+            </span>
+            <span className="text-sm text-gray-500 font-medium">
+              The offer has expired.
+            </span>
+          </div>
+        )}
+      </div>
+    ) : (
+      <span className="text-lg font-semibold text-gray-800">
+        ₹{item.salePrice}
+      </span>
+    ),
+
+    // Size:Stock
+    item.stock.map((stockItem, i) => (
+      <div key={i} className="mb-1 text-center flex items-center justify-start">
+        <div className="bg-black text-white rounded p-1 mx-2">
+          {stockItem.size}
+        </div>
+        : {stockItem.stock}
+      </div>
+    )),
+
+    // Action
+    <div className="flex flex-col items-center space-y-1">
+      <Button
+        variant="text"
+        color="secondary"
+        startIcon={<FaTags />}
+        onClick={() => handleOffersOpenModal(item)}
+      >
+        ApplyOffer
+      </Button>
+
+      <button
+        onClick={() => handleModalOpen(item)}
+        className={`px-4 py-1 rounded-md mb-3 ${
+          item.isActive ? "bg-green-500" : "bg-red-500"
+        } text-white`}
+      >
+        {item.isActive ? "Active" : "InActive"}
+      </button>
+      <Button
+        variant="text"
+        color="primary"
+        startIcon={<FaEdit />}
+        onClick={() => {
+          navigate(`edit-product?id=${item._id}`);
+        }}
+      >
+        Update
+      </Button>
+    </div>,
+  ]);
+
   //// ------------------------------------component----------------------------------------------------------
 
   if (productLoading) {
@@ -159,9 +283,22 @@ const ProductsTable = () => {
   }
 
   return (
-    <div className="p-4  bg-gray-200">
+    <div  style={{ 
+      padding: "1rem", 
+      backgroundColor: themeStyles.background,
+      minHeight: "100vh"
+    }}>
       <AdminBreadCrumbs />
-      <h1 className="text-2xl font-bold mb-4">ALL PRODUCTS</h1>
+      <Typography 
+        variant="h4" 
+        sx={{ 
+          fontWeight: "bold", 
+          marginBottom: "1rem",
+          color: themeStyles.textPrimary
+        }}
+      >
+        Products Management
+      </Typography>
       <div className="mb-6 ml-6 flex justify-between">
         <select
           value={sortingOption}
@@ -182,159 +319,8 @@ const ProductsTable = () => {
           + ADD NEW PRODUCT
         </button>
       </div>
-      <table className="min-w-full bg-white  border-gray-900 border ">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 border border-gray-900">Sl.No</th>
-            <th className="px-4 py-2 border border-gray-900">Product Name</th>
-            <th className="px-4 py-2 border border-gray-900">Brand</th>
-            <th className="px-4 py-2 border border-gray-900">Category</th>
-            <th className="px-4 py-2 border border-gray-900">Product Image</th>
-            <th className="px-4 py-2 border border-gray-900">Price</th>
-            <th className="px-4 py-2 border border-gray-900">Size:Stock </th>
-            <th className="px-4 py-2 border border-gray-900">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {ProductList.length > 0 ? (
-            ProductList.map((item, index) => (
-              <tr key={item._id} className="hover:bg-gray-100">
-                <td className="px-4 py-2 border border-gray-900">
-                  {(currentPage - 1) * itemsPerPage + index + 1}
-                </td>
-                <td className="px-4 py-2 border border-gray-900">
-                  {item.productName}
-                </td>
-                <td className="px-4 py-2 border border-gray-900">
-                  {item.brand?.brandName}
-                </td>
-                <td className="px-4 py-2 border border-gray-900">
-                  {item.category?.categoryName}
-                </td>
-                <td className="px-2 py-2 border border-gray-900 text-center">
-                  <div className="flex justify-center">
-                    <img
-                      src={item.thumbnail}
-                      alt={item.name}
-                      className="w-32 object-contain"
-                    />
-                  </div>
-                </td>
-
-                <td className="px-4 py-2 border border-gray-900 text-center">
-                  {item.offer ? (
-                    <div className="flex flex-col items-center md:mx-3">
-                      {/* Check if the offer is currently active */}
-                      {new Date(item.offer.startDate) <= new Date() &&
-                      new Date(item.offer.endDate) >= new Date() ? (
-                        <>
-                          <span className="text-lg font-semibold text-gray-800">
-                            ₹{item.offerPrice}
-                          </span>
-                          <span className="text-base text-red-500 font-medium line-through">
-                            (₹{item.salePrice})
-                          </span>
-                          <span className="text-sm text-green-600 font-bold">
-                            {item.offer?.discountPercentage}% OFF
-                            {item.offer?.offerType === "category" &&
-                              ` by ${item.offer?.offerType} offer`}
-                          </span>
-                        </>
-                      ) : new Date(item.offer.startDate) > new Date() ? (
-                        // Upcoming offer
-                        <div className="flex flex-col">
-                          <span className="text-lg font-semibold text-gray-800">
-                            ₹{item.salePrice}
-                          </span>
-                          <span className="text-sm text-yellow-600 font-medium">
-                            {item.offer?.discountPercentage}% OFF -{" "}
-                            {item.offer?.offerType && `${item.offer.offerType}`}{" "}
-                            Offer will start on{" "}
-                            {new Date(
-                              item.offer.startDate
-                            ).toLocaleDateString()}
-                          </span>
-                        </div>
-                      ) : (
-                        // Expired offer
-                        <div className="flex flex-col">
-                          <span className="text-lg font-semibold text-gray-800">
-                            ₹{item.salePrice}
-                          </span>
-                          <span className="text-sm text-gray-500 font-medium">
-                            The offer has expired.
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-lg font-semibold text-gray-800">
-                      ₹{item.salePrice}
-                    </span>
-                  )}
-                </td>
-
-                <td className="px-4 py-2 border border-gray-900">
-                  {item.stock.map((stockItem, index) => (
-                    <div
-                      key={index}
-                      className="  mb-1 text-center  flex   items-center justify-start"
-                    >
-                      <div className="bg-black text-white rounded p-1 mx-2">
-                        {" "}
-                        {stockItem.size}{" "}
-                      </div>{" "}
-                      : {stockItem.stock}
-                    </div>
-                  ))}
-                </td>
-
-                <td className="px-4 py-2 border h-full border-gray-900">
-                  <div className="flex flex-col items-center space-y-1">
-                    <Button
-                      variant="text"
-                      color="secondary"
-                      startIcon={<FaTags />}
-                      onClick={() => handleOffersOpenModal(item)}
-                    >
-                      ApplyOffer
-                    </Button>
-
-                    <button
-                      onClick={() => handleModalOpen(item)}
-                      className={`px-4 py-1 rounded-md mb-3 ${
-                        item.isActive ? "bg-green-500" : "bg-red-500"
-                      } text-white`}
-                    >
-                      {item.isActive ? "Active" : "InActive"}
-                    </button>
-                    <Button
-                      variant="text"
-                      color="primary"
-                      startIcon={<FaEdit />}
-                      onClick={() => {
-                        navigate(`edit-product?id=${item._id}`);
-                      }}
-                    >
-                      Update
-                    </Button>
-                  </div>
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan="8">
-                <div className="text-3xl m-5 text-center">
-                  {" "}
-                  Products not found
-                </div>
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-
+   
+      <ReusableTable headers={headers} rows={rows} />
       <div>
         <RenderPagination
           currentPage={currentPage}
@@ -357,6 +343,7 @@ const ProductsTable = () => {
 
       {/* Custom Modal Component for applying offers */}
       <CustomModal
+        Classnames="h-full"
         isOpen={isOffersModalOpen}
         onClose={handleOffersCloseModal}
         title={`Select an Offer for - ${currentProduct?.productName}`}
@@ -372,64 +359,84 @@ const ProductsTable = () => {
         className="bg-white" // Use 'className' for styling
       >
         {/* Modal Body - Display Offers */}
-        <div className="max-h-64 overflow-y-auto">
-          <List className="space-y-2">
-            {offers.length > 0 ? (
-              offers.filter(existingOffer=> existingOffer && new Date(existingOffer.endDate) >= new Date()).map((offer) => (
-                <ListItem
-                  key={offer._id}
-                  onClick={() => {
-                    setCurrentApplyingOffer(offer);
-                    setIsOfferConfirmModalOpen(true);
-                  }}
-                  className="hover:bg-blue-100 hover:shadow-md hover:cursor-pointer transition-all rounded-md mb-1 p-2 border border-gray-200 flex items-center space-x-4"
-                >
-                  {/* Icon for Each Offer */}
-                  <ListItemIcon className="min-w-0">
-                    <FaTags className="text-red-500 text-lg" />
-                  </ListItemIcon>
-
-                  {/* Offer Details */}
-                  <ListItemText
-                    primary={
-                      <Typography
-                        variant="subtitle1"
-                        component="span"
-                        className="font-semibold"
-                      >
-                        {offer.offerTitle}
-                      </Typography>
-                    }
-                    secondary={
-                      <React.Fragment>
+        <div className="max-h-64 min-h-10 overflow-y-auto">
+          {isLoading ? (
+            <Typography
+              variant="body1"
+              className="text-gray-600 text-center p-4"
+            >
+              Loading offers...
+            </Typography>
+          ) : isError ? (
+            <Typography
+              variant="body1"
+              className="text-red-600 text-center p-4"
+            >
+              Failed to fetch offers. Please try again later.
+            </Typography>
+          ) : offers.filter(
+              (existingOffer) =>
+                existingOffer && new Date(existingOffer.endDate) >= new Date()
+            ).length > 0 ? (
+            <List className="space-y-2">
+              {offers
+                .filter(
+                  (existingOffer) =>
+                    existingOffer &&
+                    new Date(existingOffer.endDate) >= new Date()
+                )
+                .map((offer) => (
+                  <ListItem
+                    key={offer._id}
+                    onClick={() => {
+                      setCurrentApplyingOffer(offer);
+                      setIsOfferConfirmModalOpen(true);
+                    }}
+                    className="hover:bg-blue-100 hover:shadow-md hover:cursor-pointer transition-all rounded-md mb-1 p-2 border border-gray-200 flex items-center space-x-4"
+                  >
+                    <ListItemIcon className="min-w-0">
+                      <FaTags className="text-red-500 text-lg" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={
                         <Typography
-                          variant="body2"
+                          variant="subtitle1"
                           component="span"
-                          className="text-gray-600 block"
+                          className="font-semibold"
                         >
-                          {offer.description}
+                          {offer.offerTitle}
                         </Typography>
-                        <Typography
-                          variant="subtitle2"
-                          component="span"
-                          className="font-bold text-red-500 mt-1 block"
-                        >
-                          {offer.discountPercentage}% OFF
-                        </Typography>
-                      </React.Fragment>
-                    }
-                  />
-                </ListItem>
-              ))
-            ) : (
-              <Typography
-                variant="body1"
-                className="text-gray-600 text-center p-4"
-              >
-                No Offers Available
-              </Typography>
-            )}
-          </List>
+                      }
+                      secondary={
+                        <>
+                          <Typography
+                            variant="body2"
+                            component="span"
+                            className="text-gray-600 block"
+                          >
+                            {offer.description}
+                          </Typography>
+                          <Typography
+                            variant="subtitle2"
+                            component="span"
+                            className="font-bold text-red-500 mt-1 block"
+                          >
+                            {offer.discountPercentage}% OFF
+                          </Typography>
+                        </>
+                      }
+                    />
+                  </ListItem>
+                ))}
+            </List>
+          ) : (
+            <Typography
+              variant="body1"
+              className="text-gray-600 text-center p-4"
+            >
+              No Offers Available
+            </Typography>
+          )}
         </div>
       </CustomModal>
 

@@ -92,7 +92,7 @@ export const downloadOrderDetailsPdf = (orderDetails) => {
     doc.addImage(imgPath, "PNG", imgX, imgY, imgWidth, imgHeight);
 
     // Content starts below the logo
-    const contentStartY = imgY + imgHeight + 30;
+    const contentStartY = imgY + imgHeight + 10;
 
     // Add Title
     doc.setFontSize(20);
@@ -106,6 +106,7 @@ export const downloadOrderDetailsPdf = (orderDetails) => {
         new Date(orderDetails.orderDate).toLocaleString() || "N/A"
       }`,
       `Payment Method: ${orderDetails.payment?.method || "N/A"}`,
+      `Payment Status: ${orderDetails.payment?.status || "N/A"}`,
       `Invoice Date: ${new Date().toLocaleString()}`,
       `Transaction ID: ${orderDetails.payment?.transactionId || "N/A"}`,
     ];
