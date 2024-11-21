@@ -194,7 +194,7 @@ const ProductsTable = () => {
         {new Date(item.offer.startDate) <= new Date() &&
         new Date(item.offer.endDate) >= new Date() ? (
           <>
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-gray-900">
               ₹{item.offerPrice}
             </span>
             <span className="text-base text-red-500 font-medium line-through">
@@ -208,7 +208,7 @@ const ProductsTable = () => {
           </>
         ) : new Date(item.offer.startDate) > new Date() ? (
           <div className="flex flex-col">
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-gray-500">
               ₹{item.salePrice}
             </span>
             <span className="text-sm text-yellow-600 font-medium">
@@ -219,7 +219,7 @@ const ProductsTable = () => {
           </div>
         ) : (
           <div className="flex flex-col">
-            <span className="text-lg font-semibold text-gray-800">
+            <span className="text-lg font-semibold text-gray-500">
               ₹{item.salePrice}
             </span>
             <span className="text-sm text-gray-500 font-medium">
@@ -229,7 +229,7 @@ const ProductsTable = () => {
         )}
       </div>
     ) : (
-      <span className="text-lg font-semibold text-gray-800">
+      <span className="text-lg font-semibold text-gray-500">
         ₹{item.salePrice}
       </span>
     ),

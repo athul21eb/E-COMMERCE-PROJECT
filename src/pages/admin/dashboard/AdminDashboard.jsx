@@ -324,58 +324,7 @@ const AdminDashboard = () => {
         </Grid>
         {/* Top Brands and Products */}
         <Grid container spacing={4}>
-          <Grid item xs={12} md={6}>
-            <Card
-              style={{
-                background: themeStyles.surface,
-                color: themeStyles.textPrimary,
-              }}
-            >
-              <CardContent>
-                <Typography variant="h6" className="mb-4">
-                  Top Brands
-                </Typography>
-                <List>
-                  {data?.topBrands?.length === 0 ? (
-                    <Typography variant="subtitle2" className="mb-4">
-                      No Brands Available
-                    </Typography>
-                  ) : (
-                    data?.topBrands.map((brand, index) => (
-                      <motion.div
-                        key={brand._id}
-                        variants={listItemVariants}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                      >
-                        <ListItem>
-                          <ListItemAvatar>
-                            <Avatar
-                              src={brand.brandPhotoUrl}
-                              alt={brand.brandName}
-                            />
-                          </ListItemAvatar>
-                          <ListItemText
-                            primary={brand.brandName}
-                            secondary={`Total Sold: ${brand.totalSold}`}
-                            primaryTypographyProps={{
-                              style: { color: themeStyles.textPrimary },
-                            }}
-                            secondaryTypographyProps={{
-                              style: { color: themeStyles.textSecondary },
-                            }}
-                          />
-                        </ListItem>
-                        {index < data?.topBrands.length - 1 && <Divider />}
-                      </motion.div>
-                    ))
-                  )}
-                </List>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} md={6}>
+        <Grid item xs={12} md={4}>
             <Card
               style={{
                 background: themeStyles.surface,
@@ -426,6 +375,109 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </Grid>
+          <Grid item xs={12} md={4}>
+            <Card
+              style={{
+                background: themeStyles.surface,
+                color: themeStyles.textPrimary,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" className="mb-4">
+                  Top Categories
+                </Typography>
+                <List>
+                  {data?.topCategories?.length === 0 ? (
+                    <Typography variant="subtitle2" className="mb-4">
+                      No Categories Available
+                    </Typography>
+                  ) : (
+                    data?.topCategories.map((brand, index) => (
+                      <motion.div
+                        key={brand._id}
+                        variants={listItemVariants}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                      >
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar
+                              src={brand.brandPhotoUrl}
+                              alt={brand.categoryName}
+                            />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={brand.categoryName}
+                            secondary={`Total Sold: ${brand.totalSold}`}
+                            primaryTypographyProps={{
+                              style: { color: themeStyles.textPrimary },
+                            }}
+                            secondaryTypographyProps={{
+                              style: { color: themeStyles.textSecondary },
+                            }}
+                          />
+                        </ListItem>
+                        {index < data?.topBrands.length - 1 && <Divider />}
+                      </motion.div>
+                    ))
+                  )}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card
+              style={{
+                background: themeStyles.surface,
+                color: themeStyles.textPrimary,
+              }}
+            >
+              <CardContent>
+                <Typography variant="h6" className="mb-4">
+                  Top Brands
+                </Typography>
+                <List>
+                  {data?.topBrands?.length === 0 ? (
+                    <Typography variant="subtitle2" className="mb-4">
+                      No Brands Available
+                    </Typography>
+                  ) : (
+                    data?.topBrands.map((brand, index) => (
+                      <motion.div
+                        key={brand._id}
+                        variants={listItemVariants}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 0.5, delay: index * 0.1 }}
+                      >
+                        <ListItem>
+                          <ListItemAvatar>
+                            <Avatar
+                              src={brand.brandPhotoUrl}
+                              alt={brand.brandName}
+                            />
+                          </ListItemAvatar>
+                          <ListItemText
+                            primary={brand.brandName}
+                            secondary={`Total Sold: ${brand.totalSold}`}
+                            primaryTypographyProps={{
+                              style: { color: themeStyles.textPrimary },
+                            }}
+                            secondaryTypographyProps={{
+                              style: { color: themeStyles.textSecondary },
+                            }}
+                          />
+                        </ListItem>
+                        {index < data?.topBrands.length - 1 && <Divider />}
+                      </motion.div>
+                    ))
+                  )}
+                </List>
+              </CardContent>
+            </Card>
+          </Grid>
+          
         </Grid>
 
         {/* Charts Section */}
