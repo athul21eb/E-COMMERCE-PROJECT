@@ -14,6 +14,7 @@ import {
   useLazyGetCartQuery,
 } from "../../../slices/user/cart/cartApiSlice";
 import {
+  useLazyGetWishListQuery,
   useAddToWishlistMutation,
   useRemoveFromWishlistMutation,
 } from "../../../slices/user/wishList/wishListApiSlice";
@@ -21,7 +22,7 @@ import { Tooltip } from "@mui/material";
 
 const ProductsDetails = () => {
   const { cartDetails } = useSelector((state) => state.cart);
-
+const [refetchWishlist ] = useLazyGetWishListQuery();
   const { user } = useSelector((state) => state.auth?.authInfo);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -125,6 +126,7 @@ const ProductsDetails = () => {
         size: selectedSize,
       }).unwrap();
 
+      refetchWishlist();
       toast.success(response.message);
     } catch (err) {
       // Display error message in case of failure

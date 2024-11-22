@@ -11,6 +11,7 @@ import { ThemeProvider } from "./contexts/themeContext";
 import ErrorBoundary from "./components/common/errorBoundary/ErrorBoundary";
 
 
+
 function App() {
   const { pathname,search } = useLocation();
 

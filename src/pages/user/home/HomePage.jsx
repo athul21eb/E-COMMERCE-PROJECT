@@ -1,38 +1,54 @@
-import { useGetNewArrivalsQuery } from "../../../slices/public/PublicApiSlice"
-import PopularBrands from "../../../components/layout/user/popularBrands/PopularBrands"
-import ProductList from "../../../components/layout/user/ProductListofCards/ProductCardList.jsx"
-import Carousel from "../../../components/layout/user/carouselHomepage/Carousel.jsx"
-import CategoryBanner from "../../../components/layout/user/categoryBanner/Banner.jsx"
-import MostProducts from "../../../components/layout/user/MostProducts/MostProducts.jsx"
-import LoadingFullScreen from "../../../components/common/LoadingScreens/LoadingFullScreen.jsx"
-import { useEffect } from "react"
-import { motion } from "framer-motion"
+import { useQuery } from "@tanstack/react-query";
+import PopularBrands from "../../../components/layout/user/popularBrands/PopularBrands";
+import ProductList from "../../../components/layout/user/ProductListofCards/ProductCardList.jsx";
+import Carousel from "../../../components/layout/user/carouselHomepage/Carousel.jsx";
+import CategoryBanner from "../../../components/layout/user/categoryBanner/Banner.jsx";
+import MostProducts from "../../../components/layout/user/MostProducts/MostProducts.jsx";
+import LoadingFullScreen from "../../../components/common/LoadingScreens/LoadingFullScreen.jsx";
+import { motion } from "framer-motion";
+import axios from "axios";
+import { useEffect } from "react";
+
+const fetchNewArrivals = async () => {
+  try {
+    const { data } = await axios.get(`http://localhost:${import.meta.env.VITE_SERVER_PORT}/v1/public//new-arrivals?limit=10`);
+    return data; // Return valid data
+  } catch (error) {
+    // Log the error and rethrow it for React Query to catch
+    console.error("Error fetching new arrivals:", error);
+    throw new Error(error.response?.data?.message || "Failed to fetch new arrivals");
+  }
+};
+
 
 export default function Homepage() {
-  const {
-    data: { newArrivals = [], mostWishlisted = [], mostDelivered = [] } = {},
-    isLoading,
-    isUninitialized,
-    refetch,
-  } = useGetNewArrivalsQuery({
-    limit: 10,
-  })
+  const { 
+    data = { newArrivals: [], mostDelivered: [], mostLoved: [] }, 
+    isLoading, 
+   
+  } = useQuery({
+    queryKey: ["newArrivals"],   // Query key
+    queryFn: fetchNewArrivals,  // Fetch function
+    refetchOnWindowFocus: false, // Disable refetch on window focus
+    retry: 2,                   // Retry fetching twice before failing
+  });
 
-  useEffect(() => {
-    refetch()
-  }, [refetch])
+  
 
-  if (isLoading && isUninitialized) {
-    return <LoadingFullScreen />
+  if (isLoading) {
+    return <LoadingFullScreen />;
   }
+
+ 
+
+  const { newArrivals, mostDelivered, mostLoved } = data;
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <Carousel />
-
       <CategoryBanner />
 
-      {newArrivals.length > 0 && (
+      {newArrivals&&newArrivals.length > 0 && (
         <>
           <motion.div
             initial={{ opacity: 0, y: -50 }}
@@ -44,9 +60,7 @@ export default function Homepage() {
             <h2 className="text-3xl lg:text-5xl font-extrabold tracking-tight text-gray-900">
               New <span className="text-gray-500">Arrivals</span>
             </h2>
-            <p className="text-base lg:text-lg text-gray-500 mt-3">
-              Grab the new Ones
-            </p>
+            <p className="text-base lg:text-lg text-gray-500 mt-3">Grab the new Ones</p>
           </motion.div>
 
           <ProductList productData={newArrivals} />
@@ -59,7 +73,7 @@ export default function Homepage() {
               viewport={{ once: true, margin: "-100px" }}
               className="mb-6 md:mb-0"
             >
-              <MostProducts productData={mostWishlisted} Heading="Most Loved" bgcolor="red" />
+              <MostProducts productData={mostLoved} Heading="Most Loved" bgcolor="red" />
             </motion.div>
 
             <motion.div
@@ -74,9 +88,7 @@ export default function Homepage() {
         </>
       )}
 
-     
-        <PopularBrands />
-      
+      <PopularBrands />
     </div>
-  )
+  );
 }

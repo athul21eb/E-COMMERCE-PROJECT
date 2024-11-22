@@ -7,20 +7,44 @@ import { useNavigate } from "react-router-dom";
 const items = [
   {
     id: 1,
-    _id:"66cec12af073329219b68d23",
-    title: "ADIDAS F50+ ELITE ‘VIVID HORIZON’",
-    subtitle: "Built for maximum speed on pitch",
+    _id:"66ce27bbd18a61b1b9e89270",
+    title: "PUMA ULTRA X F1 VEGAS",
+    subtitle:"Limited drop inspired by the Las Vegas Grand Prix",
     imgSrc:
-      "https://www.prodirectsport.com/-/media/prodirect/project/en/soccer/billboards/standard/boots/adidas/hero-banner-d-adidas-vivid-horizon-170924.jpg", // Replace with your image URL
+      "https://res.cloudinary.com/dmrvutjac/image/upload/v1732257756/hero-banner-d-puma-ultra-f1-1-121124_jixoz5.avif", // Replace with your image URL
   },
   {
     id: 2,
-    _id:"66cc50cfcf18045ece8524a6",
-    title: "DIADORA BRASIL CLASSICO",
-    subtitle: "A tribute to AC Milan Legend George Weah",
+    _id:"6740259852b51b97a894231a",
+    title: "Nike Mercurial Cosmic Speed 2",
+    subtitle: "limited time edition is dropped",
     imgSrc:
-      "https://www.prodirectsport.com/-/media/prodirect/project/en/soccer/billboards/standard/boots/other/diadora-weah--hero-banner-d-190924.jpg", // Replace with your image URL
+      "https://res.cloudinary.com/dmrvutjac/image/upload/v1732257770/hero-banner-d-nike-cosmicspeed2-2-plain_uig3qr.avif", // Replace with your image URL
   },
+  {
+    id: 3,
+    _id:"67371e899babf1cfd2a40f95",
+    title: "ADIDAS PREDATOR ",
+    subtitle: "physics with boots  ",
+    imgSrc:
+      "https://res.cloudinary.com/dmrvutjac/image/upload/v1732257310/banner-d-ote-boots-3-plain_allcch.jpg", // Replace with your image URL
+  },
+  {
+    id: 4,
+    _id:"66cc50cfcf18045ece8524a6",
+    title: "ADIDAS OLD RETRO ",
+    subtitle: "FELL THE POWER OF RETRO",
+    imgSrc:
+      "https://res.cloudinary.com/dmrvutjac/image/upload/v1732257344/herobannerdcopadb_h5ve48.avif", // Replace with your image URL
+  },
+  {
+    id: 5,
+    _id:"6740246b52b51b97a89422fa",
+    title: "ADIDAS F50+ ELITE ‘VIVID HORIZON’",
+    subtitle: "Built for maximum speed on pitch",
+    imgSrc:
+      "https://res.cloudinary.com/dmrvutjac/image/upload/v1732257778/hero-banner-d-2-adidas-f50-two-horizons_uophn4.jpg" },
+  
   
 ];
 
@@ -79,14 +103,15 @@ const ProductCarousel = () => {
             <div className="absolute bottom-5 right-5 left-5 flex flex-col justify-end px-10">
               <div className="flex flex-col  items-center md:flex-row md:justify-between w-full">
                 <div>
-                  <h2 className="text-white text-2xl md:text-4xl font-bold mb-2 text-center">
+                  <h2 className="text-white text-md md:text-4xl font-bold mb-2 text-center">
                     {item.title}
                   </h2>
-                  <p className="text-white md:text-lg text-center md:text-justify">
+                  <p className="text-white text-xs md:text-lg text-center md:text-justify">
+
                     {item.subtitle}
                   </p>
                 </div>
-                <button onClick={()=>navigate(`/product-details?id=${item._id}`)} className="mt-4 md:mt-0 px-6 py-3 border border-white text-white font-semibold hover:bg-white hover:text-black transition-all duration-300 ease-in-out">
+                <button onClick={()=>navigate(`/product-details?id=${item._id}`)} className="mt-4 md:mt-0 p-1 md:px-6 md:py-3 border border-white text-white font-semibold hover:bg-white hover:text-black transition-all duration-300 ease-in-out">
                   SHOP NOW
                 </button>
               </div>

@@ -1,4 +1,6 @@
 import { Route, Navigate, Outlet } from "react-router-dom";
+
+
 import Homepage from "../pages/user/home/HomePage";
 import LoginPage from "../pages/user/Login/LoginPage";
 import SignUpPage from "../pages/user/signUp/SignUpPage";
@@ -30,6 +32,7 @@ import ShopAll from "../pages/user/shopAll/ShopAll.jsx";
 import MenPage from "../pages/user/MenPage/MenPage.jsx";
 import WomenPage from "../pages/user/womenPage/WomenPage.jsx";
 import KidsPage from "../pages/user/kidPage/KidsPage.jsx";
+
 
 export const UserRoutes = (
   <>
