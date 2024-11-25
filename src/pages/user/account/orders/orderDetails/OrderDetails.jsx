@@ -266,9 +266,14 @@ export default function OrderDetails() {
             <p className="text-sm opacity-75">Order ID</p>
             <p className="font-semibold">{order.orderId}</p>
           </div>
+          
           <div>
             <p className="text-sm opacity-75">Total</p>
             <p className="font-semibold">₹{order.billAmount}</p>
+            { order?.appliedCouponAmount!==0&&<div>
+            <p className="text-sm opacity-75">Coupon Discount</p>
+            <p className="font-semibold">₹{order.appliedCouponAmount}</p>
+          </div>}
           </div>
         </div>
       </motion.div>

@@ -142,8 +142,11 @@ const AdminSaleReport = () => {
   const headers = [
     "Order ID",
     "Order Amount",
+  
     "Coupon Discount",
     "Discount on MRP",
+    "Refund Amount",
+    "Revenue",
     "Payment Details",
     "Date",
   ];
@@ -152,10 +155,13 @@ const AdminSaleReport = () => {
     order.orderId,
     `₹${order.billAmount}`,
     `₹${order.appliedCouponAmount}`,
+   
     `₹${order.items.reduce(
       (acc, item) => acc + (item.appliedOfferAmount || 0),
       0
     )}`,
+    `₹${order.refundedAmount}`,
+    `₹${order.billAmount - (order?.refundedAmount||0)}`,
     <>
       <Typography variant="body2" sx={{ color: themeStyles.textPrimary }}>
         Method: {order.payment.method}
@@ -222,6 +228,7 @@ const AdminSaleReport = () => {
           <MenuItem value="day">Day</MenuItem>
           <MenuItem value="month">Month</MenuItem>
           <MenuItem value="year">Year</MenuItem>
+          <MenuItem value="all">All</MenuItem>
           <MenuItem value="custom">Custom Date</MenuItem>
         </TextField>
 
@@ -329,7 +336,7 @@ const AdminSaleReport = () => {
              disabled={downloadIsLoading}
               variant="outlined"
               color="primary"
-              onClick={()=>downloadPdfReport(fetchData)}
+              onClick={()=>downloadPdfReport(fetchData,period,startDate,endDate)}
               sx={{ borderRadius: "10px" }}
             >
               Download PDF
@@ -338,7 +345,7 @@ const AdminSaleReport = () => {
             disabled={downloadIsLoading}
               variant="outlined"
               color="primary"
-              onClick={()=>downloadXlsxReport(fetchData)}
+              onClick={()=>downloadXlsxReport(fetchData,period,startDate,endDate)}
               sx={{ borderRadius: "10px" }}
             >
               Download Excel

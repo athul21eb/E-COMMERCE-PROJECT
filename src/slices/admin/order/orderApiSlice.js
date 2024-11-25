@@ -27,7 +27,9 @@ const adminOrderApiSlice = adminApiSlice.injectEndpoints({
       }),
     }),
     getFullSaleReport: builder.query({
-      query: () => `${orderUrl}/salesReport-download`,
+      query: ({period,startDate,endDate}) => ({
+        url:`${orderUrl}/salesReport-download?period=${period}&startDate=${startDate}&endDate=${endDate}`
+      }),
     }),
   }),
 });

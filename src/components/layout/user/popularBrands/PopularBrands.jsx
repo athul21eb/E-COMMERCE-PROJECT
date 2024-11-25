@@ -65,7 +65,7 @@ const PopularBrands = () => {
           <div
             key={index}
             className="flex items-center justify-center border border-gray-200 rounded-full shadow-sm p-4 bg-white transition-transform hover:scale-105"
-         onClick={()=>navigate(`/shop?search=${brand.brandName}`)}
+         onClick={()=>navigate(`/shop?search=${brand.brandName}`,{state:{brandName:brand?.brandName}})}
          >
             <img
               src={brand?.brandPhotoUrl}

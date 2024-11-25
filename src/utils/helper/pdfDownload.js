@@ -3,9 +3,10 @@ import "jspdf-autotable";
 import { formatDate } from "./formatDate";
 import toast from "react-hot-toast";
 
-export const downloadPdfReport = async (fetchData) => {
+export const downloadPdfReport = async (fetchData,period,startDate,endDate) => {
   try {
-    const { salesReport: reportData } = await fetchData()?.unwrap();
+    console.log(fetchData,period,startDate,endDate)
+    const { salesReport: reportData } = await fetchData({period,startDate,endDate})?.unwrap();
     const doc = new jsPDF();
     const title = "Sales Report";
 
@@ -30,6 +31,8 @@ export const downloadPdfReport = async (fetchData) => {
       `Order Amount: ${reportData.overallOrderAmount}`,
       `Discount: ${reportData.overallDiscount}`,
       `Discount on MRP: ${reportData.totalDiscountOnMRP}`,
+      `Refunded Amount :${reportData.overallRefundAmount}`,
+      
     ];
     doc.setFontSize(12);
     let summaryY = 90; // Starting Y position for summary text
@@ -48,6 +51,8 @@ export const downloadPdfReport = async (fetchData) => {
         (acc, item) => acc + (item.appliedOfferAmount || 0),
         0
       ),
+      order.refundedAmount,
+      order.billAmount-(order.refundedAmount||0)
     ]);
 
     // AutoTable starts after summary
@@ -59,6 +64,8 @@ export const downloadPdfReport = async (fetchData) => {
           "Order Amount",
           "Coupon Discount",
           "Discount on MRP",
+          "Refund Amount",
+          "Revenue"
         ],
       ],
       body: tableData,
@@ -189,6 +196,7 @@ export const downloadOrderDetailsPdf = (orderDetails) => {
           )}`,
         ],
         ["Applied Coupon Discount", `${orderDetails.appliedCouponAmount || 0}`],
+        ["Refunded Amount  ",`${orderDetails.refundedAmount || 0}`]
       ],
       startY: summaryY + 10,
       styles: { fontSize: 12, halign: "right" },
@@ -200,6 +208,8 @@ export const downloadOrderDetailsPdf = (orderDetails) => {
       theme: "grid",
     });
 
+
+   
     // Total Amount with more bold and dark font
     const totalAmountY = doc.lastAutoTable.finalY + 10;
     doc.setFontSize(14);
@@ -209,8 +219,10 @@ export const downloadOrderDetailsPdf = (orderDetails) => {
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(0, 0, 0); // Keep the dark color for better visibility
+
+   
     doc.text(
-      `${orderDetails.billAmount || 0}`,
+      `${orderDetails.billAmount-orderDetails.refundedAmount || 0}`,
       105, // Position it at the center
       totalAmountY,
       { align: "center" }

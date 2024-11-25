@@ -68,7 +68,7 @@ refetch();
             },
           }}
         >
-          Weekly
+          Day Trend
         </Button>
         <Button
           variant="contained"
@@ -82,7 +82,7 @@ refetch();
             },
           }}
         >
-          Monthly
+          Month Trend
         </Button>
       </Box>
 

@@ -124,7 +124,7 @@ const PieChartComponent = ({ data }) => {
     >
       <h1
         style={{ textAlign: "center", color: textColor, marginBottom: "20px" }}
-        className="text-lg md:text-4xl text-start"
+        className="text-lg md:text-4xl text-start font-mono font-bold"
       >
         Order Item Status Distribution
       </h1>
@@ -151,7 +151,7 @@ const PieChartComponent = ({ data }) => {
           </Pie>
           <Tooltip
             formatter={(value, name, props) => [
-              `${value.toFixed(1)}% (${props.payload.count} orders)`,
+              `${value.toFixed(1)}% (${props.payload.count} items)`,
               props.payload.status,
             ]}
             contentStyle={{

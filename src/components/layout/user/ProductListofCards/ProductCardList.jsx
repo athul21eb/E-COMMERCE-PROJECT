@@ -31,13 +31,13 @@ const ProductCardList = ({ productData = [], Heading = '' }) => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
       },
     },
   }
 
   return (
-    <div className="p-2 my-6">
+    <div className="p-2 my-6 mx-auto">
       {/* Section Heading */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg sm:text-4xl font-extrabold">{Heading}</h2>
@@ -46,7 +46,7 @@ const ProductCardList = ({ productData = [], Heading = '' }) => {
       {/* Product Grid */}
       <motion.div
         ref={ref}
-        className="mx-auto grid gap-y-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        className="mx-auto grid gap-y-4 grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6"
         variants={containerVariants}
         initial="hidden"
         animate={controls}

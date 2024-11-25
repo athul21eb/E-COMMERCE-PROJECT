@@ -154,8 +154,8 @@ const AdminDashboard = () => {
               "& .MuiOutlinedInput-root": {
                 borderRadius: "6px",
                 backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
-                fontSize: "0.8rem",
-                padding: "0.5rem",
+                fontSize: "1em",
+                padding: "0.3rem",
                 color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
               },
               "& .MuiInputLabel-root": {
@@ -167,6 +167,7 @@ const AdminDashboard = () => {
             <MenuItem value="day">Day</MenuItem>
             <MenuItem value="month">Month</MenuItem>
             <MenuItem value="year">Year</MenuItem>
+            <MenuItem value="all">All</MenuItem>
             <MenuItem value="custom">Custom Date</MenuItem>
           </TextField>
 
@@ -254,7 +255,7 @@ const AdminDashboard = () => {
         <Grid container spacing={4}>
           {[
             {
-              title: "Total Users",
+              title: " Users Added",
               value: data?.totalUsers,
               icon: <FaUsers size={40} />,
             },
@@ -269,7 +270,7 @@ const AdminDashboard = () => {
               icon: <FaRupeeSign size={40} />,
             },
             {
-              title: "Total Products",
+              title: "Products Added",
               value: data?.totalProducts,
               icon: <FaBoxOpen size={40} />,
             },

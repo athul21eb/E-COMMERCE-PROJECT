@@ -89,7 +89,7 @@ function SamplePrevArrow(props) {
 const ProductCarousel = () => {
   const navigate = useNavigate();
   return (
-    <div className="relative w-full max-w-screen-xl mx-auto mb-2">
+    <div className="relative w-full max-w-screen mx-auto mb-2">
       <Slider {...settings}p>
         {items.map((item) => (
           <div key={item.id} className="relative">
@@ -103,7 +103,7 @@ const ProductCarousel = () => {
             <div className="absolute bottom-5 right-5 left-5 flex flex-col justify-end px-10">
               <div className="flex flex-col  items-center md:flex-row md:justify-between w-full">
                 <div>
-                  <h2 className="text-white text-md md:text-4xl font-bold mb-2 text-center">
+                  <h2 className="text-white text-xs sm:text-sm md:text-4xl font-bold mb-2 text-center">
                     {item.title}
                   </h2>
                   <p className="text-white text-xs md:text-lg text-center md:text-justify">
