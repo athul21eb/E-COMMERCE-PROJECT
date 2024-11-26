@@ -4,7 +4,10 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `http://localhost:${import.meta.env.VITE_SERVER_PORT}/v1`,
+  baseUrl:
+    import.meta.env.VITE_FRONTEND_ENV === "development"
+      ? import.meta.env.VITE_DEVELOPMENT_BACKEND_URL
+      : import.meta.env.VITE_PRODUCTION_BACKEND_URL,
   credentials: "include",
 });
 

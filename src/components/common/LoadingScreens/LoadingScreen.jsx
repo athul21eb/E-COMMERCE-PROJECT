@@ -1,6 +1,7 @@
 import React from "react";
 import { Box, Typography } from "@mui/material";
 import { motion } from "framer-motion";
+import { RotatingLines } from "react-loader-spinner";
 import { useTheme } from "../../../contexts/themeContext";
 
 const LoadingScreen = () => {
@@ -9,11 +10,6 @@ const LoadingScreen = () => {
   const containerVariants = {
     initial: { opacity: 0 },
     animate: { opacity: 1, transition: { duration: 0.5 } },
-  };
-
-  const circleVariants = {
-    initial: { scale: 0 },
-    animate: { scale: 1, transition: { duration: 0.5, delay: 0.2 } },
   };
 
   const textVariants = {
@@ -37,18 +33,27 @@ const LoadingScreen = () => {
         backgroundColor: themeStyles.background,
       }}
     >
+      {/* RotatingLines Loader */}
       <motion.div
-        variants={circleVariants}
-        style={{
-          width: 80,
-          height: 80,
-          borderRadius: "50%",
-          border: `4px solid ${themeStyles.accent}`,
-          borderTop: `4px solid ${themeStyles.background}`,
-          animation: "spin 1s linear infinite",
+        animate={{
+          scale: [1, 1.1, 1], // Subtle scaling animation
         }}
-      />
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+          repeatType: "reverse",
+        }}
+      >
+        <RotatingLines
+          strokeColor={themeStyles.accent}
+          strokeWidth="5"
+          animationDuration="0.75"
+          width="80"
+          visible={true}
+        />
+      </motion.div>
 
+      {/* Loading Text */}
       <motion.div variants={textVariants}>
         <Typography
           variant="h6"
@@ -79,15 +84,6 @@ const LoadingScreen = () => {
           </motion.span>
         </Typography>
       </motion.div>
-
-      <style>
-        {`
-          @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `}
-      </style>
     </motion.div>
   );
 };

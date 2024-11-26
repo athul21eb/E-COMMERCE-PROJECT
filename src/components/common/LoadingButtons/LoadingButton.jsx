@@ -2,43 +2,25 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
+import { RotatingLines } from 'react-loader-spinner';
 
 const LoadingButton = ({ className, loadingText = 'Loading...' }) => {
     return (
         <motion.button
             type="button"
-            className={`font-bold py-2 px-4 rounded-full flex items-center justify-center ${className}`}
+            className={`font-bold py-2 px-6 rounded-full flex items-center justify-center bg-blue-600 text-white disabled:opacity-90 ${className}`}
             disabled
-            initial={{ scale: 1 }}
-            animate={{ scale: 0.9 }}
-            transition={{
-                
-                stiffness: 400,
-                damping: 10,
-                repeat: Infinity,
-                repeatType: "reverse",
-            }}
         >
-            <motion.div
-                className="w-5 h-5 border-t-2 border-b-2 border-white rounded-full animate-spin mr-2"
-                animate={{ rotate: 360 }}
-                transition={{
-                    ease: "linear",
-                    duration: 1,
-                    repeat: Infinity,
-                }}
-            />
-            <motion.span
-                initial={{ opacity: 0.8 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                    duration: 0.5,
-                    repeat: Infinity,
-                    repeatType: "reverse",
-                }}
-            >
-                {loadingText}
-            </motion.span>
+            <div className="flex items-center">
+                <RotatingLines
+                    strokeColor="white"
+                    strokeWidth="5"
+                    animationDuration="0.75"
+                    width="24"
+                    visible={true}
+                />
+                <span className="ml-3">{loadingText}</span>
+            </div>
         </motion.button>
     );
 };

@@ -248,9 +248,9 @@ const CheckoutPage = () => {
 
   
   ////----------------------component render---------------------------
-  if (selectedPaymentMethod === "RazorPay" && isLoadingVerifyPayment) {
-    return <LoadingFullScreen />;
-  }
+  // if (selectedPaymentMethod === "RazorPay" && isLoadingVerifyPayment) {
+  //   return <LoadingFullScreen />;
+  // }
 
   if (orderPlaced) {
     return <OrderCompletion />;

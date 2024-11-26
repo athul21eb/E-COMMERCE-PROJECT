@@ -1,14 +1,21 @@
 import { fetchBaseQuery, createApi } from "@reduxjs/toolkit/query/react";
 
-import { ClearAdminCredentials, SetAdminAccessToken } from "../../../slices/auth/authSlice.js";
+import {
+  ClearAdminCredentials,
+  SetAdminAccessToken,
+} from "../../../slices/auth/authSlice.js";
 import { toast } from "react-toastify";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: `http://localhost:${import.meta.env.VITE_SERVER_PORT}/v1`,
+  baseUrl:
+    import.meta.env.VITE_FRONTEND_ENV === "development"
+      ? import.meta.env.VITE_DEVELOPMENT_BACKEND_URL
+      : import.meta.env.VITE_PRODUCTION_BACKEND_URL,
+
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = getState().auth.authInfo?.admin?.accessToken;
-   
+
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
     }
@@ -22,39 +29,28 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
   //console.log(api)  //signal,dispatch,getState()
   //console.log(extraOptions) //custom like {shout:true}
 
-
-
   let result = await baseQuery(args, api, extraOptions);
-
-  
 
   // if you want , handle other status codes too
   if (result?.error?.status === 403) {
-
-
     console.log("sending refresh token ");
-
 
     const refreshResult = await baseQuery(
       "/auth/admin/resend-token",
       api,
       extraOptions
     );
-   
+
     if (refreshResult?.data) {
-      
       const { accessToken } = refreshResult?.data;
 
-      api.dispatch(SetAdminAccessToken( accessToken ));
+      api.dispatch(SetAdminAccessToken(accessToken));
 
       result = await baseQuery(args, api, extraOptions);
     } else {
       if (refreshResult?.error?.status === 401) {
-
         api.dispatch(ClearAdminCredentials());
         toast.error(`Your Login has expired `);
-
-
       }
 
       return refreshResult;
@@ -66,7 +62,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
 };
 
 export const adminApiSlice = createApi({
-  reducerPath:"AdminApi",
+  reducerPath: "AdminApi",
   baseQuery: baseQueryWithReAuth,
 
   endpoints: (builder) => ({}),
