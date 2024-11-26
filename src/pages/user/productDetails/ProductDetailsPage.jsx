@@ -22,7 +22,7 @@ import { Tooltip } from "@mui/material";
 
 const ProductsDetails = () => {
   const { cartDetails } = useSelector((state) => state.cart);
-const [refetchWishlist ] = useLazyGetWishListQuery();
+  const [refetchWishlist] = useLazyGetWishListQuery();
   const { user } = useSelector((state) => state.auth?.authInfo);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
@@ -223,7 +223,7 @@ const [refetchWishlist ] = useLazyGetWishListQuery();
             className="w-full md:w-3/6 flex justify-center items-center mt-6 md:mt-0"
           >
             {!mainImageZoomOpen ? (
-              <Tooltip title="Double click to enable Zoom"  >
+              <Tooltip title="Double click to enable Zoom">
                 <img
                   src={mainImage}
                   alt="Main Product"
@@ -339,7 +339,9 @@ const [refetchWishlist ] = useLazyGetWishListQuery();
             {/* Actions and Description */}
             <div className="flex flex-col space-y-2 text-center">
               {cartDetails &&
-              cartDetails?.items.some((x) => x.productId._id === id) ? (
+              cartDetails?.items.some(
+                (x) => x.productId._id === id && x.size === selectedSize
+              ) ? (
                 <button
                   onClick={() => navigate("/cart")}
                   className="bg-black text-white py-2 rounded-lg flex justify-center items-center"

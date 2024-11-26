@@ -57,6 +57,7 @@ refetch();
      
 
         <Button
+         size={getChartHeight() >= 300 ?"medium ":"small"}
           variant="contained"
           onClick={() => setPeriod("weekly")}
           sx={{
@@ -71,6 +72,7 @@ refetch();
           Day Trend
         </Button>
         <Button
+        size={getChartHeight() >= 300 ?"medium ":"small"}
           variant="contained"
           onClick={() => setPeriod("monthly")}
           sx={{

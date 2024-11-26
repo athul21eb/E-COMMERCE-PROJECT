@@ -24,12 +24,15 @@ import {
   useRemoveCouponMutation,
 } from "../../../slices/user/coupons/couponsApiSlice";
 import EmptyCartAnimation from "../../../components/common/animations/EmptyCartAnimations";
-import { ShoppingCartIcon ,ShoppingBagIcon } from "lucide-react";
+import { ShoppingCartIcon, ShoppingBagIcon } from "lucide-react";
 
 const Cart = () => {
-  const { cartDetails } = useSelector((state) => state.cart);
+  const cartDetails = useSelector((state) => {
+    return state.cart.cartDetails;
+  });
 
   const { data: { coupons = [] } = {}, refetch } = useGetCouponsQuery();
+
   const [applyCouponApiCall] = useApplyCouponMutation();
   const [removeCouponApiCall] = useRemoveCouponMutation();
 
@@ -52,6 +55,7 @@ const Cart = () => {
   useEffect(() => {
     refetch();
   }, [cartDetails]);
+
   const summary = useMemo(() => {
     if (!cartDetails?.items?.length) {
       return {
@@ -125,7 +129,6 @@ const Cart = () => {
       setApiCallLoading(false);
       setIsConfirmModalOpen(false);
       setIsCouponsModalOpen(false);
-     
     }
   };
 
@@ -134,7 +137,7 @@ const Cart = () => {
     try {
       setApiCallLoading(true);
       if (!currentCoupon) return;
-      
+
       const response = await removeCouponApiCall().unwrap();
 
       toast.success(response?.message);
@@ -145,17 +148,19 @@ const Cart = () => {
       setApiCallLoading(false);
       setIsConfirmModalOpen(false);
 
-      setTimeout(()=>{
+      setTimeout(() => {
         setCouponRemoveMode(false);
-      },1000)
-      
-      
+      }, 1000);
     }
   };
 
   return !cartDetails || cartDetails?.items.length === 0 ? (
     <div className="mt-2 flex flex-col items-center justify-center min-h-screen">
-      <EmptyCartAnimation icon={ <ShoppingBagIcon className="w-28 h-28 sm:w-32 sm:h-32 text-customColorTertiarypop" />}/>
+      <EmptyCartAnimation
+        icon={
+          <ShoppingBagIcon className="w-28 h-28 sm:w-32 sm:h-32 text-customColorTertiarypop" />
+        }
+      />
       <h2 className="text-2xl font-semibold text-gray-700">
         Your Bag is Empty
       </h2>
@@ -164,7 +169,7 @@ const Cart = () => {
       </p>
       <Link to="/shop">
         <button className="mt-6 px-6 py-2 bg-blue-500 bg-opacity-80 text-white text-lg rounded-lg hover:bg-blue-600">
-          Shop Now 
+          Shop Now
         </button>
       </Link>
     </div>
@@ -182,8 +187,8 @@ const Cart = () => {
         {/* Cart Items Section */}
         <div className="flex-grow w-full lg:w-7/12">
           {cartDetails &&
-            cartDetails.items.map((item) => (
-              <CartItem key={item._id} item={item} />
+            cartDetails.items.map((item, i) => (
+              <CartItem key={i} item={item} />
             ))}
         </div>
 
@@ -300,27 +305,26 @@ const Cart = () => {
 
       {/* Confirmation Modal */}
       {couponRemoveMode ? (
-  <BlockModal
-    open={isConfirmModalOpen}
-    onClose={() => setIsConfirmModalOpen(false)}
-    onConfirm={handleCouponRemove}
-    message={`Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
+        <BlockModal
+          open={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onConfirm={handleCouponRemove}
+          message={`Are you sure you want to remove the coupon ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
                (Upto ₹${currentCoupon?.maxDiscountAmount})?`}
-    buttonName="Remove"
-    loading={apiCallLoading}
-  />
-) : (
-  <BlockModal
-    open={isConfirmModalOpen}
-    onClose={() => setIsConfirmModalOpen(false)}
-    onConfirm={handleCouponApplyConfirm}
-    message={`Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
+          buttonName="Remove"
+          loading={apiCallLoading}
+        />
+      ) : (
+        <BlockModal
+          open={isConfirmModalOpen}
+          onClose={() => setIsConfirmModalOpen(false)}
+          onConfirm={handleCouponApplyConfirm}
+          message={`Are you sure you want to apply the coupon - ${currentCoupon?.code} with ${currentCoupon?.discount}% OFF On minPurchaseAmount of ₹${currentCoupon?.minPurchaseAmount}
                (Upto ₹${currentCoupon?.maxDiscountAmount})?`}
-    buttonName="Apply"
-    loading={apiCallLoading}
-  />
-)}
-
+          buttonName="Apply"
+          loading={apiCallLoading}
+        />
+      )}
     </div>
   );
 };
@@ -385,7 +389,7 @@ export const CartSummary = ({
 
       {cart && (
         <button
-          onClick={() => navigate("/checkOut",{state:{from:"/cart"}})}
+          onClick={() => navigate("/checkOut", { state: { from: "/cart" } })}
           className="w-full bg-green-500 text-white font-semibold py-2 rounded-lg mt-4"
         >
           Checkout

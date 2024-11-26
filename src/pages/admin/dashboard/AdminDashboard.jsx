@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Card,
@@ -105,6 +105,13 @@ const AdminDashboard = () => {
     visible: { opacity: 1, x: 0 },
   };
 
+  const metrics = useMemo(() => [
+    { title: "Users Added", value: data?.totalUsers, icon: <FaUsers size={40} /> },
+    { title: "Total Orders", value: data?.totalOrders, icon: <FaShoppingCart size={40} /> },
+    { title: "Total Revenue", value: ` ₹${data?.totalRevenue?.toLocaleString()}`, icon: <FaRupeeSign size={40} /> },
+    { title: "Products Added", value: data?.totalProducts, icon: <FaBoxOpen size={40} /> },
+  ], [data]);
+  
   ////-------------------------------render component---------------------------
 
   if(isUninitialized||summaryLoading){
@@ -253,28 +260,7 @@ const AdminDashboard = () => {
 
         {/* Metrics Section */}
         <Grid container spacing={4}>
-          {[
-            {
-              title: " Users Added",
-              value: data?.totalUsers,
-              icon: <FaUsers size={40} />,
-            },
-            {
-              title: "Total Orders",
-              value: data?.totalOrders,
-              icon: <FaShoppingCart size={40} />,
-            },
-            {
-              title: "Total Revenue",
-              value: ` ₹${data?.totalRevenue.toLocaleString()}`,
-              icon: <FaRupeeSign size={40} />,
-            },
-            {
-              title: "Products Added",
-              value: data?.totalProducts,
-              icon: <FaBoxOpen size={40} />,
-            },
-          ].map((metric, index) => (
+          {metrics&&metrics.map((metric, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <motion.div
                 variants={cardVariants}
@@ -325,7 +311,7 @@ const AdminDashboard = () => {
         </Grid>
         {/* Top Brands and Products */}
         <Grid container spacing={4}>
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12} sm={6} md={4}>
             <Card
               style={{
                 background: themeStyles.surface,
@@ -376,7 +362,7 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12}  sm={6}  md={4}>
             <Card
               style={{
                 background: themeStyles.surface,
@@ -427,7 +413,7 @@ const AdminDashboard = () => {
               </CardContent>
             </Card>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid item xs={12}  sm={6}  md={4}>
             <Card
               style={{
                 background: themeStyles.surface,

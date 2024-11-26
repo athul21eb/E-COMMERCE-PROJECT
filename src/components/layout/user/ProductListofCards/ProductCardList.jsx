@@ -20,7 +20,7 @@ const ProductCardList = ({ productData = [], Heading = '' }) => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.25,
+        staggerChildren: 0.2,
       },
     },
   }
@@ -31,7 +31,7 @@ const ProductCardList = ({ productData = [], Heading = '' }) => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.3,
+        duration: 0.2,
       },
     },
   }

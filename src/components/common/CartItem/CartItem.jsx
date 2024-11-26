@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 
 const CartItem = ({ item }) => {
   ////mutations
-const navigate = useNavigate();
+  const navigate = useNavigate();
   const [updateCartProduct] = useUpdateToCartMutation();
   const [removeItemFromCart] = useRemoveFromCartMutation();
   const [selectedSize, setSelectedSize] = useState(item.size);
@@ -25,7 +25,8 @@ const navigate = useNavigate();
     if (sizeStock) {
       setAvailableStock(sizeStock.stock);
     }
-  }, [selectedSize, item.productId.stock]);
+    setQuantity(item.quantity);
+  }, [selectedSize, item.productId.stock, item.quantity]);
 
   const handleSizeChange = async (newSize) => {
     try {
@@ -42,9 +43,6 @@ const navigate = useNavigate();
 
   const handleQuantityChange = async (e) => {
     try {
-
-      
-
       setQuantity(parseInt(e.target.value));
 
       await updateCartProduct({
@@ -69,8 +67,11 @@ const navigate = useNavigate();
   };
 
   return (
-    <div   className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-4">
-      <div  onClick={() => navigate(`/product-details?id=${item.productId._id}`)}  className="flex items-center cursor-pointer">
+    <div className="flex items-center justify-between p-4 bg-gray-100 rounded-lg mb-4">
+      <div
+        onClick={() => navigate(`/product-details?id=${item.productId._id}`)}
+        className="flex items-center cursor-pointer"
+      >
         <img
           src={item.productId.thumbnail}
           alt={item.productId.productName}
@@ -104,21 +105,23 @@ const navigate = useNavigate();
               <div className="text-xl font-bold text-gray-800">
                 ₹{item.productId.salePrice}
               </div>
-            )}11
+            )}
+            11
           </div>
-          <div  onClick={(e)=>{
-                e.stopPropagation()
-              }} className="flex items-center mt-2">
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="flex items-center mt-2"
+          >
             <label className="mr-2">Size:</label>
             <select
               value={selectedSize}
               onChange={(e) => {
-                
                 const newSize = e.target.value;
                 setSelectedSize(newSize);
                 handleSizeChange(newSize);
               }}
-             
               className="border p-1"
             >
               {item.productId.stock
@@ -129,7 +132,6 @@ const navigate = useNavigate();
                   </option>
                 ))}
             </select>
-          
 
             <label className="ml-4 mr-2">Qty:</label>
             <select
