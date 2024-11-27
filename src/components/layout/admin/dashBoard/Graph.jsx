@@ -22,7 +22,7 @@ const Graph = () => {
   const { data: graphData ,refetch } = useGetGraphDataQuery({ period });
   const { width } = useWindowSize();
 
-console.log(graphData);
+
   useEffect(()=>{
 refetch();
   },[period])

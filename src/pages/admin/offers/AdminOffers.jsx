@@ -69,7 +69,7 @@ const OfferManagement = () => {
       }
     } catch (err) {
       toast.error(err?.data?.message || err.error);
-      console.log(err?.data?.message || err.error);
+      if (import.meta.env.VITE_FRONTEND_ENV === 'development') console.log(err?.data?.message || err.error);
     } finally {
       setIsModalOpen(false);
       
@@ -81,7 +81,7 @@ const OfferManagement = () => {
 
   // Function to handle adding a new offer
   const handleAddOffer = async (values, { resetForm }) => {
-    console.log("Form Submitted Values: ", values); // Debug form values
+    // Debug form values
 
     try {
       setApiCallLoading(true);

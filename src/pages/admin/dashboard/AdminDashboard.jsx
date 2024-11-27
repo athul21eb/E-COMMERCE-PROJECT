@@ -45,7 +45,7 @@ const AdminDashboard = () => {
         setData(res);
       }
     } catch (err) {
-      console.log(err);
+      if (import.meta.env.VITE_FRONTEND_ENV === 'development') console.log(err);
     }
   };
 
@@ -55,7 +55,7 @@ const AdminDashboard = () => {
     }
   }, [period]);
 
-  console.log(data);
+ 
 
   const handlePeriodChange = (event) => {
     setPeriod(event.target.value);

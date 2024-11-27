@@ -37,7 +37,7 @@ const CoolOrderRows = () => {
       console.error(err);
     }
   };
-console.log(orders);
+
   useEffect(() => {
     fetchOrdersData();
   }, [currentPage]);

@@ -11,7 +11,7 @@ const brandApiSlice = adminApiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from get all brands:", res.data);
+        
 
           const { brands } = res.data;
 

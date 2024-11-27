@@ -10,7 +10,7 @@ const productApiSlice = adminApiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from get all products:", res.data);
+       
 
           const { products } = res.data;
 

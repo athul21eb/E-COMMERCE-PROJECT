@@ -52,10 +52,7 @@ const Wishlist = () => {
         current.stock > max.stock ? current : max
       );
       
-      console.log(
-       
-        availableSize
-      );
+      
       // If no available size found, show a message to the user
       if (!availableSize) {
         toast.error("Out of Stock for all sizes!");

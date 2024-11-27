@@ -25,7 +25,7 @@ const SignUpPage = () => {
 
   // Handle form submission
   const handleFormSubmit = async (values) => {
-    console.log("Form submitted with data:", values);
+    
 
     try {
       // Attempt to sign up the user

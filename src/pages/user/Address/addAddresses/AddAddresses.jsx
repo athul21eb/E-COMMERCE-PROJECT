@@ -13,7 +13,7 @@ const AddAddressPage = ({route="/checkOut/addresses"}) => {
   }, []);
   const handleAddAddress = async (values) => {
 
-    console.log(values);
+   
     try {
       const response = await addAddress({
         data: values,

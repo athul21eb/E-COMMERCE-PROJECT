@@ -49,7 +49,7 @@ const WalletComponent = () => {
       }
     } catch (error) {
       toast.error(error?.data?.message);
-      console.log(error);
+      if (import.meta.env.VITE_FRONTEND_ENV === 'development') console.log(error);
     } finally {
       setIsModalOpen(false);
       refetch();
@@ -62,7 +62,7 @@ const WalletComponent = () => {
 
     if (currentData?.isWalletCreated) {
       setWallet(currentData);
-      console.log(currentData);
+    
       setTotalTransactionsCount(currentData?.totalTransactions)
     }
   }, [currentData]);

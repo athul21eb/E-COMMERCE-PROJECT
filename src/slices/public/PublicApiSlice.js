@@ -47,8 +47,7 @@ const PubicSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from get all products with filters:", res.data);
-    
+         
           const { products } = res.data;
     
           // Dispatch the action to update the state with products data

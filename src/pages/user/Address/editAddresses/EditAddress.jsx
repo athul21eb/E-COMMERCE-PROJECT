@@ -41,7 +41,7 @@ const navigate = useNavigate();
 
   const handleEditAddress = async (values) => {
     // Logic to handle adding the address, e.g., making an API call
-    console.log("edited address:", values);
+   
 
     try {
       const response = await updateAddress({

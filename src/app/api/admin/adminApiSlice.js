@@ -33,7 +33,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
 
   // if you want , handle other status codes too
   if (result?.error?.status === 403) {
-    console.log("sending refresh token ");
+  
 
     const refreshResult = await baseQuery(
       "/auth/admin/resend-token",

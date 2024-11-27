@@ -74,7 +74,7 @@ const BrandPage = () => {
         itemsPerPage,
       }).unwrap();
       if (totalBrandsCount) {
-        console.log(totalBrandsCount);
+     
 
         setTotalBrandsCount(totalBrandsCount);
       }

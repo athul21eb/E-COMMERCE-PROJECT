@@ -107,7 +107,7 @@ const ProductForm = () => {
         galleryImages = await Promise.all(
           galleryPreviews.map(async (image) => {
             const response = await uploadImage(image, "GALLERY");
-            console.log(response, "promise");
+           
             return response;
           })
         );

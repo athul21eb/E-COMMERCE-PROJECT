@@ -12,7 +12,7 @@ const customersApiSlice = adminApiSlice.injectEndpoints({
         try {
           // Await the response from the API call
           const res = await queryFulfilled;
-          console.log("Response from get all customers ", res.data);
+         
 
           const { customers } = res.data;
 

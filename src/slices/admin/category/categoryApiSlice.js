@@ -12,7 +12,7 @@ const categoryApiSlice = adminApiSlice.injectEndpoints({
         try {
           const res = await queryFulfilled;
 
-          console.log("Response from get all categories:", res.data);
+          
 
           const { categories } = res.data;
 

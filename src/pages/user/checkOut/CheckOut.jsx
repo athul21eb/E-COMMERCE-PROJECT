@@ -261,7 +261,7 @@ const CheckoutPage = () => {
   }
 
   if (!["/cart", "/account/orders","/addresses"].includes(ComingFrom)) {
-    console.log(ComingFrom)
+
     return navigate("/cart");
   }
 

@@ -76,7 +76,7 @@ const EditProductForm = () => {
   useEffect(() => {
     if (productData) {
       setCurrentProduct(productData?.product);
-      console.log("Product data fetched:", productData?.product);
+      
       setThumbnailPreview(productData?.product?.thumbnail);
       setGalleryPreviews(productData?.product?.gallery);
     }
@@ -130,7 +130,7 @@ const EditProductForm = () => {
 
   useEffect(() => {
     if (currentProduct) {
-      console.log(currentProduct);
+      
 
       //// initial form values
       setInitialValues({
@@ -183,7 +183,7 @@ const EditProductForm = () => {
           galleryImages = await Promise.all(
             galleryPreviews.map(async (image) => {
               const response = await uploadImage(image, "GALLERY");
-              console.log(response, "promise");
+             
               return response;
             })
           );
@@ -260,14 +260,14 @@ const EditProductForm = () => {
   };
 
   const handleGalleryImageRemove = (preview) => {
-    console.log(galleryPreviews.length, "before");
+    
 
     const filteredGalleryImages = galleryPreviews.filter(
       (galleryImage) => galleryImage !== preview
     );
     setGalleryPreviews(filteredGalleryImages);
 
-    console.log(galleryPreviews.length, "after");
+   
   };
 
   const handleThumbNailImageRemove = () => {

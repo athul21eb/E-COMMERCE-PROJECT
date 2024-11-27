@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 export const downloadXlsxReport = async (fetchData,period,startDate,endDate) => {
   try {
     const { salesReport: reportData } = await fetchData({period,startDate,endDate})?.unwrap();
-    console.log();
+  
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sales Report");

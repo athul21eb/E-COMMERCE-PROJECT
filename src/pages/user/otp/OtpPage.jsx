@@ -26,7 +26,7 @@ const navigate = useNavigate();
   const handleFormSubmit = async(values) => {
  
     try {
-      console.log("Form submitted with data:", values);
+      
       if(forgotPassword){
        
         const response  = await verifyOTP({...values,email:user.email,forgotPassword:true}).unwrap();
@@ -57,7 +57,7 @@ const navigate = useNavigate();
         
         const response = await resendOTP({ email:user.email }).unwrap();
       }
-      console.log("Resend OTP clicked");
+     
 
    
       toast.success(response.message);

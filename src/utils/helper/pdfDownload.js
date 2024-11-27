@@ -5,7 +5,7 @@ import toast from "react-hot-toast";
 
 export const downloadPdfReport = async (fetchData,period,startDate,endDate) => {
   try {
-    console.log(fetchData,period,startDate,endDate)
+    
     const { salesReport: reportData } = await fetchData({period,startDate,endDate})?.unwrap();
     const doc = new jsPDF();
     const title = "Sales Report";

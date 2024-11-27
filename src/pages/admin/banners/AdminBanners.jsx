@@ -200,8 +200,7 @@ const BannerPage = () => {
           toast.error("Please upload a banner image");
           return;
         }
-        console.log("submitted");
-        setLoadingAPI(true);
+       setLoadingAPI(true);
 
         if (editMode) {
           await handleEditSubmit(values, resetForm);
@@ -278,7 +277,7 @@ const BannerPage = () => {
       await fetchBannersData();
     } catch (err) {
       toast.error(err.data.message || "error occured");
-      console.log(err);
+      if (import.meta.env.VITE_FRONTEND_ENV === 'development') console.log(err);
     }
   };
 
@@ -294,7 +293,7 @@ const BannerPage = () => {
       toast.success(response.message);
       await fetchBannersData();
     } catch (err) {
-      console.log(err);
+      if (import.meta.env.VITE_FRONTEND_ENV === 'development')  console.log(err);
       toast.error(err?.data?.message || "An error occurred");
     } finally {
       setIsModalOpen(false);

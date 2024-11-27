@@ -90,7 +90,7 @@ function SamplePrevArrow(props) {
 
 const ProductCarousel = ({items}) => {
 
-  console.log(items);
+  
   const navigate = useNavigate();
   return (
     <div className="relative w-full max-w-screen mx-auto mb-2">

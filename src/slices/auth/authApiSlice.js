@@ -17,7 +17,7 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from login:", res.data);
+  
           const { user } = res.data;
           dispatch(SetCredentials({ ...user }));
         } catch (error) {
@@ -37,7 +37,6 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from sign-up:", res.data);
           const { email } = res.data;
           dispatch(SetCredentials({ email }));
         } catch (error) {
@@ -58,7 +57,7 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from login:", res.data);
+        
           const { user } = res.data;
           dispatch(SetCredentials({ ...user }));
         } catch (error) {
@@ -78,7 +77,7 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-         console.log(res.data,"reset");
+       
          
           dispatch(SetCredentials({user:null}));
         } catch (error) {
@@ -106,7 +105,7 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from verify OTP:", res.data);
+        
           const { user } = res.data;
           dispatch(SetCredentials({ ...user }));
         } catch (error) {
@@ -141,7 +140,7 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const res = await queryFulfilled;
-          console.log("Response from admin login:", res.data);
+        
           const { admin } = res.data;
           dispatch(SetAdminCredentials({ ...admin }));
         } catch (error) {

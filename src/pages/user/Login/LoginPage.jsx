@@ -22,7 +22,7 @@ const LoginPage = ({
   const [login, { isLoading }] = mutation();
 
   const handleFormSubmit = async (values) => {
-    console.log("Form submitted with data:", values);
+    
 
     try {
       const response = await login({ ...values }).unwrap();

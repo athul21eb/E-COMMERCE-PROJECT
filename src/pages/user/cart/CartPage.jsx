@@ -116,7 +116,7 @@ const Cart = () => {
         return;
       }
 
-      console.log(currentCoupon.code);
+   
       const response = await applyCouponApiCall({
         code: currentCoupon?.code,
       }).unwrap();

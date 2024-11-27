@@ -80,7 +80,7 @@ const AdminSaleReport = () => {
       }
 
       const res = await fetchOrders(params).unwrap();
-      console.log(res);
+    
 
       const {
         salesReport: { orders, totalOrders },

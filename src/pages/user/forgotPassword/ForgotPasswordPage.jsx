@@ -27,7 +27,7 @@ const ForgotPasswordPage = () => {
         forgotPassword: true,
       }).unwrap();
 
-      console.log("sended OTP for forgot password",response.email);
+      
      dispatch (SetCredentials({email:response.email}));
 
       toast.success(response.message);
