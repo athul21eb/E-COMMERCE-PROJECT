@@ -281,6 +281,19 @@ const AdminCategory = () => {
                  fullWidth
                  error={touched.categoryName && Boolean(errors.categoryName)}
                  helperText={<ErrorMessage name="categoryName" />}
+                 sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "6px",
+                    backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                    fontSize: "1em",
+                  
+                    color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                    fontSize: "1rem",
+                  },
+                }}
                />
                <Field
                  as={TextField}
@@ -291,6 +304,19 @@ const AdminCategory = () => {
                  fullWidth
                  multiline
                  maxRows={8}
+                 sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: "6px",
+                    backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                    fontSize: "1em",
+                   
+                    color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                  },
+                  "& .MuiInputLabel-root": {
+                    color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                    fontSize: "1rem",
+                  },
+                }}
                  error={touched.categoryDescription && Boolean(errors.categoryDescription)}
                  helperText={<ErrorMessage name="categoryDescription" />}
                />

@@ -189,7 +189,7 @@ const AdminOrderDetails = () => {
             <div className="md:w-1/2">
               <h3 className="text-xl font-semibold mb-2">{item.productId.productName}</h3>
               <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Category: {item.productId.category.categoryName}</p>
-              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Price: ₹{item.productId.salePrice}</p>
+              <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>item totalPrice: ₹{item.itemTotalPrice}</p>
               <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Size: {item.size}</p>
               <p className={`${theme==="dark"?"text-slate-300":"text-gray-600"} text-sm`}>Quantity: {item.quantity}</p>
             </div>

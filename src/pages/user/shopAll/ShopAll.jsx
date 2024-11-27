@@ -21,14 +21,25 @@ const ShopAll = () => {
   const [priceRange, setPriceRange] = useState([500, 40000]); // Initial price range
   const [sortOption, setSortOption] = useState("");
 
+  const [debouncedPriceRange, setDebouncedPriceRange] = useState(priceRange);
+
+  // Debounce effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedPriceRange(priceRange);
+    }, 500); // 1.5 seconds debounce time
+
+    return () => clearTimeout(timer); // Clear timer on value change
+  }, [priceRange]);
+
   // Using the API query
   const { data, isLoading, refetch, isFetching } =
     useGetProductListWithFiltersAndSortQuery({
       page: currentPage,
       limit: itemsPerPage, // Adjust limit as per your requirement
       selectedBrands: selectedBrands.join(","), // Convert array to string for API query
-      minPrice: priceRange[0],
-      maxPrice: priceRange[1],
+      minPrice: debouncedPriceRange[0],
+      maxPrice: debouncedPriceRange[1],
       sortBy: sortOption,
       search: searchQuery || "",
     });
@@ -46,7 +57,7 @@ const ShopAll = () => {
   }, [
     selectedBrands,
     currentPage,
-    priceRange,
+    debouncedPriceRange,
     sortOption,
     refetch,
     searchQuery,

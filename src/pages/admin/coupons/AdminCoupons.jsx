@@ -13,73 +13,12 @@ import {
   useGetCouponsQuery,
 } from "../../../slices/admin/coupons/adminCouponsApiSlice.js";
 import { CouponSchema } from "../../../utils/validation/validate.js";
+import { useTheme } from "../../../contexts/themeContext.jsx";
+import AdminBreadCrumbs from "../../../components/common/BreadCrumbs/AdminBreadCrumbs.jsx";
+
 
 const CouponManagement = () => {
-  // const [coupons, setCoupons] = useState([
-  //   {
-  //     code: "SUMMER20",
-  //     discount: 20,
-  //     expirationDate: "2024-12-31",
-  //     maxDiscountAmount: 50,
-  //     minPurchaseAmount: 100,
-  //     usageLimitPerUser: 1,
-  //     totalUsageLimit: 100,
-  //     status: "active",
-  //   },
-  //   {
-  //     code: "WINTER15",
-  //     discount: 15,
-  //     expirationDate: "2025-01-31",
-  //     maxDiscountAmount: 30,
-  //     minPurchaseAmount: 50,
-  //     usageLimitPerUser: 2,
-  //     totalUsageLimit: 200,
-  //     status: "active",
-  //   },
-  // ]);
-  // const [apiCallLoading, setApiCallLoading] = useState(false);
-  // const [currentCouponIdToDelete, setCurrentCouponIdToDelete] = useState(null);
-  // const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // const handleConfirmDelete = () => {
-  //   setCoupons((prevCoupons) => prevCoupons.filter((_, index) => index !== currentCouponIdToDelete));
-  //   setIsModalOpen(false);
-  // };
-
-  // const handleAddCoupon = (values, { resetForm }) => {
-  //   setCoupons((prevCoupons) => [...prevCoupons, values]);
-  //   resetForm();
-  // };
-
-  // const headers = [
-  //   "Coupon Code",
-  //   "Discount (%)",
-  //   "Expiration Date",
-  //   "Max Discount Amount",
-  //   "Min Purchase Amount",
-
-  //   "Actions",
-  // ];
-
-  // const rows = coupons.map((coupon, index) => [
-  //   coupon.code,
-  //   coupon.discount,
-  //   new Date(coupon.expirationDate).toLocaleDateString(),
-  //   coupon.maxDiscountAmount,
-  //   coupon.minPurchaseAmount,
-
-  //   <Button
-  //     variant="outlined"
-  //     color="error"
-  //     onClick={() => {
-  //       setCurrentCouponIdToDelete(index);
-  //       setIsModalOpen(true);
-  //     }}
-  //   >
-  //     Delete
-  //   </Button>,
-  // ]);
-
+  const {theme ,themeStyles} = useTheme();
   const [apiAddCoupon] = useAddCouponMutation();
   const [apiDeleteCoupon] = useDeleteCouponMutation();
   const {
@@ -182,11 +121,12 @@ const CouponManagement = () => {
   }
 
   return (
-    <div className="p-4 bg-gray-200">
-      <h1 className="text-4xl font-bold mb-4">Coupons Management</h1>
+    <div className="p-4 " style={{backgroundColor:themeStyles.backgroundColor}}>
+      <AdminBreadCrumbs />
+      <h1 className="text-4xl font-bold mb-4" style={{color:themeStyles.textPrimary}}>Coupons Management</h1>
 
       {/* Add Coupon Form */}
-      <div className="mb-8 bg-white p-4">
+      <div className="mb-8 p-4" style={{backgroundColor:themeStyles.surface}}>
         <Formik
           initialValues={{
             code: "",
@@ -210,6 +150,19 @@ const CouponManagement = () => {
                     variant="outlined"
                     helperText={<ErrorMessage name="code" />}
                     error={touched.code && !!errors.code}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "6px",
+                        backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                        fontSize: "1em",
+                       
+                        color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                        fontSize: "1rem",
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={4}>
@@ -222,10 +175,36 @@ const CouponManagement = () => {
                     variant="outlined"
                     helperText={<ErrorMessage name="discount" />}
                     error={touched.discount && !!errors.discount}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "6px",
+                        backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                        fontSize: "1em",
+                      
+                        color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                        fontSize: "1rem",
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="maxDiscountAmount"
                     as={TextField}
                     type="number"
@@ -240,6 +219,19 @@ const CouponManagement = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="minPurchaseAmount"
                     as={TextField}
                     type="number"
@@ -254,6 +246,19 @@ const CouponManagement = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="expirationDate"
                     as={TextField}
                     type="date"
@@ -291,8 +296,9 @@ const CouponManagement = () => {
 
       <Typography
         variant="h4"
-        className="font-bold text-center text-gray-600"
+        className="font-bold text-center text-gray-600  "
         gutterBottom
+        style={{color:themeStyles.textPrimary}}
       >
         Coupons List
       </Typography>

@@ -23,7 +23,7 @@ const fetchNewArrivals = async () => {
 
 export default function Homepage() {
   const { 
-    data = { newArrivals: [], mostDelivered: [], mostLoved: [] }, 
+    data = { newArrivals: [], mostDelivered: [], mostLoved: [],banners:[] }, 
     isLoading, 
    
   } = useQuery({
@@ -41,11 +41,11 @@ export default function Homepage() {
 
  
 
-  const { newArrivals, mostDelivered, mostLoved } = data;
+  const { newArrivals, mostDelivered, mostLoved ,banners} = data;
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      <Carousel />
+     { banners&&banners?.length&&<Carousel items={banners} />}
       <CategoryBanner />
 
       {newArrivals&&newArrivals.length > 0 && (

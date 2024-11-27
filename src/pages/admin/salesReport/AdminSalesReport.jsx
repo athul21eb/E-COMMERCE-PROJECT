@@ -10,7 +10,10 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import LoadingScreen from "../../../components/common/LoadingScreens/LoadingScreen";
-import { useLazyGetFullSaleReportQuery, useLazyGetSaleReportQuery } from "../../../slices/admin/order/orderApiSlice";
+import {
+  useLazyGetFullSaleReportQuery,
+  useLazyGetSaleReportQuery,
+} from "../../../slices/admin/order/orderApiSlice";
 import AdminBreadCrumbs from "../../../components/common/BreadCrumbs/AdminBreadCrumbs";
 import RenderPagination from "../../../components/common/Pagination/RenderPagination";
 import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable";
@@ -20,8 +23,8 @@ import { downloadPdfReport } from "../../../utils/helper/pdfDownload";
 import { downloadXlsxReport } from "../../../utils/helper/xlsxDownload";
 
 const AdminSaleReport = () => {
-
-  const [fetchData,{isLoading:downloadIsLoading}] = useLazyGetFullSaleReportQuery();
+  const [fetchData, { isLoading: downloadIsLoading }] =
+    useLazyGetFullSaleReportQuery();
   const { themeStyles, theme } = useTheme();
   const isDark = theme === "dark";
 
@@ -142,7 +145,7 @@ const AdminSaleReport = () => {
   const headers = [
     "Order ID",
     "Order Amount",
-  
+
     "Coupon Discount",
     "Discount on MRP",
     "Refund Amount",
@@ -155,13 +158,13 @@ const AdminSaleReport = () => {
     order.orderId,
     `₹${order.billAmount}`,
     `₹${order.appliedCouponAmount}`,
-   
+
     `₹${order.items.reduce(
       (acc, item) => acc + (item.appliedOfferAmount || 0),
       0
     )}`,
     `₹${order.refundedAmount}`,
-    `₹${order.billAmount - (order?.refundedAmount||0)}`,
+    `₹${order.billAmount - (order?.refundedAmount || 0)}`,
     <>
       <Typography variant="body2" sx={{ color: themeStyles.textPrimary }}>
         Method: {order.payment.method}
@@ -312,46 +315,55 @@ const AdminSaleReport = () => {
           marginBottom: "1rem",
         }}
       >
-        {(!orders || orders.length === 0) && (
+        {!orders || orders.length === 0 ? (
           <Typography
-            sx={{ textAlign: "center", fontSize: "2.5rem", marginY: "1.25rem" }}
+            sx={{
+              textAlign: "center",
+              font: "message-box",
+              fontSize: "2.5rem",
+              padding: "1.25rem",
+            }}
           >
             No orders found for the selected period.
           </Typography>
+        ) : (
+          <>
+            <ReusableTable headers={headers} rows={rows} />
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                gap: "1rem",
+                marginY: "1rem",
+                padding: "1rem",
+              }}
+            >
+              <Button
+                disabled={downloadIsLoading}
+                variant="outlined"
+                color="primary"
+                onClick={() =>
+                  downloadPdfReport(fetchData, period, startDate, endDate)
+                }
+                sx={{ borderRadius: "10px" }}
+              >
+                Download PDF
+              </Button>
+              <Button
+                disabled={downloadIsLoading}
+                variant="outlined"
+                color="primary"
+                onClick={() =>
+                  downloadXlsxReport(fetchData, period, startDate, endDate)
+                }
+                sx={{ borderRadius: "10px" }}
+              >
+                Download Excel
+              </Button>
+            </Box>
+          </>
         )}
-
-        <ReusableTable headers={headers} rows={rows} />
-
-        
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              gap: "1rem",
-              marginY: "1rem",
-              padding: "1rem",
-            }}
-          >
-            <Button
-             disabled={downloadIsLoading}
-              variant="outlined"
-              color="primary"
-              onClick={()=>downloadPdfReport(fetchData,period,startDate,endDate)}
-              sx={{ borderRadius: "10px" }}
-            >
-              Download PDF
-            </Button>
-            <Button
-            disabled={downloadIsLoading}
-              variant="outlined"
-              color="primary"
-              onClick={()=>downloadXlsxReport(fetchData,period,startDate,endDate)}
-              sx={{ borderRadius: "10px" }}
-            >
-              Download Excel
-            </Button>
-          </Box>
-       
       </Paper>
 
       {orders && orders.length > 0 && (

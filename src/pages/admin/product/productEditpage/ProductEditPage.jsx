@@ -462,7 +462,7 @@ const EditProductForm = () => {
                           const file = event.target.files[0];
                           if (
                             file &&
-                            !["image/jpeg", "image/jpg", "image/png"].includes(
+                            !["image/jpeg","image/webp" ,"image/avif", "image/jpg", "image/png"].includes(
                               file.type
                             )
                           ) {

@@ -343,7 +343,7 @@ export default function OrderDetails() {
               <p className="text-gray-600">
                 Category: {item.productId.category.categoryName}
               </p>
-              <p className="text-gray-600">Price: ₹{item.itemTotalPrice}</p>
+              <p className="text-gray-600">item totalPrice: ₹{item.itemTotalPrice}</p>
               <p className="text-gray-600">Size: {item.size}</p>
               <p className="text-gray-600">Quantity: {item.quantity}</p>
             </div>

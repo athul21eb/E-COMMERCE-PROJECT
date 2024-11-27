@@ -299,11 +299,11 @@ const ProductsTable = () => {
       >
         Products Management
       </Typography>
-      <div className="mb-6 ml-6 flex justify-between">
+      <div className="m-1 md:mb-6 md:ml-6 flex space-1 justify-between">
         <select
           value={sortingOption}
           onChange={(e) => setSortingOption(e.target.value)}
-          className=" border border-black bg-gray-300 py-2 px-4 rounded-md"
+          className=" border border-black bg-gray-300 p-1 md:py-2 md:px-4 rounded-md"
         >
           {SORT_OPTIONS.map((option) => (
             <option key={option} value={option}>
@@ -313,7 +313,7 @@ const ProductsTable = () => {
         </select>
 
         <button
-          className="bg-black text-white px-4 py-2 rounded "
+          className="bg-black text-white md:px-4 md:py-2 p-1 rounded "
           onClick={() => navigate("create-product")}
         >
           + ADD NEW PRODUCT

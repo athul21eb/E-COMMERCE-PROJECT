@@ -21,8 +21,12 @@ import {
 import LoadingScreen from "../../../components/common/LoadingScreens/LoadingScreen.jsx";
 import toast from "react-hot-toast";
 import BlockModal from "../../../components/common/BlockModals/BlockModal.jsx";
+import { useTheme } from "../../../contexts/themeContext.jsx";
+
 
 const OfferManagement = () => {
+
+  const {themeStyles,theme }= useTheme();
   const [apiAddOffers] = useCreateOfferMutation();
   const [apiDeleteOffers] = useDeleteOfferMutation();
   const {
@@ -215,12 +219,12 @@ const OfferManagement = () => {
   }
 
   return (
-    <div className="p-4 bg-gray-200">
+    <div className="p-4 " style={{backgroundColor:themeStyles.backgroundColor}}>
       <AdminBreadCrumbs />
-      <h1 className="text-4xl font-bold mb-4">Offers Management</h1>
+      <h1 className="text-4xl font-bold mb-4" style={{color:themeStyles.textPrimary}}>Offers Management</h1>
 
       {/* Add Offer Form */}
-      <div className="mb-8 bg-white p-4">
+      <div className="mb-8  p-4 " style={{backgroundColor:themeStyles.surface}}>
         <Formik
           initialValues={{
             title: "",
@@ -246,10 +250,36 @@ const OfferManagement = () => {
                     variant="outlined"
                     helperText={<ErrorMessage name="title" />}
                     error={touched.title && !!errors.title}
+                    sx={{
+                      "& .MuiOutlinedInput-root": {
+                        borderRadius: "6px",
+                        backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                        fontSize: "1em",
+                       
+                        color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                      },
+                      "& .MuiInputLabel-root": {
+                        color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                        fontSize: "1rem",
+                      },
+                    }}
                   />
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                   sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="description"
                     as={TextField}
                     fullWidth
@@ -261,6 +291,19 @@ const OfferManagement = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                   sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="discountPercentage"
                     as={TextField}
                     type="number"
@@ -277,6 +320,19 @@ const OfferManagement = () => {
                 {/* Type, Start Date, End Date */}
                 <Grid item xs={4}>
                   <Field
+                   sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="type"
                     as={TextField}
                     select
@@ -292,6 +348,19 @@ const OfferManagement = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                   sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="startDate"
                     as={TextField}
                     type="date"
@@ -309,6 +378,19 @@ const OfferManagement = () => {
                 </Grid>
                 <Grid item xs={4}>
                   <Field
+                   sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: "6px",
+                      backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                      fontSize: "1em",
+                     
+                      color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                    },
+                    "& .MuiInputLabel-root": {
+                      color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                      fontSize: "1rem",
+                    },
+                  }}
                     name="endDate"
                     as={TextField}
                     type="date"
@@ -348,6 +430,7 @@ const OfferManagement = () => {
         variant="h4"
         className="font-extrabold text-center text-gray-600"
         gutterBottom
+        style={{color:themeStyles.textPrimary}}
       >
         Product Offers
       </Typography>
@@ -356,6 +439,7 @@ const OfferManagement = () => {
         variant="h4"
         className="font-bold text-center text-gray-600  "
         gutterBottom
+        style={{color:themeStyles.textPrimary}}
       >
         Category Offers
       </Typography>

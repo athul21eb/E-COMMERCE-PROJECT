@@ -33,11 +33,13 @@ import LoadingScreen from "../../../components/common/LoadingScreens/LoadingScre
 import AdminBreadCrumbs from "../../../components/common/BreadCrumbs/AdminBreadCrumbs";
 import ImageCropperModal from "../../../components/common/ImageCropModals/ImageCropModal";
 import RenderPagination from "../../../components/common/Pagination/RenderPagination";
+import ReusableTable from "../../../components/common/reUsableTable/ReUsableTable";
+import { useTheme } from "../../../contexts/themeContext";
 
 const BrandPage = () => {
   const scrollRef = useRef(null);
 
- 
+  const { theme, themeStyles } = useTheme();
   const [updateBrandIsActive] = useToggleBrandIsActiveMutation();
   const [createBrand, { isLoading: createBrandLoading }] =
     useAddBrandMutation();
@@ -57,10 +59,9 @@ const BrandPage = () => {
 
   // Mutations - Api Actions
   const [triggerGetBrandsList, { isLoading: brandsQueryLoading }] =
-  useLazyGetBrandsListQuery();
-  
-  ////pagination States
+    useLazyGetBrandsListQuery();
 
+  ////pagination States
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalBrandsCount, setTotalBrandsCount] = useState(1);
@@ -74,11 +75,10 @@ const BrandPage = () => {
       }).unwrap();
       if (totalBrandsCount) {
         console.log(totalBrandsCount);
-        
+
         setTotalBrandsCount(totalBrandsCount);
       }
     } catch (err) {
-     
       console.error(err);
     }
   };
@@ -86,7 +86,7 @@ const BrandPage = () => {
   useEffect(() => {
     fetchBrandsData();
   }, [currentPage]);
-  
+
   const [loadingAPI, setLoadingAPI] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
   const [editMode, setEditMode] = useState(false);
@@ -117,9 +117,7 @@ const BrandPage = () => {
         setLoadingAPI(true);
 
         if (editMode) {
-          
-         await handleEditSubmit(values, formik);
-          
+          await handleEditSubmit(values, formik);
         } else {
           const uploadedImageUrL = await uploadImage(previewImage, "brands");
           const response = await createBrand({
@@ -137,7 +135,6 @@ const BrandPage = () => {
         console.error(err);
       } finally {
         setLoadingAPI(false);
-       
       }
     },
   });
@@ -189,8 +186,6 @@ const BrandPage = () => {
   };
 
   const handleEditSubmit = async (values, { resetForm }) => {
-
-   
     let uploadedImageUrL = previewImage;
 
     // Only upload a new image if the previewImage has changed
@@ -220,8 +215,6 @@ const BrandPage = () => {
 
     // Trigger refresh of the brand list
     await fetchBrandsData();
-
-    
   };
 
   const confirmIsActiveToggle = async () => {
@@ -243,13 +236,63 @@ const BrandPage = () => {
     }
   };
 
+  const headers = ["Photo", "Brand Name", "Description", "isActive", "Actions"];
+  const rows =
+    brands && brands.length > 0
+      ? brands.map((brand) => [
+          <img
+            src={brand.brandPhotoUrl}
+            alt={brand.brandName}
+            className="h-10 w-10 object-fill mx-auto"
+          />,
+          brand?.brandName,
+          brand?.brandDescription,
+          <Switch
+            checked={brand.isActive}
+            onChange={() => handleToggleClick(brand)}
+            sx={{
+              "& .MuiSwitch-switchBase.Mui-checked": {
+                color: "green",
+                "&:hover": {
+                  backgroundColor: "rgba(0, 128, 0, 0.1)",
+                },
+              },
+              "& .MuiSwitch-switchBase": {
+                color: "red",
+                "&:hover": {
+                  backgroundColor: "rgba(255, 0, 0, 0.1)",
+                },
+              },
+              "& .MuiSwitch-track": {
+                backgroundColor: brand.isActive ? "green" : "red",
+              },
+            }}
+          />,
+          <div className="flex space-x-2">
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              onClick={() => handleEdit(brand)}
+            >
+              Edit
+            </Button>
+          </div>,
+        ])
+      : [];
+
   //// ------------------------------------component----------------------------------------------------------
   if (brandsQueryLoading) return <LoadingScreen />;
 
   return (
-    <div className="p-4  bg-gray-200">
+    <div className="p-4  " style={{ color: themeStyles.backgroundColor }}>
       <AdminBreadCrumbs />
-      <h1 className="text-2xl font-bold mb-4">Brand Management</h1>
+      <h1
+        className="text-2xl font-bold mb-4"
+        style={{ color: themeStyles.textPrimary }}
+      >
+        Brand Management
+      </h1>
 
       {/* Add/Edit Brand Form */}
       <div ref={scrollRef}>
@@ -260,7 +303,11 @@ const BrandPage = () => {
             e.preventDefault();
             formik.handleSubmit(formik.values);
           }}
-          className="bg-white p-4 rounded shadow-sm mb-4 space-y-3"
+          className=" p-4 rounded shadow-sm mb-4 space-y-3"
+          style={{
+            color: themeStyles.textPrimary,
+            backgroundColor: themeStyles.surface,
+          }}
         >
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <TextField
@@ -273,6 +320,19 @@ const BrandPage = () => {
               helperText={formik.touched.name && formik.errors.name}
               size="small"
               fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "6px",
+                  backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                  fontSize: "1em",
+                  padding: "0.3rem",
+                  color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                  fontSize: "1rem",
+                },
+              }}
             />
 
             <TextField
@@ -291,6 +351,19 @@ const BrandPage = () => {
               }
               size="small"
               fullWidth
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  borderRadius: "6px",
+                  backgroundColor: theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                  fontSize: "1em",
+
+                  color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                },
+                "& .MuiInputLabel-root": {
+                  color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                  fontSize: "1rem",
+                },
+              }}
             />
 
             <div className="flex flex-col items-center">
@@ -319,6 +392,20 @@ const BrandPage = () => {
                       size="small"
                       fullWidth
                       InputLabelProps={{ shrink: true }}
+                      sx={{
+                        "& .MuiOutlinedInput-root": {
+                          borderRadius: "6px",
+                          backgroundColor:
+                            theme === "light" ? "#f9f9f9" : "#2a2a2a",
+                          fontSize: "1em",
+                          padding: "0.3rem",
+                          color: theme === "light" ? "#333333" : "#ffffff", // Dynamic text color
+                        },
+                        "& .MuiInputLabel-root": {
+                          color: theme === "light" ? "#333333" : "#cccccc", // Dynamic label color
+                          fontSize: "1rem",
+                        },
+                      }}
                     />
                     <span className="text-gray-500 text-center block">
                       Click to upload and crop BrandImage
@@ -393,85 +480,7 @@ const BrandPage = () => {
         </form>
       </div>
 
-      {/* Brand List */}
-      <Paper className="bg-white p-4 rounded shadow-sm">
-        <h2 className="text-xl font-semibold mb-4">Brand List</h2>
-        <TableContainer>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ '& .MuiTableCell-root': { fontWeight: 'bold', fontSize: '1.2rem', border: 1 } }} >
-                <TableCell>Photo</TableCell>
-                <TableCell>Brand Name</TableCell>
-                <TableCell>Description</TableCell>
-                <TableCell>isActive</TableCell>
-                <TableCell>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {brands.length > 0 ? (
-                brands.map((brand) => (
-                  <TableRow key={brand._id}>
-                    <TableCell>
-                      <img
-                        src={brand.brandPhotoUrl}
-                        alt={brand.brandName}
-                        className="h-10 w-10 object-fill mx-auto"
-                      />
-                    </TableCell>
-                    <TableCell>{brand.brandName}</TableCell>
-                    <TableCell>{brand.brandDescription}</TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={brand.isActive}
-                        onChange={() => handleToggleClick(brand)}
-                        sx={{
-                          "& .MuiSwitch-switchBase.Mui-checked": {
-                            color: "green",
-                            "&:hover": {
-                              backgroundColor: "rgba(0, 128, 0, 0.1)",
-                            },
-                          },
-                          "& .MuiSwitch-switchBase": {
-                            color: "red",
-                            "&:hover": {
-                              backgroundColor: "rgba(255, 0, 0, 0.1)",
-                            },
-                          },
-                          "& .MuiSwitch-track": {
-                            backgroundColor: brand.isActive ? "green" : "red",
-                          },
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outlined"
-                          color="primary"
-                          size="small"
-                          onClick={() => handleEdit(brand)}
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan="5">
-                    <div className="text-center text-3xl">
-                      {" "}
-                      Brands not found
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Paper>
-
+      <ReusableTable headers={headers} rows={rows} />
       <div>
         <RenderPagination
           currentPage={currentPage}
@@ -494,7 +503,7 @@ const BrandPage = () => {
       {/* Brand Image cropper*/}
       {isCropperOpen && (
         <ImageCropperModal
-        size={1/1}
+          size={1 / 1}
           image={selectedImage}
           onCancel={handleCancelCrop}
           onCropComplete={handleCropComplete}
