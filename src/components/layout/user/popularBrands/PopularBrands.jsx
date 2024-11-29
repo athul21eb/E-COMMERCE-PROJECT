@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLazyGetAllBrandsListQuery } from "../../../../slices/public/PublicApiSlice";
 import { toast } from "react-toastify";
-import LoadingBlurScreen from "../../../common/LoadingScreens/LoadingBlurFullScreen";
+
 import { useNavigate } from "react-router-dom";
+import LoadingFullScreen from "../../../common/LoadingScreens/LoadingFullScreen";
 
 const PopularBrands = () => {
 
@@ -28,7 +29,7 @@ const PopularBrands = () => {
   }, []);
 
   if (isLoading) {
-    return <LoadingBlurScreen />;
+    return <LoadingFullScreen />;
   }
   if(brandDetails?.length===0){
     return ;

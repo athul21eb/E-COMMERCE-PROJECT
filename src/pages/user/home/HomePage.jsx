@@ -71,7 +71,7 @@ export default function Homepage() {
 
           <div className="md:flex md:justify-evenly mb-10">
             <motion.div
-              initial={{ opacity: 0, x: -100 }}
+              initial={{ opacity: 0, x: -200 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               viewport={{ once: true, margin: "-100px" }}
@@ -85,7 +85,7 @@ export default function Homepage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 100 }}
+              initial={{ opacity: 0, x: -100 }}
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, ease: "easeOut" }}
               viewport={{ once: true, margin: "-100px" }}

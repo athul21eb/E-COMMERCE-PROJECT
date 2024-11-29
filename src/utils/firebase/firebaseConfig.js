@@ -6,15 +6,14 @@ import { initializeApp } from "firebase/app";
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: "fire-e-commerce-14239.firebaseapp.com",
-  projectId: "fire-e-commerce-14239",
-  storageBucket: "fire-e-commerce-14239.appspot.com",
-  messagingSenderId: "262935703737",
-  appId: "1:262935703737:web:e3a652ba40129817c3eb68"
+  authDomain: "fireboots-585cf.firebaseapp.com",
+  projectId: "fireboots-585cf",
+  storageBucket: "fireboots-585cf.firebasestorage.app",
+  messagingSenderId: "378788725766",
+  appId: "1:378788725766:web:d86938ce518325d8fd6f87"
 };
 
 // Initialize Firebase
-
 const firebaseApp = initializeApp(firebaseConfig);
 
 export default firebaseApp

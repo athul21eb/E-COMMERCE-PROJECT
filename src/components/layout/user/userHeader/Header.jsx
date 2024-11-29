@@ -63,7 +63,7 @@ const Header = () => {
   }
 
   return (
-    <header className="bg-white h-16 shadow-md fixed w-full z-10 top-0">
+    <header className="bg-white h-16 shadow-md fixed w-full z-50 top-0 max-w-full">
       <nav className="flex items-center justify-between px-6 py-3">
         <div id="logo">
           <Link to="/" className="h-10 w-12">

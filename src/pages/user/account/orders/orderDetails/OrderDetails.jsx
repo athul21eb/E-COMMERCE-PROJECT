@@ -35,57 +35,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { formatDate } from "../../../../../utils/helper/formatDate";
 import { downloadOrderDetailsPdf } from "../../../../../utils/helper/pdfDownload";
 
-// const mockOrderData = {
-//   "_id": { "$oid": "671b40dff8698de99e74913f" },
-//   "userId": { "$oid": "66cd6d0fdd5dcfacda5faaae" },
-//   "items": [
-//     {
-//       "productId": {
-//         "$oid": "66cec12af073329219b68d23",
-//         "productName": "Sample Product",
-//         "thumbnail": "/placeholder.svg?height=100&width=100",
-//         "category": { "categoryName": "Sample Category" },
-//         "salePrice": 8999
-//       },
-//       "quantity": 1,
-//       "size": "5",
-//       "unitPrice": 8999,
-//       "itemTotalPrice": 8999,
-//       "appliedOfferAmount": 0,
-//       "status": "Confirmed",
-//       "_id": { "$oid": "671b40dff8698de99e749140" }
-//     }
-//   ],
-//   "billAmount": 8999,
-//   "shippingAddress": {
-//     "firstName": "athul",
-//     "lastName": "Bindhu",
-//     "state": "Kerala",
-//     "district": "thrissur",
-//     "city": "thrissur",
-//     "pincode": "680001",
-//     "landmark": "vhgjvv",
-//     "mobileNumber": "0808691135",
-//     "alternateNumber": "2569874563",
-//     "isDefaultAddress": true,
-//     "_id": { "$oid": "67057c021602733e464421f5" },
-//     "createdAt": { "$date": "2024-10-08T18:37:54.985Z" },
-//     "updatedAt": { "$date": "2024-10-08T18:37:54.985Z" }
-//   },
-//   "payment": {
-//     "method": "RazorPay",
-//     "status": "Success",
-//     // "transactionId": "b2124292-18bd-4ba6-8810-70b092e315b3",
-//     // "gateway_order_id": "order_PDBAe9YfJT2hWZ"
-//   },
-//   "orderStatus": "Confirmed",
-//   "appliedCouponAmount": 0,
-//   "orderId": "1a156972-56c2-4ef9-90e0-5b244f1abdde",
-//   "orderDate":  "2024-10-25T06:55:27.395Z" ,
-//   "createdAt": { "$date": "2024-10-25T06:55:27.455Z" },
-//   "updatedAt": { "$date": "2024-10-25T06:56:17.154Z" },
-//   "__v": 0
-// }
 
 export default function OrderDetails() {
   const [

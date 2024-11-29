@@ -11,7 +11,6 @@ import {
   useRetryPaymentMutation,
   useVerifyPaymentMutation,
 } from "../../../slices/user/orders/orderApiSlice";
-import LoadingBlurScreen from "../../../components/common/LoadingScreens/LoadingBlurFullScreen";
 import OrderCompletion from "../orderFulfilled/OrderCompletion";
 import OrderFailed from "../orderFulfilled/orderFailed";
 import { CartSummary } from "../cart/CartPage";
@@ -25,59 +24,14 @@ const CheckoutPage = () => {
   const ComingFrom = location.state?.from;
 
    const RetryPaymentOrder =  location.state?.RetryPaymentOrder;
-   //{
-  //   _id: "673e028f13bb996c45c8f5fd",
-  //   userId: "673cd6f23b9815b6e7484c58",
-  //   items: [
-  //     {
-  //       productId: "66cc37b7cf18045ece8521c0",
-  //       quantity: 1,
-  //       size: "5",
-  //       unitPrice: 10000,
-  //       itemTotalPrice: 10000,
-  //       appliedOfferAmount: 0,
-  //       status: "Failed",
-  //       _id: "673e028f13bb996c45c8f5fe",
-  //     },
-  //   ],
-  //   billAmount: 10000,
-  //   shippingAddress: {
-  //     firstName: "ATHUL",
-  //     lastName: "Bindhu",
-  //     state: "Kerala",
-  //     district: "efdsf",
-  //     city: "thrissur",
-  //     pincode: "680001",
-  //     landmark: "near temple",
-  //     mobileNumber: "8086911354",
-  //     alternateNumber: "",
-  //     isDefaultAddress: true,
-  //     _id: "673ce6dfd303297d390ca825",
-  //     createdAt: "2024-11-19T19:28:31.131Z",
-  //     updatedAt: "2024-11-19T19:28:31.131Z",
-  //   },
-  //   payment: {
-  //     method: "RazorPay",
-  //     status: "Failed",
-  //     transactionId: "457700dd-1ac1-449f-8918-5a0faf6f5b17",
-  //     gateway_order_id: "order_PNbyjmMd9vTJw2",
-  //   },
-  //   orderStatus: "Failed",
-  //   appliedCouponAmount: 0,
-  //   orderId: "51a76b61-9fe8-48e1-bfe6-40fd70a22dc6",
-  //   orderDate: "2024-11-20T15:38:55.770Z",
-  //   createdAt: "2024-11-20T15:38:55.812Z",
-  //   updatedAt: "2024-11-20T15:39:09.942Z",
-  //   __v: 0,
-  // };
-   //
+  
 
-  const { currentData, refetch: refetchWallet } = useGetWalletDetailsQuery({
+  const { currentData, refetch: refetchWallet,isLoading:walletLoading } = useGetWalletDetailsQuery({
     page: 1,
     limit: 1,
   });
-  const { refetch } = useGetCartQuery();
-  const { refetch: refetchAddress } = useGetAddressesQuery();
+  const { refetch ,isLoading:cartLoading } = useGetCartQuery();
+  const { refetch: refetchAddress,isLoading:addressLoading } = useGetAddressesQuery();
   const [placeOrder, { isLoading }] = useCreateOrderMutation();
   const [verifyPayment, { isLoading: isLoadingVerifyPayment }] =
     useVerifyPaymentMutation();
@@ -252,6 +206,9 @@ const CheckoutPage = () => {
   //   return <LoadingFullScreen />;
   // }
 
+  if(addressLoading||cartLoading||walletLoading){
+    return <LoadingFullScreen/>
+  }
   if (orderPlaced) {
     return <OrderCompletion />;
   }
