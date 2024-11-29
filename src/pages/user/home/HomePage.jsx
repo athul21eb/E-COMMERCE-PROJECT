@@ -16,7 +16,7 @@ const fetchNewArrivals = async () => {
         import.meta.env.VITE_FRONTEND_ENV === "development"
           ? import.meta.env.VITE_DEVELOPMENT_BACKEND_URL
           : import.meta.env.VITE_PRODUCTION_BACKEND_URL
-      }/v1/public//new-arrivals?limit=10`
+      }/public//new-arrivals?limit=10`
     );
     return data; // Return valid data
   } catch (error) {
