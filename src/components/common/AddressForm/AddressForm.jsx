@@ -128,7 +128,7 @@ const AddressForm = ({ initialValues, onSubmit }) => {
           </div>
           <div className="md:col-span-2">
             <label className="block text-gray-700 text-sm font-bold mb-1">
-              Landmark
+              Landmark (Optional)
             </label>
             <input
               type="text"

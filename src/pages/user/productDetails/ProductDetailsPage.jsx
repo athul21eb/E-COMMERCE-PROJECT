@@ -22,6 +22,7 @@ import { Tooltip } from "@mui/material";
 
 const ProductsDetails = () => {
   const { cartDetails } = useSelector((state) => state.cart);
+  const [refetchCart,{isLoading:CartLoading}] = useLazyGetCartQuery()
   const [refetchWishlist] = useLazyGetWishListQuery();
   const { user } = useSelector((state) => state.auth?.authInfo);
   const location = useLocation();
@@ -126,7 +127,8 @@ const ProductsDetails = () => {
         size: selectedSize,
       }).unwrap();
 
-      refetchWishlist();
+      await refetchCart();
+      await refetchWishlist();
       toast.success(response.message);
     } catch (err) {
       // Display error message in case of failure
@@ -352,7 +354,7 @@ const ProductsDetails = () => {
               ) : (
                 <button
                   onClick={handleAddToBag}
-                  disabled={addToCartLoading || totalStock === 0}
+                  disabled={addToCartLoading || totalStock === 0 ||CartLoading}
                   className={`bg-blue-500 text-white py-2 rounded-lg flex justify-center items-center ${
                     totalStock === 0 && "cursor-not-allowed"
                   }`}

@@ -13,6 +13,7 @@ import { toast } from "react-toastify";
 const CartItem = ({ item }) => {
   ////mutations
   const navigate = useNavigate();
+  const [refetchCart] = useLazyGetCartQuery();
   const [updateCartProduct] = useUpdateToCartMutation();
   const [removeItemFromCart] = useRemoveFromCartMutation();
   const [selectedSize, setSelectedSize] = useState(item.size);
@@ -26,7 +27,7 @@ const CartItem = ({ item }) => {
       setAvailableStock(sizeStock.stock);
     }
     setQuantity(item.quantity);
-  }, [selectedSize, item.productId.stock, item.quantity]);
+  }, [selectedSize, item.productId.stock, item.quantity,item?.size]);
 
   const handleSizeChange = async (newSize) => {
     try {
@@ -34,6 +35,7 @@ const CartItem = ({ item }) => {
         data: { size: newSize, quantity: quantity },
         itemId: item._id,
       }).unwrap();
+      await refetchCart();
     } catch (err) {
       // Display error message in case of failure
       toast.error(err?.data?.message || err?.error);
@@ -49,6 +51,7 @@ const CartItem = ({ item }) => {
         data: { size: selectedSize, quantity: parseInt(e.target.value) },
         itemId: item._id,
       }).unwrap();
+      await refetchCart();
     } catch (err) {
       // Display error message in case of failure
       toast.error(err?.data?.message || err?.error);

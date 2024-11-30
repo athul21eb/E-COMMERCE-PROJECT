@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import LoadingBlurScreen from "../../../../components/common/LoadingScreens/LoadingBlurFullScreen";
 import { toast } from "react-toastify";
 
-const EditAddress = ({route="/addresses"}) => {
+const EditAddress = ({route="/checkOut/addresses"}) => {
   const location = useLocation(); // This will give you access to the location object
 const navigate = useNavigate();
   // Create an instance of URLSearchParams to parse the query string

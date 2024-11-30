@@ -128,7 +128,7 @@ export const CouponSchema = Yup.object().shape({
 
   maxDiscountAmount: Yup.number()
     .required("Maximum discount amount is required")
-    .min(1, "Minimum discount amount must be at least 1"),
+    .min(1, "Minimum discount amount must be at least 1").max(2000,"maximum discount amount must be less than 2000"),
 
   minPurchaseAmount: Yup.number()
     .required("Minimum purchase amount is required")
